@@ -1,2 +1,3 @@
-# drawmix
-Simple and scalable content-first video editing tool
+# Timeline
+
+Content-first video editing tool
