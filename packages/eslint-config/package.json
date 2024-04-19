@@ -1,0 +1,12 @@
+{
+  "name": "@filmy/eslint-config",
+  "version": "1.0.0",
+  "description": "Shared ESLint config for the project",
+  "main": "index.js",
+  "private": true,
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.4.0",
+    "@typescript-eslint/parser": "^7.4.0",
+    "eslint": "^8.57.0"
+  }
+}
