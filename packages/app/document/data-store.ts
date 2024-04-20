@@ -1,8 +1,8 @@
-type DataObject = {
+export type DataObject = {
   readonly [key: string]: DataValue;
 };
-type DataLeaf = boolean | number | string | Uint8Array;
-type DataValue = DataObject | DataLeaf;
+export type DataLeaf = boolean | number | string | Uint8Array;
+export type DataValue = DataObject | DataLeaf;
 
 type MutableDataObject = {
   [key: string]: DataValue;

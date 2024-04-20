@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { dataStoreObservable } from "./data-store-observable";
-import { DataStore } from "./data-store";
+import { DataStore, DataValue } from "./data-store";
 import { reaction } from "mobx";
 
 describe(dataStoreObservable, () => {
@@ -11,7 +11,7 @@ describe(dataStoreObservable, () => {
 
     expect(observable()).toBe(null);
 
-    const mockFn = vi.fn();
+    const mockFn = vi.fn<[DataValue | null], undefined>();
     const disposer = reaction(
       () => observable(),
       (value) => mockFn(value)

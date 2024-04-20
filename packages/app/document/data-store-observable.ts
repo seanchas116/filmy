@@ -1,10 +1,10 @@
-import { DataStore } from "./data-store";
+import { DataStore, DataValue } from "./data-store";
 import { createAtom } from "mobx";
 
 export function dataStoreObservable(
   dataStore: DataStore,
   path: readonly string[]
-): () => any {
+): () => DataValue | null {
   let unsubscribe: () => void | undefined;
 
   const atom = createAtom(
