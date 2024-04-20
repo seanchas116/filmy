@@ -1,3 +1,14 @@
+export type TypeForPath<
+  TData,
+  TPath extends readonly string[]
+> = TPath extends readonly [infer Key, ...infer Rest]
+  ? Key extends keyof TData
+    ? Rest extends readonly string[]
+      ? TypeForPath<NonNullable<TData[Key]>, Rest>
+      : never
+    : never
+  : TData;
+
 export type DataObject = {
   readonly [key: string]: DataValue;
 };
@@ -13,10 +24,13 @@ function isObject(value: DataValue): value is DataObject {
 }
 
 // Firebase Realtime Database-like API to store and sync document data
-export class DataStore {
+export class DataStore<TRootData extends DataObject> {
   constructor() {}
 
-  set(path: readonly string[], value: DataValue | null) {
+  set<TPath extends readonly string[]>(
+    path: TPath,
+    value: TypeForPath<TRootData, TPath> | null
+  ) {
     if (value === null) {
       this.delete(path);
       return;
@@ -57,7 +71,9 @@ export class DataStore {
     this.notifyChange(path);
   }
 
-  get(path: readonly string[]): DataValue | null {
+  get<TPath extends readonly string[]>(
+    path: TPath
+  ): TypeForPath<TRootData, TPath> | null {
     if (path.length === 0) return this.data;
 
     let data = this.data;
@@ -89,7 +105,7 @@ export class DataStore {
     }
   }
 
-  data: DataObject = {};
+  data: TRootData = {};
 
   private listeners = new Set<{
     path: readonly string[];

@@ -1,3 +1,5 @@
+import { DataStore } from "./data-store";
+
 export type ShapeData =
   | {
       type: "text";
@@ -42,7 +44,7 @@ export type NodeData = {
   stroke?: StrokeData;
 };
 
-export interface StoredData {
+export type StoredData = {
   timelines?: {
     [id: string]: {
       order: number;
@@ -65,4 +67,13 @@ export interface StoredData {
       data: NodeData;
     };
   };
-}
+};
+
+export const store = new DataStore<StoredData>();
+
+store.set(["timelineItems", "123"] as const, {
+  timelineId: "456",
+  start: 0,
+  duration: 1000,
+  node: "789",
+});

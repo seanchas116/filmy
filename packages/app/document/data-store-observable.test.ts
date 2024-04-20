@@ -5,7 +5,11 @@ import { reaction } from "mobx";
 
 describe(dataStoreObservable, () => {
   it("creates mobx observable fot path", () => {
-    const store = new DataStore();
+    const store = new DataStore<{
+      a: {
+        b: number;
+      };
+    }>();
 
     const observable = dataStoreObservable(store, ["a", "b"]);
 
@@ -17,7 +21,7 @@ describe(dataStoreObservable, () => {
       (value) => mockFn(value)
     );
 
-    store.set(["a", "b"], 1);
+    store.set(["a", "b"] as const, 1);
 
     expect(observable()).toBe(1);
     expect(mockFn).toHaveBeenCalledTimes(1);
@@ -25,7 +29,7 @@ describe(dataStoreObservable, () => {
 
     disposer();
 
-    store.set(["a", "b"], 2);
+    store.set(["a", "b"] as const, 2);
     expect(mockFn).toHaveBeenCalledTimes(1);
   });
 });

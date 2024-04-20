@@ -3,7 +3,8 @@ import { DataStore } from "./data-store";
 
 describe(DataStore, () => {
   it("sets value to object", () => {
-    const store = new DataStore();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const store = new DataStore<any>();
 
     store.set(["a"], 1);
     expect(store.get([])).toEqual({ a: 1 });
@@ -29,7 +30,8 @@ describe(DataStore, () => {
   });
 
   it("emits change event", () => {
-    const store = new DataStore();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const store = new DataStore<any>();
     const listener = vi.fn();
     store.onChange(["a"], listener);
 
