@@ -102,5 +102,9 @@ export class Document {
         },
       },
     });
+
+    store.onUpdate(`timelines`, (key, newValue, oldValue) => {
+      // TODO
+    });
   }
 }

@@ -1,3 +1,5 @@
+import { cloneDeep } from "lodash-es";
+
 export type TypeForPath<
   TData,
   TPath extends string
@@ -21,7 +23,7 @@ export class DataStore<TRootData> {
     slashPath: TPath,
     value: TypeForPath<TRootData, TPath> | null
   ) {
-    if (value === null) {
+    if (value == null) {
       this.delete(slashPath);
       return;
     }
@@ -31,33 +33,35 @@ export class DataStore<TRootData> {
       throw new Error("Use root setter to set root value");
     }
 
-    let data = this.data as Record<string, unknown>;
-    for (let i = 0; i < path.length - 1; i++) {
-      const key = path[i];
-      if (!data[key] || !isPlainObject(data[key])) {
-        data[key] = {};
+    this.notifyChange(slashPath, () => {
+      let data = this.data as Record<string, unknown>;
+      for (let i = 0; i < path.length - 1; i++) {
+        const key = path[i];
+        if (!data[key] || !isPlainObject(data[key])) {
+          data[key] = {};
+        }
+        data = data[key] as Record<string, unknown>;
       }
-      data = data[key] as Record<string, unknown>;
-    }
-    data[path[path.length - 1]] = value;
 
-    this.notifyChange(path);
+      data[path[path.length - 1]] = value;
+    });
   }
 
   private delete(slashPath: string) {
     const path = slashPath.split("/");
 
-    let data = this.data as Record<string, unknown>;
-    for (let i = 0; i < path.length - 1; i++) {
-      const key = path[i];
-      if (!data[key] || !isPlainObject(data[key])) {
-        return;
+    this.notifyChange(slashPath, () => {
+      let data = this.data as Record<string, unknown>;
+      for (let i = 0; i < path.length - 1; i++) {
+        const key = path[i];
+        if (!data[key] || !isPlainObject(data[key])) {
+          return;
+        }
+        data = data[key] as Record<string, unknown>;
       }
-      data = data[key] as Record<string, unknown>;
-    }
-    delete data[path[path.length - 1]];
 
-    this.notifyChange(path);
+      delete data[path[path.length - 1]];
+    });
   }
 
   get root() {
@@ -65,8 +69,9 @@ export class DataStore<TRootData> {
   }
 
   set root(value: TRootData) {
-    this.data = value;
-    this.notifyChange([]);
+    this.notifyChange("", () => {
+      this.data = value;
+    });
   }
 
   get<TPath extends string>(
@@ -91,43 +96,118 @@ export class DataStore<TRootData> {
     > | null;
   }
 
-  private notifyChange(path: readonly string[]) {
-    for (const listener of this.listeners) {
-      const listenerPath = listener.path;
-      if (listenerPath.length <= path.length) {
-        let match = true;
-        for (let i = 0; i < listenerPath.length; i++) {
-          if (listenerPath[i] !== path[i]) {
-            match = false;
-            break;
-          }
-        }
-        if (match) {
-          listener.callback(this.get(listenerPath.join("/")));
-        }
+  private notifyChange(path: string, doChange: () => void) {
+    const targetUpdateListeners: {
+      path: string;
+      key: string;
+      oldValue: unknown;
+      listener: (key: string, newValue: unknown, oldValue: unknown) => void;
+    }[] = [];
+
+    const targetChangeListeners: {
+      path: string;
+      oldValue: unknown;
+      listener: (newValue: unknown, oldValue: unknown) => void;
+    }[] = [];
+
+    const pathParts = path.split("/");
+    const parentPath = pathParts.slice(0, pathParts.length - 1).join("/");
+
+    // emit update events
+    for (const listener of this.updateListeners) {
+      if (
+        listener.path === parentPath ||
+        parentPath.startsWith(listener.path + "/")
+      ) {
+        // example:
+        // listener.path = "a/b"
+        // path = 'a/b/c/d'
+        // parentPath = "a/b/c"
+        // key = 'c
+        const key = pathParts[listener.path.split("/").length];
+
+        targetUpdateListeners.push({
+          path: parentPath,
+          key,
+          oldValue: cloneDeep(this.get(`${listener.path}/${key}`)),
+          listener: listener.callback,
+        });
       }
+    }
+
+    // emit change events
+    // TODO: determine call order
+    for (const listener of this.changeListeners) {
+      const listenerPath = listener.path;
+      if (listenerPath === path || path.startsWith(listenerPath + "/")) {
+        targetChangeListeners.push({
+          path: listenerPath,
+          oldValue: cloneDeep(this.get(listenerPath)),
+          listener: listener.callback,
+        });
+      }
+    }
+
+    doChange();
+
+    for (const { path, key, oldValue, listener } of targetUpdateListeners) {
+      listener(key, this.get(`${path}/${key}`), oldValue);
+    }
+    for (const { path, oldValue, listener } of targetChangeListeners) {
+      listener(this.get(path), oldValue);
     }
   }
 
   private data = {} as TRootData;
 
-  private listeners = new Set<{
-    path: readonly string[];
-    callback: (data: unknown) => void;
+  private changeListeners = new Set<{
+    path: string;
+    callback: (newValue: unknown, oldValue: unknown) => void;
+  }>();
+
+  private updateListeners = new Set<{
+    path: string;
+    callback: (key: string, newValue: unknown, oldValue: unknown) => void;
   }>();
 
   onChange<TPath extends string>(
     slashPath: TPath,
-    callback: (data: TypeForPath<TRootData, TPath> | null) => void
+    callback: (
+      newValue: TypeForPath<TRootData, TPath> | null,
+      oldValue: TypeForPath<TRootData, TPath> | null
+    ) => void
   ): () => void {
     const listener = {
-      path: slashPath.split("/"),
+      path: slashPath,
       callback: callback as (data: unknown) => void,
     };
 
-    this.listeners.add(listener);
+    this.changeListeners.add(listener);
     return () => {
-      this.listeners.delete(listener);
+      this.changeListeners.delete(listener);
+    };
+  }
+
+  onUpdate<TPath extends string>(
+    slashPath: TPath,
+    callback: (
+      key: string,
+      oldValue: TypeForPath<TRootData, `${TPath}/${string}`> | null,
+      newValue: TypeForPath<TRootData, `${TPath}/${string}`> | null
+    ) => void
+  ): () => void {
+    const listener = {
+      path: slashPath,
+      callback: callback as (
+        key: string,
+        oldValue: unknown,
+        newValue: unknown
+      ) => void,
+    };
+
+    this.updateListeners.add(listener);
+    return () => {
+      this.updateListeners.delete(listener);
     };
   }
 }
