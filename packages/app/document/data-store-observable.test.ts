@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { dataStoreObservable } from "./data-store-observable";
-import { DataStore, DataValue } from "./data-store";
+import { DataStore } from "./data-store";
 import { reaction } from "mobx";
 
 describe(dataStoreObservable, () => {
@@ -11,17 +11,17 @@ describe(dataStoreObservable, () => {
       };
     }>();
 
-    const observable = dataStoreObservable(store, ["a", "b"]);
+    const observable = dataStoreObservable(store, "a/b");
 
     expect(observable()).toBe(null);
 
-    const mockFn = vi.fn<[DataValue | null], undefined>();
+    const mockFn = vi.fn<[number | null], undefined>();
     const disposer = reaction(
       () => observable(),
       (value) => mockFn(value)
     );
 
-    store.set(["a", "b"] as const, 1);
+    store.set("a/b", 1);
 
     expect(observable()).toBe(1);
     expect(mockFn).toHaveBeenCalledTimes(1);
@@ -29,7 +29,7 @@ describe(dataStoreObservable, () => {
 
     disposer();
 
-    store.set(["a", "b"] as const, 2);
+    store.set("a/b", 2);
     expect(mockFn).toHaveBeenCalledTimes(1);
   });
 });

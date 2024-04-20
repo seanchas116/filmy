@@ -1,90 +1,94 @@
 export type TypeForPath<
   TData,
-  TPath extends readonly string[]
-> = TPath extends readonly [infer Key, ...infer Rest]
+  TPath extends string
+> = TPath extends `${infer Key}/${infer Rest}`
   ? Key extends keyof TData
-    ? Rest extends readonly string[]
-      ? TypeForPath<NonNullable<TData[Key]>, Rest>
-      : never
+    ? TypeForPath<NonNullable<TData[Key]>, Rest>
     : never
-  : TData;
+  : TPath extends keyof TData
+  ? TData[TPath]
+  : never;
 
-export type DataObject = {
-  readonly [key: string]: DataValue;
-};
-export type DataLeaf = boolean | number | string | Uint8Array;
-export type DataValue = DataObject | DataLeaf;
-
-type MutableDataObject = {
-  [key: string]: DataValue;
-};
-
-function isObject(value: DataValue): value is DataObject {
-  return typeof value === "object" && value.constructor === Object;
+function isPlainObject(value: unknown): boolean {
+  return typeof value === "object" && !!value && value.constructor === Object;
 }
 
 // Firebase Realtime Database-like API to store and sync document data
-export class DataStore<TRootData extends DataObject> {
+export class DataStore<TRootData> {
   constructor() {}
 
-  set<TPath extends readonly string[]>(
-    path: TPath,
+  set<TPath extends string>(
+    slashPath: TPath,
     value: TypeForPath<TRootData, TPath> | null
   ) {
     if (value === null) {
-      this.delete(path);
-      return;
-    }
-    if (path.length === 0) {
-      if (!isObject(value)) {
-        throw new Error("Root value must be an object");
-      }
-      this.data = value;
-      this.notifyChange(path);
+      this.delete(slashPath);
       return;
     }
 
-    let data = this.data as MutableDataObject;
+    const path = slashPath.split("/");
+    if (path.length === 0) {
+      throw new Error("Use root setter to set root value");
+    }
+
+    let data = this.data as Record<string, unknown>;
     for (let i = 0; i < path.length - 1; i++) {
       const key = path[i];
-      if (!data[key] || !isObject(data[key])) {
-        (data[key] as MutableDataObject) = {};
+      if (!data[key] || !isPlainObject(data[key])) {
+        data[key] = {};
       }
-      data = data[key] as MutableDataObject;
+      data = data[key] as Record<string, unknown>;
     }
     data[path[path.length - 1]] = value;
 
     this.notifyChange(path);
   }
 
-  delete(path: readonly string[]) {
-    let data = this.data as MutableDataObject;
+  private delete(slashPath: string) {
+    const path = slashPath.split("/");
+
+    let data = this.data as Record<string, unknown>;
     for (let i = 0; i < path.length - 1; i++) {
       const key = path[i];
-      if (!data[key] || !isObject(data[key])) {
+      if (!data[key] || !isPlainObject(data[key])) {
         return;
       }
-      data = data[key] as MutableDataObject;
+      data = data[key] as Record<string, unknown>;
     }
     delete data[path[path.length - 1]];
 
     this.notifyChange(path);
   }
 
-  get<TPath extends readonly string[]>(
-    path: TPath
-  ): TypeForPath<TRootData, TPath> | null {
-    if (path.length === 0) return this.data;
+  get root() {
+    return this.data;
+  }
 
-    let data = this.data;
+  set root(value: TRootData) {
+    this.data = value;
+    this.notifyChange([]);
+  }
+
+  get<TPath extends string>(
+    slashPath: TPath
+  ): TypeForPath<TRootData, TPath> | null {
+    const path = slashPath.split("/");
+    if (path.length === 0) {
+      throw new Error("Use root getter to get root value");
+    }
+
+    let data = this.data as Record<string, unknown>;
     for (let i = 0; i < path.length - 1; i++) {
       const key = path[i];
-      if (!data[key] || !isObject(data[key])) {
+      if (!data[key] || !isPlainObject(data[key])) {
         return null;
       }
-      data = data[key] as DataObject;
+      data = data[key] as Record<string, unknown>;
     }
-    return data[path[path.length - 1]] ?? null;
+    return (data[path[path.length - 1]] ?? null) as TypeForPath<
+      TRootData,
+      TPath
+    > | null;
   }
 
   private notifyChange(path: readonly string[]) {
@@ -99,24 +103,27 @@ export class DataStore<TRootData extends DataObject> {
           }
         }
         if (match) {
-          listener.callback(this.get(listenerPath));
+          listener.callback(this.get(listenerPath.join("/")));
         }
       }
     }
   }
 
-  data: TRootData = {};
+  data = {} as TRootData;
 
   private listeners = new Set<{
     path: readonly string[];
-    callback: (data: DataValue | null) => void;
+    callback: (data: unknown) => void;
   }>();
 
-  onChange(
-    path: readonly string[],
-    callback: (data: DataValue | null) => void
+  onChange<TPath extends string>(
+    slashPath: TPath,
+    callback: (data: TypeForPath<TRootData, TPath> | null) => void
   ): () => void {
-    const listener = { path, callback };
+    const listener = {
+      path: slashPath.split("/"),
+      callback: callback as (data: unknown) => void,
+    };
 
     this.listeners.add(listener);
     return () => {

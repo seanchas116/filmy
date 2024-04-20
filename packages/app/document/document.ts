@@ -71,7 +71,7 @@ export type StoredData = {
 
 export const store = new DataStore<StoredData>();
 
-store.set(["timelineItems", "123"] as const, {
+store.set(`timelineItems/${"123"}`, {
   timelineId: "456",
   start: 0,
   duration: 1000,
