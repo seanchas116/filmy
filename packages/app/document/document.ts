@@ -69,11 +69,38 @@ export type StoredData = {
   };
 };
 
-export const store = new DataStore<StoredData>();
+export class Document {
+  constructor() {
+    const store = new DataStore<StoredData>();
 
-store.set(`timelineItems/${"123"}`, {
-  timelineId: "456",
-  start: 0,
-  duration: 1000,
-  node: "789",
-});
+    store.set(`timelines/${"0"}`, {
+      order: 0,
+    });
+
+    store.set(`timelineItems/${"0"}`, {
+      timelineId: "0",
+      start: 0,
+      duration: 1000,
+      node: "0",
+    });
+
+    store.set(`nodes/${"0"}`, {
+      order: 0,
+      data: {
+        type: "shape",
+        shape: { type: "rectangle", x: 0, y: 0, w: 100, h: 100 },
+        fill: {
+          type: "solid",
+          color: { r: 255, g: 0, b: 0, a: 1 },
+        },
+        stroke: {
+          width: 1,
+          fill: {
+            type: "solid",
+            color: { r: 0, g: 0, b: 0, a: 1 },
+          },
+        },
+      },
+    });
+  }
+}
