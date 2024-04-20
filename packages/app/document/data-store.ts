@@ -1,4 +1,4 @@
-import { cloneDeep } from "lodash-es";
+import { cloneDeep, isPlainObject } from "lodash-es";
 
 export type TypeForPath<
   TData,
@@ -10,10 +10,6 @@ export type TypeForPath<
   : TPath extends keyof TData
   ? TData[TPath]
   : never;
-
-function isPlainObject(value: unknown): boolean {
-  return typeof value === "object" && !!value && value.constructor === Object;
-}
 
 // Firebase Realtime Database-like API to store and sync document data
 export class DataStore<TRootData> {
@@ -116,6 +112,7 @@ export class DataStore<TRootData> {
     // emit update events
     for (const listener of this.updateListeners) {
       if (
+        // element of the map is changing
         listener.path === parentPath ||
         parentPath.startsWith(listener.path + "/")
       ) {
@@ -132,6 +129,23 @@ export class DataStore<TRootData> {
           oldValue: cloneDeep(this.get(`${listener.path}/${key}`)),
           listener: listener.callback,
         });
+      } else if (
+        // the map itself is changing
+        listener.path === path ||
+        listener.path.startsWith(path + "/")
+      ) {
+        const currentValue = this.get(listener.path);
+
+        if (isPlainObject(currentValue)) {
+          for (const [key, value] of Object.entries(currentValue as object)) {
+            targetUpdateListeners.push({
+              path: listener.path,
+              key,
+              oldValue: cloneDeep(value),
+              listener: listener.callback,
+            });
+          }
+        }
       }
     }
 
@@ -139,7 +153,13 @@ export class DataStore<TRootData> {
     // TODO: determine call order
     for (const listener of this.changeListeners) {
       const listenerPath = listener.path;
-      if (listenerPath === path || path.startsWith(listenerPath + "/")) {
+      if (
+        listenerPath === path ||
+        // ancestor
+        path.startsWith(listenerPath + "/") ||
+        // descendant
+        listenerPath.startsWith(path + "/")
+      ) {
         targetChangeListeners.push({
           path: listenerPath,
           oldValue: cloneDeep(this.get(listenerPath)),
