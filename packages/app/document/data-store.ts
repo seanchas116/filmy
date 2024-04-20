@@ -109,7 +109,7 @@ export class DataStore<TRootData> {
     }
   }
 
-  data = {} as TRootData;
+  private data = {} as TRootData;
 
   private listeners = new Set<{
     path: readonly string[];
