@@ -9,6 +9,7 @@ export class Collection<T> {
 }
 
 export class UndoManager {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(collections: Collection<any>[]) {
     this.collections = collections;
 
