@@ -9,7 +9,7 @@ export class Collection<T> {
 }
 
 export class UndoManager {
-  constructor(collections: Collection<unknown>[]) {
+  constructor(collections: Collection<any>[]) {
     this.collections = collections;
 
     for (const collection of collections) {
