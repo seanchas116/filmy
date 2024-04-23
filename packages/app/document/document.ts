@@ -1,4 +1,4 @@
-import { DataStore } from "./data-store";
+import { Collection } from "@/utils/store";
 
 export type ShapeData =
   | {
@@ -37,56 +37,53 @@ export type StrokeData = {
   fill: FillData;
 };
 
-export type NodeData = {
+export type NodeDetailData = {
   type: "shape";
   shape: ShapeData;
   fill?: FillData;
   stroke?: StrokeData;
 };
 
-export type StoredData = {
-  timelines?: {
-    [id: string]: {
-      order: number;
-    };
-  };
+export type TimelineData = {
+  order: number;
+};
 
-  timelineItems?: {
-    [id: string]: {
-      timelineId: string;
-      start: number;
-      duration: number;
-      node: string;
-    };
-  };
+export type TimelineItemData = {
+  timeline: string;
+  start: number;
+  duration: number;
+  node: string;
+};
 
-  nodes?: {
-    [id: string]: {
-      parent?: string;
-      order: number;
-      data: NodeData;
-    };
-  };
+export type NodeData = {
+  parent?: string;
+  order: number;
+  detail: NodeDetailData;
 };
 
 export class Document {
   constructor() {
-    const store = new DataStore<StoredData>();
+    const timelines = new Collection<TimelineData>();
 
-    store.set(`timelines/${"0"}`, {
+    timelines.data.set("timeline0", {
       order: 0,
     });
 
-    store.set(`timelineItems/${"0"}`, {
-      timelineId: "0",
+    const timelineItems = new Collection<TimelineItemData>();
+
+    timelineItems.data.set("timelineItem0", {
+      timeline: "timeline0",
       start: 0,
       duration: 1000,
-      node: "0",
+      node: "node0",
     });
 
-    store.set(`nodes/${"0"}`, {
+    const nodes = new Collection<NodeData>();
+
+    nodes.data.set("node0", {
+      parent: "timelineItem0",
       order: 0,
-      data: {
+      detail: {
         type: "shape",
         shape: { type: "rectangle", x: 0, y: 0, w: 100, h: 100 },
         fill: {
@@ -101,10 +98,6 @@ export class Document {
           },
         },
       },
-    });
-
-    store.onUpdate(`timelines`, (key, newValue, oldValue) => {
-      // TODO
     });
   }
 }
