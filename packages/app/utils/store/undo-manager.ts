@@ -1,32 +1,22 @@
 import { getOrAdd } from "../get-or-add";
 import { UndoStack } from "../undo-stack";
-import { Collection } from "./collection";
+import { Store } from "./store";
 
 export class UndoManager {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(collections: Collection<any>[]) {
-    this.collections = collections;
+  constructor(stores: Store<any>[]) {
+    this.stores = stores;
 
-    for (const collection of collections) {
+    for (const store of stores) {
       this.disposers.push(
-        collection.data.observe_((change) => {
+        store.data.observe_((change) => {
           if (change.type === "add") {
-            this.stageChanges(
-              collection,
-              change.name,
-              undefined,
-              change.newValue
-            );
+            this.stageChanges(store, change.name, undefined, change.newValue);
           } else if (change.type === "delete") {
-            this.stageChanges(
-              collection,
-              change.name,
-              change.oldValue,
-              undefined
-            );
+            this.stageChanges(store, change.name, change.oldValue, undefined);
           } else {
             this.stageChanges(
-              collection,
+              store,
               change.name,
               change.oldValue,
               change.newValue
@@ -44,7 +34,7 @@ export class UndoManager {
   }
 
   readonly disposers: (() => void)[] = [];
-  readonly collections: Collection<unknown>[];
+  readonly stores: Store<unknown>[];
   private lastCommand: UndoManagerCommand | undefined;
   private undoStack = new UndoStack<UndoManagerCommand>();
 
@@ -76,7 +66,7 @@ export class UndoManager {
   }
 
   stageChanges(
-    collection: Collection<unknown>,
+    store: Store<unknown>,
     id: string,
     oldData: unknown,
     newData: unknown
@@ -89,8 +79,8 @@ export class UndoManager {
     }
 
     const changes = getOrAdd(
-      this.lastCommand.changesForCollection,
-      collection,
+      this.lastCommand.changesForStore,
+      store,
       () => new Map<string, { oldData: unknown; newData: unknown }>()
     );
     const staged = changes.get(id);
@@ -111,8 +101,8 @@ class UndoManagerCommand {
 
   readonly undoManager: UndoManager;
   timestamp = Date.now();
-  readonly changesForCollection = new Map<
-    Collection<unknown>,
+  readonly changesForStore = new Map<
+    Store<unknown>,
     Map<string, { oldData: unknown; newData: unknown }>
   >();
 
@@ -121,12 +111,12 @@ class UndoManagerCommand {
       console.debug("-- undo");
       this.undoManager.duringUndoRedo = true;
 
-      for (const [collection, changes] of this.changesForCollection) {
+      for (const [store, changes] of this.changesForStore) {
         for (const [id, { oldData }] of changes) {
           if (oldData == null) {
-            collection.data.delete(id);
+            store.data.delete(id);
           } else {
-            collection.data.set(id, oldData);
+            store.data.set(id, oldData);
           }
         }
       }
@@ -140,12 +130,12 @@ class UndoManagerCommand {
       console.debug("-- redo");
       this.undoManager.duringUndoRedo = true;
 
-      for (const [collection, changes] of this.changesForCollection) {
+      for (const [store, changes] of this.changesForStore) {
         for (const [id, { newData }] of changes) {
           if (newData == null) {
-            collection.data.delete(id);
+            store.data.delete(id);
           } else {
-            collection.data.set(id, newData);
+            store.data.set(id, newData);
           }
         }
       }

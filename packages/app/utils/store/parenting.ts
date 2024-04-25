@@ -1,5 +1,5 @@
 import { IMapDidChange } from "mobx";
-import { Collection } from "./collection";
+import { Store } from "./store";
 import { FractionalSort, FractionalSortResult } from "./fractiona-sort";
 import { getOrAdd } from "../get-or-add";
 
@@ -9,17 +9,17 @@ export class Parenting<
     order: number;
   }
 > {
-  constructor(collection: Collection<TData>) {
-    this.collection = collection;
-    collection.data.observe_(this.onChange.bind(this));
-    for (const [name, data] of collection.data) {
+  constructor(store: Store<TData>) {
+    this.store = store;
+    store.data.observe_(this.onChange.bind(this));
+    for (const [name, data] of store.data) {
       if (data.parent) {
         this.getChildrenSort(data.parent).add(name);
       }
     }
   }
 
-  private collection: Collection<TData>;
+  private store: Store<TData>;
   private childrenMap = new Map<string, FractionalSort<TData>>();
 
   private onChange(change: IMapDidChange<string, TData>) {
@@ -35,13 +35,13 @@ export class Parenting<
     }
 
     // remove from old parent
-    if (oldValue?.parent) {
-      this.getChildrenSort(oldValue.parent).delete(change.name);
+    if (oldValue) {
+      this.getChildrenSort(oldValue.parent ?? "").delete(change.name);
     }
 
     // add to new parent
-    if (newValue?.parent) {
-      this.getChildrenSort(newValue.parent).add(change.name);
+    if (newValue) {
+      this.getChildrenSort(newValue.parent ?? "").add(change.name);
     }
   }
 
@@ -49,7 +49,7 @@ export class Parenting<
     return getOrAdd(
       this.childrenMap,
       parent,
-      () => new FractionalSort(this.collection)
+      () => new FractionalSort(this.store)
     );
   }
 

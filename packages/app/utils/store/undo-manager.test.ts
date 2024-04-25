@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { Collection } from "./collection";
+import { Store } from "./store";
 import { UndoManager } from "./undo-manager";
 
 describe(UndoManager, () => {
   it("undo/redo", () => {
-    const users = new Collection<{
+    const users = new Store<{
       firstName: string;
       lastName: string;
     }>();
-    const documents = new Collection<{
+    const documents = new Store<{
       title: string;
     }>();
 

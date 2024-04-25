@@ -1,86 +1,28 @@
-import { Collection } from "@/utils/store/collection";
-
-export type ShapeData =
-  | {
-      type: "text";
-      text: string;
-    }
-  | {
-      type: "rectangle";
-      x: number;
-      y: number;
-      w: number;
-      h: number;
-    }
-  | {
-      type: "ellipse";
-      x: number;
-      y: number;
-      w: number;
-      h: number;
-    };
-
-export type ColorData = {
-  r: number;
-  g: number;
-  b: number;
-  a: number;
-};
-
-export type FillData = {
-  type: "solid";
-  color: ColorData;
-};
-
-export type StrokeData = {
-  width: number;
-  fill: FillData;
-};
-
-export type NodeDetailData = {
-  type: "shape";
-  shape: ShapeData;
-  fill?: FillData;
-  stroke?: StrokeData;
-};
-
-export type TimelineData = {
-  order: number;
-};
-
-export type TimelineItemData = {
-  timeline: string;
-  start: number;
-  duration: number;
-  node: string;
-};
-
-export type NodeData = {
-  parent?: string;
-  order: number;
-  detail: NodeDetailData;
-};
+import { Store } from "@/utils/store/store";
+import { NodeData, TimelineData, TimelineItemData } from "./schema";
+import { NodeManager } from "./node";
+import { InstanceManager } from "./instance-manager";
+import { Timeline } from "./timeline";
+import { TimelineItem } from "./timeline-item";
+import { nanoid } from "nanoid";
 
 export class Document {
   constructor() {
-    const timelines = new Collection<TimelineData>();
+    this.timelineStore = new Store<TimelineData>();
+    this.timelineItemStore = new Store<TimelineItemData>();
+    this.nodeStore = new Store<NodeData>();
 
-    timelines.data.set("timeline0", {
-      order: 0,
-    });
+    this.nodes = new NodeManager(this.nodeStore);
+    this.timelines = new InstanceManager(
+      this.timelineStore,
+      (id) => new Timeline(this, id)
+    );
+    this.timelineItems = new InstanceManager(
+      this.timelineItemStore,
+      (id) => new TimelineItem(this, id)
+    );
 
-    const timelineItems = new Collection<TimelineItemData>();
-
-    timelineItems.data.set("timelineItem0", {
-      timeline: "timeline0",
-      start: 0,
-      duration: 1000,
-      node: "node0",
-    });
-
-    const nodes = new Collection<NodeData>();
-
-    nodes.data.set("node0", {
+    const node = this.nodes.add(nanoid(), {
       parent: "timelineItem0",
       order: 0,
       detail: {
@@ -99,5 +41,26 @@ export class Document {
         },
       },
     });
+
+    this.currentTimeline = this.timelines.add(nanoid(), {
+      order: 0,
+    });
+    this.currentTimelineItem = this.timelineItems.add(nanoid(), {
+      timeline: this.currentTimeline.id,
+      start: 0,
+      duration: 1000,
+      node: node.id,
+    });
   }
+
+  readonly timelineStore: Store<TimelineData>;
+  readonly timelineItemStore: Store<TimelineItemData>;
+  readonly nodeStore: Store<NodeData>;
+
+  readonly timelines: InstanceManager<TimelineData, Timeline>;
+  readonly timelineItems: InstanceManager<TimelineItemData, TimelineItem>;
+  readonly nodes: NodeManager;
+
+  readonly currentTimeline: Timeline;
+  readonly currentTimelineItem: TimelineItem;
 }
