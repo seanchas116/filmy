@@ -1,16 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import { Node } from "@/document/node";
-import { EditorState } from "./editor-state";
 import { LeftSideBar } from "./left-sidebar";
 import { RightSideBar } from "./right-sidebar";
 import { ToolBar } from "./tool-bar";
 import { TimelineEditor } from "./timeline-editor";
+import { useEditorState } from "./use-editor-state";
 
 export function Editor() {
-  const [editorState] = useState(() => new EditorState());
-
+  const editorState = useEditorState();
   const node = editorState.document.currentTimelineItem.node;
 
   return (
