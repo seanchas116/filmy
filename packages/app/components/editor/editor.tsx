@@ -5,6 +5,8 @@ import { Node } from "@/document/node";
 import { EditorState } from "./editor-state";
 import { LeftSideBar } from "./left-sidebar";
 import { RightSideBar } from "./right-sidebar";
+import { ToolBar } from "./tool-bar";
+import { TimelineEditor } from "./timeline-editor";
 
 export function Editor() {
   const [editorState] = useState(() => new EditorState());
@@ -12,14 +14,18 @@ export function Editor() {
   const node = editorState.document.currentTimelineItem.node;
 
   return (
-    <div className="grid grid-cols-[auto,1fr,auto] w-screen h-screen">
-      <LeftSideBar />
-      <div className="bg-gray-100 flex items-center justify-center">
-        <svg width={800} height={600} className="bg-white shadow-md">
-          <NodeRenderer node={node} />
-        </svg>
+    <div className="grid grid-rows-[auto,1fr,auto] w-screen h-screen">
+      <ToolBar />
+      <div className="grid grid-cols-[auto,1fr,auto]">
+        <LeftSideBar />
+        <div className="bg-gray-100 flex items-center justify-center">
+          <svg width={800} height={600} className="bg-white shadow-md">
+            <NodeRenderer node={node} />
+          </svg>
+        </div>
+        <RightSideBar />
       </div>
-      <RightSideBar />
+      <TimelineEditor />
     </div>
   );
 }
