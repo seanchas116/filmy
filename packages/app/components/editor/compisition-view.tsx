@@ -1,15 +1,74 @@
 import { Node } from "@/document/node";
 import { useEditorState } from "./use-editor-state";
 import { observer } from "mobx-react-lite";
+import { useRef } from "react";
+import { nanoid } from "nanoid";
 
 export const CompositionView: React.FC = observer(() => {
   const editorState = useEditorState();
   const node = editorState.document.currentTimelineItem.node;
 
   return (
-    <svg width={800} height={600} className="bg-white shadow-md">
-      <NodeRenderer node={node} />
-    </svg>
+    <div className="relative">
+      <svg width={800} height={600} className="bg-white shadow-md">
+        <NodeRenderer node={node} />
+      </svg>
+      <EventTarget />
+    </div>
+  );
+});
+
+const EventTarget = observer(() => {
+  const editorState = useEditorState();
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    if (editorState.tool === "rectangle") {
+      const document = editorState.document;
+
+      const rootNode = document.currentTimelineItem.node;
+      document.nodes.add(nanoid(), {
+        parent: rootNode.id,
+        order: rootNode.children.length,
+        detail: {
+          type: "shape",
+          shape: {
+            type: "rectangle",
+            x: e.nativeEvent.offsetX,
+            y: e.nativeEvent.offsetY,
+            w: 100,
+            h: 100,
+          },
+          fill: {
+            type: "solid",
+            color: { r: 255, g: 0, b: 0, a: 1 },
+          },
+          stroke: {
+            width: 1,
+            fill: {
+              type: "solid",
+              color: { r: 0, g: 0, b: 0, a: 1 },
+            },
+          },
+        },
+      });
+    }
+  };
+
+  const onPointerMove = (e: React.PointerEvent) => {
+    // TODO
+  };
+
+  const onPointerUp = (e: React.PointerEvent) => {
+    // TODO
+  };
+
+  return (
+    <div
+      className="absolute inset-0"
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+    />
   );
 });
 
