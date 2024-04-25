@@ -22,8 +22,13 @@ export class Document {
       (id) => new TimelineItem(this, id)
     );
 
-    const node = this.nodes.add(nanoid(), {
+    const rootNode = this.nodes.add(nanoid(), {
       parent: "timelineItem0",
+      order: 0,
+    });
+
+    this.nodes.add(nanoid(), {
+      parent: rootNode.id,
       order: 0,
       detail: {
         type: "shape",
@@ -49,7 +54,7 @@ export class Document {
       timeline: this.currentTimeline.id,
       start: 0,
       duration: 1000,
-      node: node.id,
+      node: rootNode.id,
     });
   }
 

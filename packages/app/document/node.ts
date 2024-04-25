@@ -29,11 +29,11 @@ export class Node {
     this.manager.store.data.set(this.id, data);
   }
 
-  get detail(): NodeDetailData {
+  get detail(): NodeDetailData | undefined {
     return this.data.detail;
   }
 
-  set detail(detail: NodeDetailData) {
+  set detail(detail: NodeDetailData | undefined) {
     this.data = {
       ...this.data,
       detail,

@@ -58,5 +58,5 @@ export type TimelineItemData = {
 export type NodeData = {
   readonly parent?: string;
   readonly order: number;
-  readonly detail: NodeDetailData;
+  readonly detail?: NodeDetailData;
 };

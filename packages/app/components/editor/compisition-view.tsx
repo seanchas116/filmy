@@ -16,7 +16,23 @@ export const CompositionView: React.FC = observer(() => {
 const NodeRenderer: React.FC<{
   node: Node;
 }> = observer(({ node }) => {
+  return (
+    <>
+      <ShapeRenderer node={node} />
+      {node.children.map((child) => (
+        <NodeRenderer key={child.id} node={child} />
+      ))}
+    </>
+  );
+});
+
+const ShapeRenderer: React.FC<{
+  node: Node;
+}> = observer(({ node }) => {
   const detail = node.data.detail;
+  if (!detail) {
+    return;
+  }
 
   if (detail.shape) {
     switch (detail.shape.type) {
