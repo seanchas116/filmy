@@ -3,6 +3,7 @@ import { useEditorState } from "./use-editor-state";
 import { observer } from "mobx-react-lite";
 import { useRef } from "react";
 import { nanoid } from "nanoid";
+import { action } from "mobx";
 
 export const CompositionView: React.FC = observer(() => {
   const editorState = useEditorState();
@@ -21,12 +22,19 @@ export const CompositionView: React.FC = observer(() => {
 const EventTarget = observer(() => {
   const editorState = useEditorState();
 
-  const onPointerDown = (e: React.PointerEvent) => {
+  const insertionStateRef = useRef<{
+    type: "rectangle" | "ellipse" | "text";
+    node: Node;
+    startX: number;
+    startY: number;
+  } | null>(null);
+
+  const onPointerDown = action((e: React.PointerEvent) => {
     if (editorState.tool === "rectangle") {
       const document = editorState.document;
 
       const rootNode = document.currentTimelineItem.node;
-      document.nodes.add(nanoid(), {
+      const node = document.nodes.add(nanoid(), {
         parent: rootNode.id,
         order: rootNode.children.length,
         detail: {
@@ -51,16 +59,49 @@ const EventTarget = observer(() => {
           },
         },
       });
+
+      insertionStateRef.current = {
+        type: "rectangle",
+        node,
+        startX: e.nativeEvent.offsetX,
+        startY: e.nativeEvent.offsetY,
+      };
     }
-  };
+  });
 
-  const onPointerMove = (e: React.PointerEvent) => {
-    // TODO
-  };
+  const onPointerMove = action((e: React.PointerEvent) => {
+    if (editorState.tool === "rectangle" && insertionStateRef.current) {
+      const state = insertionStateRef.current;
+      const detail = state.node.data.detail;
+      if (detail && detail.shape.type === "rectangle") {
+        const x1 = state.startX;
+        const y1 = state.startY;
+        const x2 = e.nativeEvent.offsetX;
+        const y2 = e.nativeEvent.offsetY;
 
-  const onPointerUp = (e: React.PointerEvent) => {
-    // TODO
-  };
+        const x = Math.min(x1, x2);
+        const y = Math.min(y1, y2);
+        const w = Math.abs(x2 - x1);
+        const h = Math.abs(y2 - y1);
+
+        state.node.detail = {
+          ...detail,
+          shape: {
+            ...detail.shape,
+            x,
+            y,
+            w,
+            h,
+          },
+        };
+      }
+    }
+  });
+
+  const onPointerUp = action((e: React.PointerEvent) => {
+    editorState.tool = undefined;
+    insertionStateRef.current = null;
+  });
 
   return (
     <div
