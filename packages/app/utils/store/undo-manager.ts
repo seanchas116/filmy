@@ -1,12 +1,6 @@
-import { observable } from "mobx";
-import { UndoStack } from "./undo-stack";
-import { getOrAdd } from "./get-or-add";
-
-export class Collection<T> {
-  constructor() {}
-
-  readonly data = observable.map<string, T>([], { deep: false });
-}
+import { getOrAdd } from "../get-or-add";
+import { UndoStack } from "../undo-stack";
+import { Collection } from "./collection";
 
 export class UndoManager {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

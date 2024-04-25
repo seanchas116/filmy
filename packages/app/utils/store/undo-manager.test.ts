@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { Collection, UndoManager } from "./store";
+import { Collection } from "./collection";
+import { UndoManager } from "./undo-manager";
 
 describe(UndoManager, () => {
   it("undo/redo", () => {

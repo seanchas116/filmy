@@ -1,4 +1,4 @@
-import { Collection } from "@/utils/store";
+import { Collection } from "@/utils/store/collection";
 
 export type ShapeData =
   | {
