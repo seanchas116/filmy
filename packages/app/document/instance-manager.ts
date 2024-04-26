@@ -20,6 +20,10 @@ export class InstanceManager<TData, TInstance> {
     return this.instances.get(id)!;
   }
 
+  safeGet(id: string): TInstance | undefined {
+    return this.instances.get(id);
+  }
+
   get(id: string): TInstance {
     const instance = this.instances.get(id);
     if (!instance) {
