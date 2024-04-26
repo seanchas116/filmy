@@ -5,6 +5,7 @@ import { useRef } from "react";
 import { nanoid } from "nanoid";
 import { action } from "mobx";
 import { ShapeData } from "@/document/schema";
+import { NodeResizeBox } from "./node-resize-box";
 
 export const CompositionView: React.FC = observer(() => {
   const editorState = useEditorState();
@@ -14,6 +15,7 @@ export const CompositionView: React.FC = observer(() => {
     <div className="relative">
       <svg width={800} height={600} className="bg-white shadow-md">
         <NodeRenderer node={node} />
+        <NodeResizeBox />
       </svg>
       <EventTarget />
     </div>
@@ -46,19 +48,19 @@ const EventTarget = observer(() => {
               h: 100,
             }
           : editorState.tool === "ellipse"
-          ? {
-              type: "ellipse",
-              x: e.nativeEvent.offsetX,
-              y: e.nativeEvent.offsetY,
-              w: 50,
-              h: 50,
-            }
-          : {
-              type: "text",
-              x: e.nativeEvent.offsetX,
-              y: e.nativeEvent.offsetY,
-              text: "Text",
-            };
+            ? {
+                type: "ellipse",
+                x: e.nativeEvent.offsetX,
+                y: e.nativeEvent.offsetY,
+                w: 50,
+                h: 50,
+              }
+            : {
+                type: "text",
+                x: e.nativeEvent.offsetX,
+                y: e.nativeEvent.offsetY,
+                text: "Text",
+              };
 
       const node = document.nodes.add(nanoid(), {
         parent: rootNode.id,
@@ -123,19 +125,19 @@ const EventTarget = observer(() => {
     }
   });
 
-  const onPointerUp = action((e: React.PointerEvent) => {
+  const onPointerUp = action(() => {
     editorState.tool = undefined;
     insertionStateRef.current = null;
   });
 
-  return (
+  return editorState.tool ? (
     <div
       className="absolute inset-0"
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
     />
-  );
+  ) : null;
 });
 
 const NodeRenderer: React.FC<{
@@ -154,10 +156,18 @@ const NodeRenderer: React.FC<{
 const ShapeRenderer: React.FC<{
   node: Node;
 }> = observer(({ node }) => {
+  const editorState = useEditorState();
+
   const detail = node.data.detail;
   if (!detail) {
     return;
   }
+
+  const onClick = action(() => {
+    editorState.selectedNodeIds.clear();
+    editorState.selectedNodeIds.add(node.id);
+    console.log("click", node.id);
+  });
 
   if (detail.shape) {
     switch (detail.shape.type) {
@@ -169,6 +179,7 @@ const ShapeRenderer: React.FC<{
             width={detail.shape.w}
             height={detail.shape.h}
             fill="red"
+            onMouseDown={onClick}
           />
         );
       case "ellipse":
@@ -179,11 +190,17 @@ const ShapeRenderer: React.FC<{
             rx={detail.shape.w / 2}
             ry={detail.shape.h / 2}
             fill="red"
+            onMouseDown={onClick}
           />
         );
       case "text":
         return (
-          <text x={detail.shape.x} y={detail.shape.y} fill="black">
+          <text
+            x={detail.shape.x}
+            y={detail.shape.y}
+            fill="black"
+            onMouseDown={onClick}
+          >
             {detail.shape.text}
           </text>
         );

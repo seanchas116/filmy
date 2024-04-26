@@ -1,7 +1,8 @@
 import { Store } from "@/utils/store/store";
-import { NodeData, NodeDetailData } from "./schema";
+import { NodeData, NodeDetailData, ShapeData } from "./schema";
 import { Parenting } from "@/utils/store/parenting";
 import { InstanceManager } from "./instance-manager";
+import { Rect } from "paintvec";
 
 export class NodeManager extends InstanceManager<NodeData, Node> {
   constructor(store: Store<NodeData>) {
@@ -40,6 +41,18 @@ export class Node {
     };
   }
 
+  get shape(): ShapeData | undefined {
+    return this.detail?.shape;
+  }
+
+  set shape(shape: ShapeData) {
+    this.detail = {
+      ...this.detail,
+      type: "shape",
+      shape,
+    };
+  }
+
   get children(): Node[] {
     return this.manager.parenting
       .getChildren(this.id)
@@ -65,5 +78,31 @@ export class Node {
     return (
       this.manager.parenting.getChildren(parentId).indices.get(this.id) ?? -1
     );
+  }
+
+  get boundingBox(): Rect {
+    const shape = this.detail?.shape;
+    if (!shape) {
+      return Rect.from({ x: 0, y: 0, width: 0, height: 0 });
+    }
+
+    switch (shape.type) {
+      case "rectangle":
+      case "ellipse":
+        return Rect.from({
+          x: shape.x,
+          y: shape.y,
+          width: shape.w,
+          height: shape.h,
+        });
+      case "text":
+        return Rect.from({
+          x: shape.x,
+          y: shape.y,
+          // TODO: measure text
+          width: 100,
+          height: 50,
+        });
+    }
   }
 }

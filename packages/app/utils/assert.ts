@@ -1,6 +1,6 @@
-export function assertNonNull<T>(value: T | null | undefined): value is T {
+export function assertNonNull<T>(value: T | null | undefined): T {
   if (value === null || value === undefined) {
-    throw new Error(`Expected value to be defined, but received ${value}`);
+    throw new Error(`Unexpected null or undefined`);
   }
-  return true;
+  return value;
 }
