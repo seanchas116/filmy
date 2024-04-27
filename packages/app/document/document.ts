@@ -1,14 +1,22 @@
 import { Store } from "@/utils/store/store";
-import { NodeData, TimelineData, TimelineItemData } from "./schema";
+import {
+  NodeData,
+  SequenceData,
+  TimelineData,
+  TimelineItemData,
+} from "./schema";
 import { NodeManager } from "./node";
 import { InstanceManager } from "./instance-manager";
 import { Timeline } from "./timeline";
 import { TimelineItem } from "./timeline-item";
 import { nanoid } from "nanoid";
+import { Sequence } from "./sequence";
+import { Parenting } from "@/utils/store/parenting";
 
 export class Document {
   constructor() {
     this.timelineStore = new Store<TimelineData>();
+    this.sequenceStore = new Store<SequenceData>();
     this.timelineItemStore = new Store<TimelineItemData>();
     this.nodeStore = new Store<NodeData>();
 
@@ -21,6 +29,16 @@ export class Document {
       this.timelineItemStore,
       (id) => new TimelineItem(this, id)
     );
+    this.timelineParenting = new Parenting(this.timelineStore);
+    this.sequences = new InstanceManager(
+      this.sequenceStore,
+      (id) => new Sequence(this, id)
+    );
+
+    const sequence = this.sequences.add(nanoid(), {
+      name: "Sequence 1",
+      order: 0,
+    });
 
     const rootNode = this.nodes.add(nanoid(), {
       parent: "timelineItem0",
@@ -49,6 +67,7 @@ export class Document {
 
     this.currentTimeline = this.timelines.add(nanoid(), {
       order: 0,
+      sequence: sequence.id,
     });
     this.currentTimelineItem = this.timelineItems.add(nanoid(), {
       timeline: this.currentTimeline.id,
@@ -58,12 +77,15 @@ export class Document {
     });
   }
 
+  readonly sequenceStore: Store<SequenceData>;
   readonly timelineStore: Store<TimelineData>;
   readonly timelineItemStore: Store<TimelineItemData>;
   readonly nodeStore: Store<NodeData>;
 
+  readonly sequences: InstanceManager<SequenceData, Sequence>;
   readonly timelines: InstanceManager<TimelineData, Timeline>;
   readonly timelineItems: InstanceManager<TimelineItemData, TimelineItem>;
+  readonly timelineParenting: Parenting<TimelineData>;
   readonly nodes: NodeManager;
 
   readonly currentTimeline: Timeline;

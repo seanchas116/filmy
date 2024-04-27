@@ -44,7 +44,14 @@ export type NodeDetailData = {
   readonly stroke?: StrokeData;
 };
 
+export type NodeData = {
+  readonly parent?: string;
+  readonly order: number;
+  readonly detail?: NodeDetailData;
+};
+
 export type TimelineData = {
+  readonly sequence: string;
   readonly order: number;
 };
 
@@ -55,8 +62,7 @@ export type TimelineItemData = {
   readonly node: string;
 };
 
-export type NodeData = {
-  readonly parent?: string;
+export type SequenceData = {
+  readonly name: string;
   readonly order: number;
-  readonly detail?: NodeDetailData;
 };
