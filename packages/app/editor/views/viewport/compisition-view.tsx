@@ -33,11 +33,7 @@ const ShapeRenderer: React.FC<{
   node: Node;
 }> = observer(({ node }) => {
   const editorState = useEditorState();
-
-  const detail = node.data.detail;
-  if (!detail) {
-    return;
-  }
+  const data = node.data;
 
   const onClick = action(() => {
     editorState.selectedNodeIds.clear();
@@ -45,41 +41,34 @@ const ShapeRenderer: React.FC<{
     console.log("click", node.id);
   });
 
-  if (detail.shape) {
-    switch (detail.shape.type) {
-      case "rectangle":
-        return (
-          <rect
-            x={detail.shape.x}
-            y={detail.shape.y}
-            width={detail.shape.w}
-            height={detail.shape.h}
-            fill="red"
-            onMouseDown={onClick}
-          />
-        );
-      case "ellipse":
-        return (
-          <ellipse
-            cx={detail.shape.x + detail.shape.w / 2}
-            cy={detail.shape.y + detail.shape.h / 2}
-            rx={detail.shape.w / 2}
-            ry={detail.shape.h / 2}
-            fill="red"
-            onMouseDown={onClick}
-          />
-        );
-      case "text":
-        return (
-          <text
-            x={detail.shape.x}
-            y={detail.shape.y}
-            fill="black"
-            onMouseDown={onClick}
-          >
-            {detail.shape.text}
-          </text>
-        );
-    }
+  switch (data.type) {
+    case "rectangle":
+      return (
+        <rect
+          x={data.x}
+          y={data.y}
+          width={data.w}
+          height={data.h}
+          fill="red"
+          onMouseDown={onClick}
+        />
+      );
+    case "ellipse":
+      return (
+        <ellipse
+          cx={data.x + data.w / 2}
+          cy={data.y + data.h / 2}
+          rx={data.w / 2}
+          ry={data.h / 2}
+          fill="red"
+          onMouseDown={onClick}
+        />
+      );
+    case "text":
+      return (
+        <text x={data.x} y={data.y} fill="black" onMouseDown={onClick}>
+          {data.text}
+        </text>
+      );
   }
 });

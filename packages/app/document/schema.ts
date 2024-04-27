@@ -1,24 +1,15 @@
-export type ShapeData =
-  | {
-      readonly type: "text";
-      readonly text: string;
-      readonly x: number;
-      readonly y: number;
-    }
-  | {
-      readonly type: "rectangle";
-      readonly x: number;
-      readonly y: number;
-      readonly w: number;
-      readonly h: number;
-    }
-  | {
-      readonly type: "ellipse";
-      readonly x: number;
-      readonly y: number;
-      readonly w: number;
-      readonly h: number;
-    };
+export type NodeCommonData = {
+  readonly parent?: string;
+  readonly order: number;
+
+  readonly fill?: FillData;
+  readonly stroke?: StrokeData;
+
+  readonly x: number;
+  readonly y: number;
+  readonly w: number;
+  readonly h: number;
+};
 
 export type ColorData = {
   readonly r: number;
@@ -29,26 +20,29 @@ export type ColorData = {
 
 export type FillData = {
   readonly type: "solid";
-  readonly color: ColorData;
-};
+} & ColorData;
 
 export type StrokeData = {
   readonly width: number;
   readonly fill: FillData;
 };
 
-export type NodeDetailData = {
-  readonly type: "shape";
-  readonly shape: ShapeData;
-  readonly fill?: FillData;
-  readonly stroke?: StrokeData;
-};
-
-export type NodeData = {
-  readonly parent?: string;
-  readonly order: number;
-  readonly detail?: NodeDetailData;
-};
+export type NodeData = NodeCommonData &
+  (
+    | {
+        readonly type: "text";
+        readonly text: string;
+      }
+    | {
+        readonly type: "rectangle";
+      }
+    | {
+        readonly type: "ellipse";
+      }
+    | {
+        readonly type: "frame";
+      }
+  );
 
 export type TimelineData = {
   readonly sequence: string;

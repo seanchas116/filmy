@@ -29,30 +29,15 @@ class ElementResizer {
       height: boolean;
     }
   ) {
-    const shape = this.node.shape;
-    if (!shape) {
-      return;
-    }
+    const data = this.node.data;
 
-    switch (shape.type) {
-      case "ellipse":
-      case "rectangle":
-        this.node.shape = {
-          ...shape,
-          x: changes.x ? newRect.left : shape.x,
-          y: changes.y ? newRect.top : shape.y,
-          w: changes.width ? newRect.width : shape.w,
-          h: changes.height ? newRect.height : shape.h,
-        };
-        break;
-      case "text":
-        this.node.shape = {
-          ...shape,
-          x: changes.x ? newRect.left : shape.x,
-          y: changes.y ? newRect.top : shape.y,
-        };
-        break;
-    }
+    this.node.data = {
+      ...data,
+      x: changes.x ? newRect.left : data.x,
+      y: changes.y ? newRect.top : data.y,
+      w: changes.width ? newRect.width : data.w,
+      h: changes.height ? newRect.height : data.h,
+    };
   }
 
   finish() {

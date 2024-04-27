@@ -1,5 +1,5 @@
 import { Store } from "@/utils/store/store";
-import { NodeData, NodeDetailData, ShapeData } from "./schema";
+import { NodeData } from "./schema";
 import { Parenting } from "@/utils/store/parenting";
 import { InstanceManager } from "./instance-manager";
 import { Rect } from "paintvec";
@@ -30,29 +30,6 @@ export class Node {
     this.manager.store.data.set(this.id, data);
   }
 
-  get detail(): NodeDetailData | undefined {
-    return this.data.detail;
-  }
-
-  set detail(detail: NodeDetailData | undefined) {
-    this.data = {
-      ...this.data,
-      detail,
-    };
-  }
-
-  get shape(): ShapeData | undefined {
-    return this.detail?.shape;
-  }
-
-  set shape(shape: ShapeData) {
-    this.detail = {
-      ...this.detail,
-      type: "shape",
-      shape,
-    };
-  }
-
   get children(): Node[] {
     return this.manager.parenting
       .getChildren(this.id)
@@ -81,28 +58,12 @@ export class Node {
   }
 
   get boundingBox(): Rect {
-    const shape = this.detail?.shape;
-    if (!shape) {
-      return Rect.from({ x: 0, y: 0, width: 0, height: 0 });
-    }
-
-    switch (shape.type) {
-      case "rectangle":
-      case "ellipse":
-        return Rect.from({
-          x: shape.x,
-          y: shape.y,
-          width: shape.w,
-          height: shape.h,
-        });
-      case "text":
-        return Rect.from({
-          x: shape.x,
-          y: shape.y,
-          // TODO: measure text
-          width: 100,
-          height: 50,
-        });
-    }
+    const data = this.data;
+    return Rect.from({
+      x: data.x,
+      y: data.y,
+      width: data.w,
+      height: data.h,
+    });
   }
 }

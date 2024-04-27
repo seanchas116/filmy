@@ -42,24 +42,43 @@ export class Document {
 
     const rootNode = this.nodes.add(nanoid(), {
       order: 0,
+      type: "frame",
+      x: 0,
+      y: 0,
+      w: 640,
+      h: 480,
+      fill: {
+        type: "solid",
+        r: 255,
+        g: 255,
+        b: 255,
+        a: 1,
+      },
     });
 
     this.nodes.add(nanoid(), {
       parent: rootNode.id,
       order: 0,
-      detail: {
-        type: "shape",
-        shape: { type: "rectangle", x: 0, y: 0, w: 100, h: 100 },
+      type: "rectangle",
+      x: 0,
+      y: 0,
+      w: 100,
+      h: 100,
+      fill: {
+        type: "solid",
+        r: 255,
+        g: 0,
+        b: 0,
+        a: 1,
+      },
+      stroke: {
+        width: 1,
         fill: {
           type: "solid",
-          color: { r: 255, g: 0, b: 0, a: 1 },
-        },
-        stroke: {
-          width: 1,
-          fill: {
-            type: "solid",
-            color: { r: 0, g: 0, b: 0, a: 1 },
-          },
+          r: 0,
+          g: 0,
+          b: 0,
+          a: 1,
         },
       },
     });

@@ -4,7 +4,6 @@ import { observer } from "mobx-react-lite";
 import { useRef } from "react";
 import { nanoid } from "nanoid";
 import { action } from "mobx";
-import { ShapeData } from "@/document/schema";
 import { Vec2 } from "paintvec";
 
 export const EventTarget = observer(() => {
@@ -27,46 +26,33 @@ export const EventTarget = observer(() => {
 
       const rootNode = document.currentTimelineItem.node;
 
-      const shape: ShapeData =
-        editorState.tool === "rectangle"
-          ? {
-              type: "rectangle",
-              x: docPos.x,
-              y: docPos.y,
-              w: 100,
-              h: 100,
-            }
-          : editorState.tool === "ellipse"
-            ? {
-                type: "ellipse",
-                x: docPos.x,
-                y: docPos.y,
-                w: 50,
-                h: 50,
-              }
-            : {
-                type: "text",
-                x: docPos.x,
-                y: docPos.y,
-                text: "Text",
-              };
-
       const node = document.nodes.add(nanoid(), {
         parent: rootNode.id,
         order: rootNode.children.length,
-        detail: {
-          type: "shape",
-          shape,
+        ...(editorState.tool === "rectangle"
+          ? { type: "rectangle" }
+          : editorState.tool === "ellipse"
+            ? { type: "ellipse" }
+            : { type: "text", text: "Text" }),
+        x: docPos.x,
+        y: docPos.y,
+        w: 100,
+        h: 100,
+        fill: {
+          type: "solid",
+          r: 255,
+          g: 0,
+          b: 0,
+          a: 1,
+        },
+        stroke: {
+          width: 1,
           fill: {
             type: "solid",
-            color: { r: 255, g: 0, b: 0, a: 1 },
-          },
-          stroke: {
-            width: 1,
-            fill: {
-              type: "solid",
-              color: { r: 0, g: 0, b: 0, a: 1 },
-            },
+            r: 0,
+            g: 0,
+            b: 0,
+            a: 1,
           },
         },
       });
@@ -87,28 +73,21 @@ export const EventTarget = observer(() => {
     ).transform(editorState.scroll.viewportToDocument);
 
     if (editorState.tool && insertionStateRef.current) {
+      const node = insertionStateRef.current.node;
       const state = insertionStateRef.current;
-      const detail = state.node.data.detail;
-      if (detail?.shape) {
-        const x1 = state.startX;
-        const y1 = state.startY;
-        const x2 = docPos.x;
-        const y2 = docPos.y;
 
-        const x = Math.min(x1, x2);
-        const y = Math.min(y1, y2);
-        const w = Math.abs(x2 - x1);
-        const h = Math.abs(y2 - y1);
+      const x1 = state.startX;
+      const y1 = state.startY;
+      const x2 = docPos.x;
+      const y2 = docPos.y;
 
-        if (
-          detail.shape.type === "rectangle" ||
-          detail.shape.type === "ellipse"
-        ) {
-          state.node.detail = {
-            ...detail,
-            shape: { ...detail.shape, x, y, w, h },
-          };
-        }
+      const x = Math.min(x1, x2);
+      const y = Math.min(y1, y2);
+      const w = Math.abs(x2 - x1);
+      const h = Math.abs(y2 - y1);
+
+      if (node.data.type === "rectangle" || node.data.type === "ellipse") {
+        node.data = { ...node.data, x, y, w, h };
       }
     }
   });
