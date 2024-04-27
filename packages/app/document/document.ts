@@ -41,7 +41,6 @@ export class Document {
     });
 
     const rootNode = this.nodes.add(nanoid(), {
-      parent: "timelineItem0",
       order: 0,
     });
 
