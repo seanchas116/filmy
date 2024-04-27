@@ -1,5 +1,5 @@
 import { Icon } from "@iconify/react";
-import { useEditorState } from "./use-editor-state";
+import { useEditorState } from "../use-editor-state";
 import { action } from "mobx";
 import { observer } from "mobx-react-lite";
 import tw from "tailwind-styled-components";

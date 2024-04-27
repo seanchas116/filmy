@@ -1,7 +1,7 @@
 import { computed, makeObservable } from "mobx";
 import { Vec2, Rect, Transform } from "paintvec";
 import twColors from "tailwindcss/colors";
-import { EditorState } from "../state/editor-state";
+import { EditorState } from "../../state/editor-state";
 import { Node } from "@/document/node";
 import { assertNonNull } from "@/utils/assert";
 
@@ -90,7 +90,9 @@ export class NodeResizeBoxState {
   }
 
   @computed get viewportBoundingBox(): Rect | undefined {
-    return this.boundingBox?.transform(this.editorState.documentToHUDTransform);
+    return this.boundingBox?.transform(
+      this.editorState.scroll.documentToViewport
+    );
   }
 
   begin() {
@@ -104,7 +106,7 @@ export class NodeResizeBoxState {
 
   change(p0: Vec2, p1: Vec2) {
     const newWholeBBox = assertNonNull(Rect.boundingRect([p0, p1])).transform(
-      this.editorState.hudToDocumentTransform
+      this.editorState.scroll.viewportToDocument
     );
 
     if (

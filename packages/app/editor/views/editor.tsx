@@ -1,10 +1,10 @@
 "use client";
 
-import { LeftSideBar } from "./left-sidebar";
-import { RightSideBar } from "./right-sidebar";
-import { ToolBar } from "./tool-bar";
-import { TimelineEditor } from "./timeline-editor";
-import { Viewport } from "./viewport";
+import { LeftSideBar } from "./left-sidebar/left-sidebar";
+import { RightSideBar } from "./right-sidebar/right-sidebar";
+import { ToolBar } from "./tool-bar/tool-bar";
+import { TimelineEditor } from "./timeline/timeline-editor";
+import { Viewport } from "./viewport/viewport";
 
 export function Editor() {
   return (

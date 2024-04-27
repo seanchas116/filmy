@@ -2,7 +2,7 @@ import { Document } from "@/document/document";
 import { Node } from "@/document/node";
 import { compact } from "lodash-es";
 import { computed, makeObservable, observable } from "mobx";
-import { Transform } from "paintvec";
+import { ScrollState } from "./scroll-state";
 
 export class EditorState {
   constructor() {
@@ -21,8 +21,8 @@ export class EditorState {
   }
 
   // TODO
-  readonly documentToHUDTransform = new Transform();
-  readonly hudToDocumentTransform = new Transform();
+
+  readonly scroll = new ScrollState();
 
   commitUndo() {
     // TODO
