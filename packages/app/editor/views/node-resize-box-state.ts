@@ -1,7 +1,7 @@
 import { computed, makeObservable } from "mobx";
 import { Vec2, Rect, Transform } from "paintvec";
 import twColors from "tailwindcss/colors";
-import { EditorState } from "./editor-state";
+import { EditorState } from "../state/editor-state";
 import { Node } from "@/document/node";
 import { assertNonNull } from "@/utils/assert";
 

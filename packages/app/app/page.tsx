@@ -1,8 +1,8 @@
 "use client";
 
-import { Editor } from "@/components/editor/editor";
-import { EditorState } from "@/components/editor/editor-state";
-import { EditorStateProvider } from "@/components/editor/use-editor-state";
+import { Editor } from "@/editor/views/editor";
+import { EditorState } from "@/editor/state/editor-state";
+import { EditorStateProvider } from "@/editor/views/use-editor-state";
 import { useState } from "react";
 
 export default function Home() {

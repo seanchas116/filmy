@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { EditorState } from "./editor-state";
+import { EditorState } from "@/editor/state/editor-state";
 
 const EditorStateContext = createContext<EditorState | undefined>(undefined);
 

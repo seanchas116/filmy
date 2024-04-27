@@ -5,7 +5,7 @@ import { observer } from "mobx-react-lite";
 import { NodeResizeBoxState } from "./node-resize-box-state";
 import { useEditorState } from "./use-editor-state";
 import twColors from "tailwindcss/colors";
-import { ResizeBox } from "./components/resize-box/resize-box";
+import { ResizeBox } from "@/editor/components/resize-box/resize-box";
 
 export const NodeResizeBox: React.FC = observer(function NodeResizeBox() {
   const editorState = useEditorState();
