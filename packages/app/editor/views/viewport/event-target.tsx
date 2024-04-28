@@ -9,6 +9,7 @@ import { EditorState } from "@/editor/state/editor-state";
 import { compact } from "lodash-es";
 import { Node } from "@/document/node";
 import { useMemo } from "react";
+import { ClickMoveDragHandler } from "./drag-handlers/click-move-drag-handler";
 
 class ViewportNodePicker {
   constructor(editorState: EditorState) {
@@ -60,12 +61,12 @@ export const EventTarget = observer(() => {
     DragHandler | undefined
   >({
     onBegin: (event) => {
+      const viewportEvent = createViewportEvent(event);
+
       if (editorState.tool) {
-        return new InsertDragHandler(
-          createViewportEvent(event),
-          editorState.tool
-        );
+        return new InsertDragHandler(viewportEvent, editorState.tool);
       }
+      return ClickMoveDragHandler.create(viewportEvent);
     },
     onMove: (e, { initData }) => {
       initData?.move(createViewportEvent(e));

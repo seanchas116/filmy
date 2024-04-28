@@ -24,7 +24,7 @@ export const NodeResizeBox: React.FC = observer(function NodeResizeBox() {
     return null;
   }
 
-  if (editorState.isReadOnly) {
+  if (editorState.isReadonly) {
     return (
       <rect
         {...boundingBox.toSVGRectProps()}

@@ -11,7 +11,7 @@ function clickableAncestor(
 ): Node {
   const clickables = new Set<Node>();
 
-  for (const selected of editorState.selectedNodes) {
+  for (const selected of editorState.document.selectedNodes) {
     for (const descendantSelected of selected.ancestors) {
       const siblings = descendantSelected.parent?.children ?? [];
       for (const sibling of siblings) {

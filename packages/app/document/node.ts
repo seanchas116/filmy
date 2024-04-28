@@ -1,14 +1,14 @@
-import { Store } from "@/utils/store/store";
 import { NodeData } from "./schema";
 import { Parenting } from "@/utils/store/parenting";
 import { InstanceManager } from "./instance-manager";
 import { Rect } from "paintvec";
 import { computed, makeObservable } from "mobx";
+import { Document } from "./document";
 
 export class NodeManager extends InstanceManager<NodeData, Node> {
-  constructor(store: Store<NodeData>) {
-    super(store, (id) => new Node(this, id));
-    this.parenting = new Parenting(store);
+  constructor(document: Document) {
+    super(document.nodeStore, (id) => new Node(document, id));
+    this.parenting = new Parenting(document.nodeStore);
   }
 
   readonly parenting: Parenting<NodeData>;
@@ -19,12 +19,14 @@ export class NodeManager extends InstanceManager<NodeData, Node> {
 }
 
 export class Node {
-  constructor(manager: NodeManager, id: string) {
-    this.manager = manager;
+  constructor(document: Document, id: string) {
+    this.document = document;
+    this.manager = document.nodes;
     this.id = id;
     makeObservable(this);
   }
 
+  readonly document: Document;
   readonly manager: NodeManager;
   readonly id: string;
 
@@ -76,7 +78,30 @@ export class Node {
   }
 
   get insideLocked(): boolean {
-    throw new Error("Method not implemented.");
+    // TODO
+    return false;
+  }
+
+  @computed get selected(): boolean {
+    return this.document.selectedNodeIds.has(this.id);
+  }
+
+  select(): void {
+    for (const child of this.children) {
+      child.deselect();
+    }
+    this.document.selectedNodeIds.add(this.id);
+  }
+
+  deselect(): void {
+    this.document.selectedNodeIds.delete(this.id);
+    for (const child of this.children) {
+      child.deselect();
+    }
+  }
+
+  get ancestorSelected(): boolean {
+    return this.selected || this.parent?.selected || false;
   }
 
   get boundingBox(): Rect {
@@ -87,5 +112,15 @@ export class Node {
       width: data.w,
       height: data.h,
     });
+  }
+
+  set boundingBox(rect: Rect) {
+    this.data = {
+      ...this.data,
+      x: rect.left,
+      y: rect.top,
+      w: rect.width,
+      h: rect.height,
+    };
   }
 }

@@ -52,8 +52,7 @@ const ShapeRenderer: React.FC<{
   const data = node.data;
 
   const onClick = action(() => {
-    editorState.selectedNodeIds.clear();
-    editorState.selectedNodeIds.add(node.id);
+    editorState.document.selectedNodeIds.replace([node.id]);
     console.log("click", node.id);
   });
 
@@ -61,6 +60,7 @@ const ShapeRenderer: React.FC<{
     case "rectangle":
       return (
         <rect
+          data-node-id={node.id}
           x={data.x}
           y={data.y}
           width={data.w}
@@ -74,6 +74,7 @@ const ShapeRenderer: React.FC<{
     case "ellipse":
       return (
         <ellipse
+          data-node-id={node.id}
           cx={data.x + data.w / 2}
           cy={data.y + data.h / 2}
           rx={data.w / 2}
@@ -87,6 +88,7 @@ const ShapeRenderer: React.FC<{
     case "text":
       return (
         <text
+          data-node-id={node.id}
           x={data.x}
           y={data.y + 16}
           fontSize={16}

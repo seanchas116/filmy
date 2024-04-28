@@ -12,6 +12,8 @@ import { TimelineItem } from "./timeline-item";
 import { nanoid } from "nanoid";
 import { Sequence } from "./sequence";
 import { Parenting } from "@/utils/store/parenting";
+import { computed, makeObservable, observable } from "mobx";
+import { compact } from "lodash-es";
 
 export class Document {
   constructor() {
@@ -20,7 +22,7 @@ export class Document {
     this.timelineItemStore = new Store<TimelineItemData>();
     this.nodeStore = new Store<NodeData>();
 
-    this.nodes = new NodeManager(this.nodeStore);
+    this.nodes = new NodeManager(this);
     this.timelines = new InstanceManager(
       this.timelineStore,
       (id) => new Timeline(this, id)
@@ -94,6 +96,8 @@ export class Document {
       duration: 1000,
       node: frameNode.id,
     });
+
+    makeObservable(this);
   }
 
   readonly sequenceStore: Store<SequenceData>;
@@ -108,4 +112,16 @@ export class Document {
   readonly nodes: NodeManager;
 
   readonly currentPage: Node;
+
+  readonly selectedNodeIds = observable.set<string>();
+
+  deselectAllNodes(): void {
+    this.selectedNodeIds.clear();
+  }
+
+  @computed get selectedNodes(): Node[] {
+    return compact(
+      [...this.selectedNodeIds].map((id) => this.nodes.safeGet(id))
+    );
+  }
 }
