@@ -1,7 +1,6 @@
 import { Node } from "@/document/node";
 import { useEditorState } from "../use-editor-state";
 import { observer } from "mobx-react-lite";
-import { action } from "mobx";
 
 export const CompositionView: React.FC = observer(() => {
   const editorState = useEditorState();
@@ -25,7 +24,9 @@ export const CompositionView: React.FC = observer(() => {
           background: node.data.fill?.hex,
         }}
       >
-        <NodeRenderer node={node} />
+        {node.children.map((child) => (
+          <NodeRenderer key={child.id} node={child} />
+        ))}
       </svg>
     );
   });
@@ -47,13 +48,7 @@ const NodeRenderer: React.FC<{
 const ShapeRenderer: React.FC<{
   node: Node;
 }> = observer(({ node }) => {
-  const editorState = useEditorState();
   const data = node.data;
-
-  const onClick = action(() => {
-    editorState.document.selectedNodeIds.replace([node.id]);
-    console.log("click", node.id);
-  });
 
   switch (data.type) {
     case "rectangle":
@@ -67,7 +62,6 @@ const ShapeRenderer: React.FC<{
           fill={data.fill?.hex}
           strokeWidth={data.stroke?.width}
           stroke={data.stroke?.fill.hex}
-          onMouseDown={onClick}
         />
       );
     case "ellipse":
@@ -81,7 +75,6 @@ const ShapeRenderer: React.FC<{
           fill={data.fill?.hex}
           strokeWidth={data.stroke?.width}
           stroke={data.stroke?.fill.hex}
-          onMouseDown={onClick}
         />
       );
     case "text":
@@ -94,7 +87,6 @@ const ShapeRenderer: React.FC<{
           fill={data.fill?.hex}
           strokeWidth={data.stroke?.width}
           stroke={data.stroke?.fill.hex}
-          onMouseDown={onClick}
         >
           {data.text}
         </text>

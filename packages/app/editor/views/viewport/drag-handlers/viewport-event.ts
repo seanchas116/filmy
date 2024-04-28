@@ -62,8 +62,6 @@ export class ViewportEvent {
     allNodesAtPos: readonly Node[],
     mode?: "click" | "doubleClick"
   ) {
-    console.log(allNodesAtPos);
-
     this.editorState = editorState;
     this.nodesIncludingLocked = allNodesAtPos;
     this.nodes = this.nodesIncludingLocked.filter((s) => !s.insideLocked);
