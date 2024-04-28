@@ -8,7 +8,7 @@ import { Viewport } from "./viewport/viewport";
 
 export function Editor() {
   return (
-    <div className="grid grid-rows-[auto,1fr,auto] w-screen h-screen">
+    <div className="grid grid-rows-[auto,1fr,auto] w-screen h-screen select-none">
       <ToolBar />
       <div className="grid grid-cols-[auto,1fr,auto]">
         <LeftSideBar />
