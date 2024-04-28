@@ -1,7 +1,6 @@
 import { Node } from "@/document/node";
 import { useEditorState } from "../use-editor-state";
 import { observer } from "mobx-react-lite";
-import { NodeResizeBox } from "./node-resize-box";
 import { action } from "mobx";
 
 export const CompositionView: React.FC = observer(() => {
@@ -27,7 +26,6 @@ export const CompositionView: React.FC = observer(() => {
         }}
       >
         <NodeRenderer node={node} />
-        <NodeResizeBox />
       </svg>
     );
   });

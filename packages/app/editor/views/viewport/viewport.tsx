@@ -3,6 +3,7 @@ import { useEditorState } from "../use-editor-state";
 import { EventTarget } from "./event-target";
 import { useRef } from "react";
 import { useObserveDOMClientRect } from "./use-observe-dom-client-rect";
+import { HUD } from "./hud";
 
 export function Viewport() {
   const editorState = useEditorState();
@@ -22,6 +23,7 @@ export function Viewport() {
         <CompositionView />
       </div>
       <EventTarget />
+      <HUD />
     </div>
   );
 }
