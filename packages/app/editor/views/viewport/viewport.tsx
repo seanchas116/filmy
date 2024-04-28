@@ -12,7 +12,7 @@ export function Viewport() {
   useObserveDOMClientRect(ref);
 
   return (
-    <div className="bg-gray-100 relative" ref={ref}>
+    <div className="bg-gray-100 relative overflow-hidden" ref={ref}>
       <div
         className="absolute"
         style={{
