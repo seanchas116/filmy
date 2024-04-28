@@ -6,14 +6,30 @@ import { action } from "mobx";
 
 export const CompositionView: React.FC = observer(() => {
   const editorState = useEditorState();
-  const node = editorState.document.currentTimelineItem.node;
+  const roots = editorState.document.nodes.roots;
 
-  return (
-    <svg width={800} height={600} className="bg-white shadow-md">
-      <NodeRenderer node={node} />
-      <NodeResizeBox />
-    </svg>
-  );
+  return roots.map((node) => {
+    if (node.data.type !== "frame") {
+      return;
+    }
+
+    return (
+      <svg
+        key={node.id}
+        width={node.data.w}
+        height={node.data.h}
+        className="absolute"
+        style={{
+          left: node.data.x,
+          top: node.data.y,
+          background: node.data.fill?.hex,
+        }}
+      >
+        <NodeRenderer node={node} />
+        <NodeResizeBox />
+      </svg>
+    );
+  });
 });
 
 const NodeRenderer: React.FC<{
@@ -49,7 +65,9 @@ const ShapeRenderer: React.FC<{
           y={data.y}
           width={data.w}
           height={data.h}
-          fill="red"
+          fill={data.fill?.hex}
+          strokeWidth={data.stroke?.width}
+          stroke={data.stroke?.fill.hex}
           onMouseDown={onClick}
         />
       );
@@ -60,13 +78,23 @@ const ShapeRenderer: React.FC<{
           cy={data.y + data.h / 2}
           rx={data.w / 2}
           ry={data.h / 2}
-          fill="red"
+          fill={data.fill?.hex}
+          strokeWidth={data.stroke?.width}
+          stroke={data.stroke?.fill.hex}
           onMouseDown={onClick}
         />
       );
     case "text":
       return (
-        <text x={data.x} y={data.y} fill="black" onMouseDown={onClick}>
+        <text
+          x={data.x}
+          y={data.y + 16}
+          fontSize={16}
+          fill={data.fill?.hex}
+          strokeWidth={data.stroke?.width}
+          stroke={data.stroke?.fill.hex}
+          onMouseDown={onClick}
+        >
           {data.text}
         </text>
       );

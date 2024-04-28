@@ -40,7 +40,7 @@ export class Document {
       order: 0,
     });
 
-    const rootNode = this.nodes.add(nanoid(), {
+    const frameNode = this.nodes.add(nanoid(), {
       order: 0,
       type: "frame",
       x: 0,
@@ -49,15 +49,12 @@ export class Document {
       h: 480,
       fill: {
         type: "solid",
-        r: 255,
-        g: 255,
-        b: 255,
-        a: 1,
+        hex: "#ffffff",
       },
     });
 
     this.nodes.add(nanoid(), {
-      parent: rootNode.id,
+      parent: frameNode.id,
       order: 0,
       type: "rectangle",
       x: 0,
@@ -66,19 +63,13 @@ export class Document {
       h: 100,
       fill: {
         type: "solid",
-        r: 255,
-        g: 0,
-        b: 0,
-        a: 1,
+        hex: "#ff0000",
       },
       stroke: {
         width: 1,
         fill: {
           type: "solid",
-          r: 0,
-          g: 0,
-          b: 0,
-          a: 1,
+          hex: "#000000",
         },
       },
     });
@@ -91,7 +82,7 @@ export class Document {
       timeline: this.currentTimeline.id,
       start: 0,
       duration: 1000,
-      node: rootNode.id,
+      node: frameNode.id,
     });
   }
 

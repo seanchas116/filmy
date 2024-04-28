@@ -7,7 +7,7 @@ export class Parenting<
   TData extends {
     parent?: string;
     order: number;
-  }
+  },
 > {
   constructor(store: Store<TData>) {
     this.store = store;
@@ -55,5 +55,9 @@ export class Parenting<
 
   getChildren(parent: string): FractionalSortResult {
     return this.getChildrenSort(parent).get();
+  }
+
+  getRoots(): FractionalSortResult {
+    return this.getChildrenSort("").get();
   }
 }

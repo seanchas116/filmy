@@ -40,19 +40,13 @@ export const EventTarget = observer(() => {
         h: 100,
         fill: {
           type: "solid",
-          r: 255,
-          g: 0,
-          b: 0,
-          a: 1,
+          hex: "#ff0000",
         },
         stroke: {
           width: 1,
           fill: {
             type: "solid",
-            r: 0,
-            g: 0,
-            b: 0,
-            a: 1,
+            hex: "#000000",
           },
         },
       });

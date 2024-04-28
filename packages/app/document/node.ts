@@ -11,6 +11,10 @@ export class NodeManager extends InstanceManager<NodeData, Node> {
   }
 
   readonly parenting: Parenting<NodeData>;
+
+  get roots() {
+    return this.parenting.getRoots().items.map((id) => this.instances.get(id)!);
+  }
 }
 
 export class Node {

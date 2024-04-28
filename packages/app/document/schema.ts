@@ -11,16 +11,10 @@ export type NodeCommonData = {
   readonly h: number;
 };
 
-export type ColorData = {
-  readonly r: number;
-  readonly g: number;
-  readonly b: number;
-  readonly a: number;
-};
-
 export type FillData = {
   readonly type: "solid";
-} & ColorData;
+  readonly hex: string; // #RRGGBB
+};
 
 export type StrokeData = {
   readonly width: number;
