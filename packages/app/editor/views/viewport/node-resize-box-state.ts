@@ -17,7 +17,7 @@ function roundRectXYWH(rect: Rect): Rect {
 class ElementResizer {
   constructor(node: Node) {
     this.node = node;
-    this.originalRect = node.boundingBox;
+    this.originalRect = node.globalBoundingBox;
   }
 
   resize(
@@ -29,15 +29,8 @@ class ElementResizer {
       height: boolean;
     }
   ) {
-    const data = this.node.data;
-
-    this.node.data = {
-      ...data,
-      x: changes.x ? newRect.left : data.x,
-      y: changes.y ? newRect.top : data.y,
-      w: changes.width ? newRect.width : data.w,
-      h: changes.height ? newRect.height : data.h,
-    };
+    this.node.globalBoundingBox = newRect;
+    // TODO: use changes
   }
 
   finish() {
@@ -71,7 +64,7 @@ export class NodeResizeBoxState {
   }
 
   @computed get boundingBox(): Rect | undefined {
-    return Rect.union(...this.selectedNodes.map((n) => n.boundingBox));
+    return Rect.union(...this.selectedNodes.map((n) => n.globalBoundingBox));
   }
 
   @computed get viewportBoundingBox(): Rect | undefined {

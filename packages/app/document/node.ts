@@ -1,7 +1,7 @@
 import { NodeData } from "./schema";
 import { Parenting } from "@/utils/store/parenting";
 import { InstanceManager } from "./instance-manager";
-import { Rect } from "paintvec";
+import { Rect, Vec2 } from "paintvec";
 import { computed, makeObservable } from "mobx";
 import { Document } from "./document";
 
@@ -100,11 +100,11 @@ export class Node {
     }
   }
 
-  get ancestorSelected(): boolean {
+  @computed get ancestorSelected(): boolean {
     return this.selected || this.parent?.selected || false;
   }
 
-  get boundingBox(): Rect {
+  @computed get boundingBox(): Rect {
     const data = this.data;
     return Rect.from({
       x: data.x,
@@ -122,5 +122,18 @@ export class Node {
       w: rect.width,
       h: rect.height,
     };
+  }
+
+  @computed get globalBoundingBox(): Rect {
+    const parent = this.parent;
+    if (!parent) {
+      return this.boundingBox;
+    }
+    return this.boundingBox.translate(parent.globalBoundingBox.topLeft);
+  }
+
+  set globalBoundingBox(rect: Rect) {
+    const parentOffset = this.parent?.globalBoundingBox.topLeft ?? new Vec2(0);
+    this.boundingBox = rect.translate(parentOffset.neg);
   }
 }
