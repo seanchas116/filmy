@@ -22,6 +22,8 @@ class ElementResizer {
 
   resize(
     newRect: Rect,
+    // TODO: use changes
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     changes: {
       x: boolean;
       y: boolean;
@@ -30,7 +32,6 @@ class ElementResizer {
     }
   ) {
     this.node.globalBoundingBox = newRect;
-    // TODO: use changes
   }
 
   finish() {

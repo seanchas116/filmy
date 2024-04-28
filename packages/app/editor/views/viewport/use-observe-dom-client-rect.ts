@@ -29,5 +29,5 @@ export function useObserveDOMClientRect(ref: React.RefObject<HTMLElement>) {
       resizeObserver.disconnect();
       window.removeEventListener("scroll", updateViewportClientRect);
     };
-  }, []);
+  }, [editorState.scroll, ref]);
 }
