@@ -3,6 +3,7 @@ import { NodeData } from "./schema";
 import { Parenting } from "@/utils/store/parenting";
 import { InstanceManager } from "./instance-manager";
 import { Rect } from "paintvec";
+import { computed, makeObservable } from "mobx";
 
 export class NodeManager extends InstanceManager<NodeData, Node> {
   constructor(store: Store<NodeData>) {
@@ -21,12 +22,13 @@ export class Node {
   constructor(manager: NodeManager, id: string) {
     this.manager = manager;
     this.id = id;
+    makeObservable(this);
   }
 
   readonly manager: NodeManager;
   readonly id: string;
 
-  get data(): NodeData {
+  @computed get data(): NodeData {
     return this.manager.store.data.get(this.id)!;
   }
 
@@ -34,7 +36,11 @@ export class Node {
     this.manager.store.data.set(this.id, data);
   }
 
-  get children(): Node[] {
+  @computed get type(): NodeData["type"] {
+    return this.data.type;
+  }
+
+  @computed get children(): Node[] {
     return this.manager.parenting
       .getChildren(this.id)
       .items.map((id) => this.manager.instances.get(id)!);
@@ -45,9 +51,17 @@ export class Node {
     return id ? this.manager.instances.get(id) : undefined;
   }
 
-  parent(): Node | undefined {
+  @computed get parent(): Node | undefined {
     const parentId = this.data.parent;
     return parentId ? this.manager.instances.get(parentId) : undefined;
+  }
+
+  @computed get ancestors(): Node[] {
+    const parent = this.parent;
+    if (!parent) {
+      return [];
+    }
+    return [...parent.ancestors, parent];
   }
 
   indexOf(): number {
@@ -59,6 +73,10 @@ export class Node {
     return (
       this.manager.parenting.getChildren(parentId).indices.get(this.id) ?? -1
     );
+  }
+
+  get insideLocked(): boolean {
+    throw new Error("Method not implemented.");
   }
 
   get boundingBox(): Rect {

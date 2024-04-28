@@ -5,6 +5,7 @@ import { useRef } from "react";
 import { nanoid } from "nanoid";
 import { action } from "mobx";
 import { Vec2 } from "paintvec";
+import { assertNonNull } from "@/utils/assert";
 
 export const EventTarget = observer(() => {
   const editorState = useEditorState();
@@ -24,11 +25,11 @@ export const EventTarget = observer(() => {
         e.nativeEvent.offsetY
       ).transform(editorState.scroll.viewportToDocument);
 
-      const rootNode = document.currentTimelineItem.node;
+      const frame = assertNonNull(document.currentPage.childAt(0));
 
       const node = document.nodes.add(nanoid(), {
-        parent: rootNode.id,
-        order: rootNode.children.length,
+        parent: frame.id,
+        order: frame.children.length,
         ...(editorState.tool === "rectangle"
           ? { type: "rectangle" }
           : editorState.tool === "ellipse"

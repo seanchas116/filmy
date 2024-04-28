@@ -36,6 +36,9 @@ export type NodeData = NodeCommonData &
     | {
         readonly type: "frame";
       }
+    | {
+        readonly type: "page";
+      }
   );
 
 export type TimelineData = {

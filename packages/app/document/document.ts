@@ -5,7 +5,7 @@ import {
   TimelineData,
   TimelineItemData,
 } from "./schema";
-import { NodeManager } from "./node";
+import { Node, NodeManager } from "./node";
 import { InstanceManager } from "./instance-manager";
 import { Timeline } from "./timeline";
 import { TimelineItem } from "./timeline-item";
@@ -40,7 +40,17 @@ export class Document {
       order: 0,
     });
 
+    const pageNode = (this.currentPage = this.nodes.add(nanoid(), {
+      order: 0,
+      type: "page",
+      x: 0,
+      y: 0,
+      w: 0,
+      h: 0,
+    }));
+
     const frameNode = this.nodes.add(nanoid(), {
+      parent: pageNode.id,
       order: 0,
       type: "frame",
       x: 0,
@@ -74,12 +84,12 @@ export class Document {
       },
     });
 
-    this.currentTimeline = this.timelines.add(nanoid(), {
+    const timeline = this.timelines.add(nanoid(), {
       order: 0,
       sequence: sequence.id,
     });
-    this.currentTimelineItem = this.timelineItems.add(nanoid(), {
-      timeline: this.currentTimeline.id,
+    this.timelineItems.add(nanoid(), {
+      timeline: timeline.id,
       start: 0,
       duration: 1000,
       node: frameNode.id,
@@ -97,6 +107,5 @@ export class Document {
   readonly timelineParenting: Parenting<TimelineData>;
   readonly nodes: NodeManager;
 
-  readonly currentTimeline: Timeline;
-  readonly currentTimelineItem: TimelineItem;
+  readonly currentPage: Node;
 }
