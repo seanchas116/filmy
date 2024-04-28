@@ -5,20 +5,55 @@ import { usePointerStroke } from "@/editor/components/use-pointer-stroke";
 import { DragHandler } from "./drag-handlers/drag-handler";
 import { InsertDragHandler } from "./drag-handlers/insert-drag-handler";
 import { ViewportEvent } from "./drag-handlers/viewport-event";
+import { EditorState } from "@/editor/state/editor-state";
+import { compact } from "lodash-es";
+import { Node } from "@/document/node";
+import { useMemo } from "react";
+
+class ViewportNodePicker {
+  constructor(editorState: EditorState) {
+    this.editorState = editorState;
+  }
+
+  nodesFromPoint(clientX: number, clientY: number): Node[] {
+    const elements = document.elementsFromPoint(clientX, clientY);
+
+    return compact(
+      [...elements].map((elem) => {
+        const id = elem.getAttribute("data-node-id");
+        if (!id) {
+          return null;
+        }
+        return this.editorState.document.nodes.safeGet(id);
+      })
+    );
+  }
+
+  editorState: EditorState;
+}
 
 export const EventTarget = observer(() => {
   const editorState = useEditorState();
 
-  const createViewportEvent = (event: React.PointerEvent): ViewportEvent => {
-    return new ViewportEvent(
-      editorState,
-      event.nativeEvent,
-      editorState.scroll.documentPosForClientPos(
-        new Vec2(event.clientX, event.clientY)
-      ),
-      [] // TODO
-    );
-  };
+  const nodePicker = useMemo(
+    () => new ViewportNodePicker(editorState),
+    [editorState]
+  );
+
+  const createViewportEvent = useMemo(
+    () =>
+      (event: React.PointerEvent): ViewportEvent => {
+        return new ViewportEvent(
+          editorState,
+          event.nativeEvent,
+          editorState.scroll.documentPosForClientPos(
+            new Vec2(event.clientX, event.clientY)
+          ),
+          nodePicker.nodesFromPoint(event.clientX, event.clientY)
+        );
+      },
+    [editorState, nodePicker]
+  );
 
   const pointerProps = usePointerStroke<
     HTMLDivElement,
@@ -40,7 +75,5 @@ export const EventTarget = observer(() => {
     },
   });
 
-  return editorState.tool ? (
-    <div className="absolute inset-0" {...pointerProps} />
-  ) : null;
+  return <div className="absolute inset-0" {...pointerProps} />;
 });

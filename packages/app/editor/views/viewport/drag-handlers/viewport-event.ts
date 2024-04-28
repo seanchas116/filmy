@@ -54,10 +54,6 @@ function clickableAncestor(
   return instance;
 }
 
-export interface NodePicker {
-  nodesFromPoint(clientPos: Vec2): Node[];
-}
-
 export class ViewportEvent {
   constructor(
     editorState: EditorState,
@@ -66,6 +62,8 @@ export class ViewportEvent {
     allNodesAtPos: readonly Node[],
     mode?: "click" | "doubleClick"
   ) {
+    console.log(allNodesAtPos);
+
     this.editorState = editorState;
     this.nodesIncludingLocked = allNodesAtPos;
     this.nodes = this.nodesIncludingLocked.filter((s) => !s.insideLocked);

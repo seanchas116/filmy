@@ -3,9 +3,11 @@ import { ViewportEvent } from "./viewport-event";
 import { assertNonNull } from "@/utils/assert";
 import { nanoid } from "nanoid";
 import { Node } from "@/document/node";
+import { EditorState } from "@/editor/state/editor-state";
 
 export class InsertDragHandler implements DragHandler {
   constructor(event: ViewportEvent, type: "rectangle" | "ellipse" | "text") {
+    this.editorState = event.editorState;
     this.type = type;
     this.startX = event.pos.x;
     this.startY = event.pos.y;
@@ -40,6 +42,7 @@ export class InsertDragHandler implements DragHandler {
   }
 
   type: "rectangle" | "ellipse" | "text";
+  editorState: EditorState;
   node: Node;
   startX: number;
   startY: number;
@@ -62,5 +65,7 @@ export class InsertDragHandler implements DragHandler {
     }
   }
 
-  end(): void {}
+  end(): void {
+    this.editorState.tool = undefined;
+  }
 }

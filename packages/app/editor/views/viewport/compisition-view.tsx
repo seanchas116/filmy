@@ -6,7 +6,7 @@ import { action } from "mobx";
 
 export const CompositionView: React.FC = observer(() => {
   const editorState = useEditorState();
-  const roots = editorState.document.nodes.roots;
+  const roots = editorState.document.currentPage.children;
 
   return roots.map((node) => {
     if (node.data.type !== "frame") {
