@@ -16,6 +16,7 @@ export const CompositionView: React.FC = observer(() => {
     return (
       <svg
         key={node.id}
+        data-node-id={node.id}
         width={node.data.w}
         height={node.data.h}
         className="absolute"

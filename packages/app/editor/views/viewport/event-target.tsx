@@ -10,6 +10,7 @@ import { compact } from "lodash-es";
 import { Node } from "@/document/node";
 import { useMemo } from "react";
 import { ClickMoveDragHandler } from "./drag-handlers/click-move-drag-handler";
+import { action } from "mobx";
 
 class ViewportNodePicker {
   constructor(editorState: EditorState) {
@@ -60,20 +61,20 @@ export const EventTarget = observer(() => {
     HTMLDivElement,
     DragHandler | undefined
   >({
-    onBegin: (event) => {
+    onBegin: action((event) => {
       const viewportEvent = createViewportEvent(event);
 
       if (editorState.tool) {
         return new InsertDragHandler(viewportEvent, editorState.tool);
       }
       return ClickMoveDragHandler.create(viewportEvent);
-    },
-    onMove: (e, { initData }) => {
+    }),
+    onMove: action((e, { initData }) => {
       initData?.move(createViewportEvent(e));
-    },
-    onEnd: (e, { initData }) => {
+    }),
+    onEnd: action((e, { initData }) => {
       initData?.end(createViewportEvent(e));
-    },
+    }),
   });
 
   return <div className="absolute inset-0" {...pointerProps} />;
