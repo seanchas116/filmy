@@ -1,3 +1,4 @@
+import { Document } from "@/document/document";
 import { Node } from "@/document/node";
 import { EditorState } from "@/editor/state/editor-state";
 import { ScrollState } from "@/editor/state/scroll-state";
@@ -60,38 +61,33 @@ export interface NodePicker {
 export class ViewportEvent {
   constructor(
     editorState: EditorState,
-    nodePicker: NodePicker,
     event: MouseEvent | DragEvent,
-    options: {
-      all?: readonly Node[];
-      clientPos?: Vec2;
-      pos?: Vec2;
-      mode?: "click" | "doubleClick";
-    } = {}
+    pos: Vec2,
+    allNodesAtPos: readonly Node[],
+    mode?: "click" | "doubleClick"
   ) {
     this.editorState = editorState;
-
-    const clientPos =
-      options.clientPos ?? new Vec2(event.clientX, event.clientY);
-
-    this.nodesIncludingLocked =
-      options.all ?? nodePicker.nodesFromPoint(clientPos) ?? [];
+    this.nodesIncludingLocked = allNodesAtPos;
     this.nodes = this.nodesIncludingLocked.filter((s) => !s.insideLocked);
-
-    this.clientPos = clientPos;
-    this.pos =
-      options.pos ?? editorState.scroll.documentPosForClientPos(clientPos);
+    this.pos = pos;
     this.event = event;
-    this.mode = options.mode ?? "click";
+    this.mode = mode ?? "click";
   }
 
   readonly editorState: EditorState;
   readonly nodesIncludingLocked: readonly Node[];
   readonly nodes: readonly Node[];
-  readonly clientPos: Vec2;
   readonly pos: Vec2;
   readonly event: MouseEvent | DragEvent;
   readonly mode: "click" | "doubleClick";
+
+  get document(): Document {
+    return this.editorState.document;
+  }
+
+  get clientPos(): Vec2 {
+    return new Vec2(this.event.clientX, this.event.clientY);
+  }
 
   get scroll(): ScrollState {
     return this.editorState.scroll;
