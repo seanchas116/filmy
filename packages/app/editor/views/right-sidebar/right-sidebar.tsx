@@ -1,6 +1,6 @@
 import { ExplicitInput } from "@/editor/components/explicit-input";
 import { useEditorState } from "../use-editor-state";
-import { MIXED, sameOrMixed } from "@/utils/Mixed";
+import { MIXED, sameOrMixed } from "@/utils/mixed";
 import { observer } from "mobx-react-lite";
 import tw from "tailwind-styled-components";
 import { action } from "mobx";

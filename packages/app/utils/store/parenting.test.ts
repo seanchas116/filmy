@@ -9,7 +9,11 @@ describe(Parenting, () => {
       order: number;
       name: string;
     }>();
-    const parenting = new Parenting(store);
+    const parenting = new Parenting(
+      store,
+      (data) => data.parent,
+      (data) => data.order
+    );
 
     // generate example data
 
@@ -40,7 +44,11 @@ describe(Parenting, () => {
     store.data.set("a", a);
     store.data.set("b", b);
 
-    const parenting = new Parenting(store);
+    const parenting = new Parenting(
+      store,
+      (data) => data.parent,
+      (data) => data.order
+    );
 
     // generate example data
 

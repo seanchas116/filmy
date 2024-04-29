@@ -8,7 +8,11 @@ import { Document } from "./document";
 export class NodeManager extends InstanceManager<NodeData, Node> {
   constructor(document: Document) {
     super(document.nodeStore, (id) => new Node(document, id));
-    this.parenting = new Parenting(document.nodeStore);
+    this.parenting = new Parenting(
+      document.nodeStore,
+      (data) => data.parent,
+      (data) => data.order
+    );
   }
 
   readonly parenting: Parenting<NodeData>;

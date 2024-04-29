@@ -31,7 +31,16 @@ export class Document {
       this.timelineItemStore,
       (id) => new TimelineItem(this, id)
     );
-    this.timelineParenting = new Parenting(this.timelineStore);
+    this.timelineParenting = new Parenting(
+      this.timelineStore,
+      (data) => data.sequence,
+      (data) => data.order
+    );
+    this.timelineItemParenting = new Parenting(
+      this.timelineItemStore,
+      (data) => data.timeline,
+      (data) => data.start
+    );
     this.sequences = new InstanceManager(
       this.sequenceStore,
       (id) => new Sequence(this, id)
@@ -120,6 +129,7 @@ export class Document {
   readonly timelines: InstanceManager<TimelineData, Timeline>;
   readonly timelineItems: InstanceManager<TimelineItemData, TimelineItem>;
   readonly timelineParenting: Parenting<TimelineData>;
+  readonly timelineItemParenting: Parenting<TimelineItemData>;
   readonly nodes: NodeManager;
 
   readonly currentPage: Node;

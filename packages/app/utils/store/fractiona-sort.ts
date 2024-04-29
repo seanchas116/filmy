@@ -6,16 +6,14 @@ export interface FractionalSortResult {
   indices: Map<string, number>;
 }
 
-export class FractionalSort<
-  TData extends {
-    order: number;
-  }
-> {
-  constructor(store: Store<TData>) {
+export class FractionalSort<TData> {
+  constructor(store: Store<TData>, getOrder: (data: TData) => number) {
     this.store = store;
+    this.getOrder = getOrder;
   }
 
   readonly store: Store<TData>;
+  readonly getOrder: (data: TData) => number;
 
   readonly items = new Set<string>();
   private cache: FractionalSortResult | undefined;
@@ -42,8 +40,8 @@ export class FractionalSort<
       children.sort((a, b) => {
         const aData = this.store.data.get(a);
         const bData = this.store.data.get(b);
-        const aOrder = aData?.order ?? 0;
-        const bOrder = bData?.order ?? 0;
+        const aOrder = aData ? this.getOrder(aData) : 0;
+        const bOrder = bData ? this.getOrder(bData) : 0;
         return aOrder - bOrder;
       });
 

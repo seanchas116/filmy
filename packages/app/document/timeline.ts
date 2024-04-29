@@ -1,6 +1,7 @@
 import { Store } from "@/utils/store/store";
 import { Document } from "./document";
 import { TimelineData } from "./schema";
+import { TimelineItem } from "./timeline-item";
 
 export class Timeline {
   constructor(document: Document, id: string) {
@@ -15,6 +16,12 @@ export class Timeline {
 
   set data(data: TimelineData) {
     this.store.data.set(this.id, data);
+  }
+
+  get items(): TimelineItem[] {
+    return this.document.timelineItemParenting
+      .getChildren(this.id)
+      .items.map((id) => this.document.timelineItems.get(id));
   }
 
   readonly id: string;
