@@ -38,6 +38,7 @@ export type NodeData = NodeCommonData &
       }
     | {
         readonly type: "video";
+        readonly src: string;
       }
   );
 

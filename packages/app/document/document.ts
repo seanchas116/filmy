@@ -99,11 +99,29 @@ export class Document {
       },
     });
 
+    const videoNode = this.nodes.add(nanoid(), {
+      order: 1,
+      type: "video",
+      x: 0,
+      y: 0,
+      w: 640,
+      h: 480,
+      src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    });
+
     const timelineItem = this.timelineItems.add(nanoid(), {
       timeline: timeline1.id,
-      start: 0,
+      start: 1000,
       duration: 1000,
       node: frameNode.id,
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const timelineItem2 = this.timelineItems.add(nanoid(), {
+      timeline: timeline2.id,
+      start: 0,
+      duration: 10000,
+      node: videoNode.id,
     });
 
     this.selectedTimelineItemIDs.add(timelineItem.id);

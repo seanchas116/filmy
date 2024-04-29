@@ -6,8 +6,43 @@ import { useEffect, useRef } from "react";
 export const CompositionView: React.FC = observer(() => {
   const editorState = useEditorState();
   const nodes = editorState.document.currentSequence.timelines
+    .toReversed()
     .flatMap((timeline) => timeline.itemsAt(editorState.currentTime))
     .map((item) => item.node);
+
+  const width = 640;
+  const height = 480;
+
+  return (
+    <div
+      className="relative"
+      style={{
+        width,
+        height,
+      }}
+    >
+      {nodes.map((child) =>
+        child.data.type === "video" ? (
+          <VideoRenderer key={child.id} node={child} />
+        ) : (
+          <svg
+            key={child.id}
+            width={width}
+            height={height}
+            className="absolute left-0 top-0"
+          >
+            <NodeRenderer key={child.id} node={child} />
+          </svg>
+        )
+      )}
+    </div>
+  );
+});
+
+const VideoRenderer: React.FC<{
+  node: Node;
+}> = observer(({ node }) => {
+  const editorState = useEditorState();
 
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -30,29 +65,25 @@ export const CompositionView: React.FC = observer(() => {
     };
   }, [editorState]);
 
+  if (node.data.type !== "video") {
+    return;
+  }
+
   return (
-    <div
-      className="relative"
+    <video
+      data-node-id={node.id}
+      src={node.data.src}
+      width={node.data.w}
+      height={node.data.h}
+      className="absolute"
       style={{
-        width: 640,
-        height: 480,
+        left: node.data.x,
+        top: node.data.y,
       }}
-    >
-      <video
-        src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
-        width={640}
-        height={480}
-        className="absolute left-0 top-0 bg-white"
-        playsInline
-        autoPlay
-        ref={videoRef}
-      />
-      <svg width={640} height={480} className="absolute left-0 top-0">
-        {nodes.map((child) => (
-          <NodeRenderer key={child.id} node={child} />
-        ))}
-      </svg>
-    </div>
+      playsInline
+      autoPlay
+      ref={videoRef}
+    />
   );
 });
 
