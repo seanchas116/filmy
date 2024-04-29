@@ -17,8 +17,18 @@ export const CompositionView: React.FC = observer(() => {
       return;
     }
 
-    video.currentTime = editorState.currentTime / 1000;
-  }, [editorState.currentTime]);
+    const interval = setInterval(() => {
+      const targetTime = editorState.currentTime / 1000;
+      const diff = Math.abs(video.currentTime - targetTime);
+      if (diff < 1 / 60) {
+        return;
+      }
+      video.currentTime = targetTime;
+    }, 10);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [editorState]);
 
   return (
     <div
@@ -34,6 +44,7 @@ export const CompositionView: React.FC = observer(() => {
         height={480}
         className="absolute left-0 top-0 bg-white"
         playsInline
+        autoPlay
         ref={videoRef}
       />
       <svg width={640} height={480} className="absolute left-0 top-0">
