@@ -25,4 +25,30 @@ export class EditorState {
   get isReadonly() {
     return false;
   }
+
+  @observable currentTime = 0;
+  @observable isPlaying = false;
+
+  private lastFrameTime = 0;
+
+  play() {
+    this.isPlaying = true;
+    this.lastFrameTime = Date.now();
+    this.requestFrame();
+  }
+
+  private requestFrame() {
+    requestAnimationFrame(() => {
+      if (this.isPlaying) {
+        const currentTime = Date.now();
+        this.currentTime += currentTime - this.lastFrameTime;
+        this.lastFrameTime = currentTime;
+        this.requestFrame();
+      }
+    });
+  }
+
+  pause() {
+    this.isPlaying = false;
+  }
 }

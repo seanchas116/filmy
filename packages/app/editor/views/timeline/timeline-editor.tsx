@@ -1,25 +1,56 @@
+import { observer } from "mobx-react-lite";
 import { useEditorState } from "../use-editor-state";
+import { Icon } from "@iconify/react";
+import { action } from "mobx";
 
-export const TimelineEditor: React.FC = () => {
+export const TimelineEditor: React.FC = observer(() => {
   const editorState = useEditorState();
   const timelines = [
     ...editorState.document.timelines.instances.values(),
   ].toSorted((a, b) => a.data.order - b.data.order); // TODO: cache sorting
 
   const scale = 0.1;
-  const currentTime = 0; // TODO
+  const currentTime = editorState.currentTime;
 
   return (
     <div className="h-64 bg-white border-t border-gray-200 grid grid-cols-[auto_1fr]">
-      <div className="w-64 border-r border-gray-200">
+      <div className="w-64 border-r border-gray-200 p-2">
+        <div className="flex">
+          <button
+            className="p-2 text-base bg-gray-800 rounded-lg text-white"
+            onClick={() => {
+              editorState.isPlaying ? editorState.pause() : editorState.play();
+            }}
+          >
+            {editorState.isPlaying ? (
+              <Icon icon="material-symbols:stop-outline-rounded" />
+            ) : (
+              <Icon icon="material-symbols:play-arrow-outline-rounded" />
+            )}
+          </button>
+        </div>
         {timelines.map((timeline) => (
           <div key={timeline.id} className="p-2">
             {timeline.data.name}
           </div>
         ))}
       </div>
-      <div className="p-4 pt-8">
+      <div className="p-4">
         <div className="relative">
+          {/* seek area */}
+          <div className="h-8 relative">
+            <div
+              className="absolute -inset-4"
+              onMouseMove={action((e) => {
+                const pressed = (e.buttons & 1) !== 0;
+                if (pressed) {
+                  const offsetX = e.nativeEvent.offsetX;
+                  const time = (offsetX - 16) / scale;
+                  editorState.currentTime = time;
+                }
+              })}
+            />
+          </div>
           {timelines.map((timeline) => {
             return (
               <div className="flex relative h-10" key={timeline.id}>
@@ -38,7 +69,7 @@ export const TimelineEditor: React.FC = () => {
           })}
           {/* time cursor */}
           <div
-            className="absolute -top-2 bottom-0 bg-red-500"
+            className="absolute top-4 bottom-0 bg-red-500"
             style={{
               left: currentTime * scale,
               width: 2,
@@ -52,4 +83,4 @@ export const TimelineEditor: React.FC = () => {
       </div>
     </div>
   );
-};
+});
