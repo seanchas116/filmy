@@ -44,6 +44,7 @@ export type NodeData = NodeCommonData &
 export type TimelineData = {
   readonly sequence: string;
   readonly order: number;
+  readonly name: string;
 };
 
 export type TimelineItemData = {

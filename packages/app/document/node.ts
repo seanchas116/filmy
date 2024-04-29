@@ -83,18 +83,18 @@ export class Node {
   }
 
   @computed get selected(): boolean {
-    return this.document.selectedNodeIds.has(this.id);
+    return this.document.selectedNodeIDs.has(this.id);
   }
 
   select(): void {
     for (const child of this.children) {
       child.deselect();
     }
-    this.document.selectedNodeIds.add(this.id);
+    this.document.selectedNodeIDs.add(this.id);
   }
 
   deselect(): void {
-    this.document.selectedNodeIds.delete(this.id);
+    this.document.selectedNodeIDs.delete(this.id);
     for (const child of this.children) {
       child.deselect();
     }

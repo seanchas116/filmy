@@ -65,7 +65,8 @@ export class Document {
       },
     });
 
-    this.nodes.add(nanoid(), {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const rectNode = this.nodes.add(nanoid(), {
       parent: frameNode.id,
       order: 0,
       type: "rectangle",
@@ -86,16 +87,26 @@ export class Document {
       },
     });
 
-    const timeline = this.timelines.add(nanoid(), {
+    const timeline1 = this.timelines.add(nanoid(), {
       order: 0,
       sequence: sequence.id,
+      name: "Timeline 1",
     });
-    this.timelineItems.add(nanoid(), {
-      timeline: timeline.id,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const timeline2 = this.timelines.add(nanoid(), {
+      order: 1,
+      sequence: sequence.id,
+      name: "Timeline 2",
+    });
+
+    const timelineItem = this.timelineItems.add(nanoid(), {
+      timeline: timeline1.id,
       start: 0,
       duration: 1000,
       node: frameNode.id,
     });
+
+    this.selectedTimelineItemIDs.add(timelineItem.id);
 
     makeObservable(this);
   }
@@ -113,15 +124,24 @@ export class Document {
 
   readonly currentPage: Node;
 
-  readonly selectedNodeIds = observable.set<string>();
+  readonly selectedNodeIDs = observable.set<string>();
+  readonly selectedTimelineItemIDs = observable.set<string>();
 
   deselectAllNodes(): void {
-    this.selectedNodeIds.clear();
+    this.selectedNodeIDs.clear();
   }
 
   @computed get selectedNodes(): Node[] {
     return compact(
-      [...this.selectedNodeIds].map((id) => this.nodes.safeGet(id))
+      [...this.selectedNodeIDs].map((id) => this.nodes.safeGet(id))
+    );
+  }
+
+  @computed get selectedTimelineItems(): TimelineItem[] {
+    return compact(
+      [...this.selectedTimelineItemIDs].map((id) =>
+        this.timelineItems.safeGet(id)
+      )
     );
   }
 }
