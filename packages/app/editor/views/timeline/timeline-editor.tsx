@@ -2,6 +2,7 @@ import { observer } from "mobx-react-lite";
 import { useEditorState } from "../use-editor-state";
 import { Icon } from "@iconify/react";
 import { action } from "mobx";
+import { usePointerStroke } from "@/editor/components/use-pointer-stroke";
 
 export const TimelineEditor: React.FC = observer(() => {
   const editorState = useEditorState();
@@ -12,13 +13,26 @@ export const TimelineEditor: React.FC = observer(() => {
   const scale = 0.1;
   const currentTime = editorState.currentTime;
 
+  const seekPointerProps = usePointerStroke<HTMLDivElement, void>({
+    onBegin: action((e) => {
+      const offsetX = e.nativeEvent.offsetX;
+      const time = Math.max(0, (offsetX - 16) / scale);
+      editorState.currentTime = time;
+    }),
+    onMove: action((e) => {
+      const offsetX = e.nativeEvent.offsetX;
+      const time = Math.max(0, (offsetX - 16) / scale);
+      editorState.currentTime = time;
+    }),
+  });
+
   return (
     <div className="h-64 bg-white border-t border-gray-200 grid grid-cols-[auto_1fr]">
       <div className="w-64 border-r border-gray-200 p-2">
-        <div className="flex">
+        <div className="flex mb-2">
           <button
             className="p-2 text-base bg-gray-800 rounded-lg text-white"
-            onClick={() => {
+            onMouseDown={() => {
               editorState.isPlaying ? editorState.pause() : editorState.play();
             }}
           >
@@ -30,26 +44,16 @@ export const TimelineEditor: React.FC = observer(() => {
           </button>
         </div>
         {timelines.map((timeline) => (
-          <div key={timeline.id} className="p-2">
+          <div key={timeline.id} className="p-2 h-10 flex items-center">
             {timeline.data.name}
           </div>
         ))}
       </div>
       <div className="p-4">
-        <div className="relative">
+        <div className="relative h-full">
           {/* seek area */}
           <div className="h-8 relative">
-            <div
-              className="absolute -inset-4"
-              onMouseMove={action((e) => {
-                const pressed = (e.buttons & 1) !== 0;
-                if (pressed) {
-                  const offsetX = e.nativeEvent.offsetX;
-                  const time = (offsetX - 16) / scale;
-                  editorState.currentTime = time;
-                }
-              })}
-            />
+            <div className="absolute -inset-4" {...seekPointerProps} />
           </div>
           {timelines.map((timeline) => {
             return (
@@ -69,7 +73,7 @@ export const TimelineEditor: React.FC = observer(() => {
           })}
           {/* time cursor */}
           <div
-            className="absolute top-4 bottom-0 bg-red-500"
+            className="absolute top-4 bottom-0 bg-red-500 pointer-events-none"
             style={{
               left: currentTime * scale,
               width: 2,
