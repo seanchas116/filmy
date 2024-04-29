@@ -50,18 +50,21 @@ export class Document {
       name: "Sequence 1",
       order: 0,
     });
+    this.currentSequence = this.sequences.get(sequence.id);
 
-    const pageNode = (this.currentPage = this.nodes.add(nanoid(), {
+    const timeline1 = this.timelines.add(nanoid(), {
       order: 0,
-      type: "page",
-      x: 0,
-      y: 0,
-      w: 0,
-      h: 0,
-    }));
+      sequence: sequence.id,
+      name: "Timeline 1",
+    });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const timeline2 = this.timelines.add(nanoid(), {
+      order: 1,
+      sequence: sequence.id,
+      name: "Timeline 2",
+    });
 
     const frameNode = this.nodes.add(nanoid(), {
-      parent: pageNode.id,
       order: 0,
       type: "frame",
       x: 0,
@@ -96,18 +99,6 @@ export class Document {
       },
     });
 
-    const timeline1 = this.timelines.add(nanoid(), {
-      order: 0,
-      sequence: sequence.id,
-      name: "Timeline 1",
-    });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const timeline2 = this.timelines.add(nanoid(), {
-      order: 1,
-      sequence: sequence.id,
-      name: "Timeline 2",
-    });
-
     const timelineItem = this.timelineItems.add(nanoid(), {
       timeline: timeline1.id,
       start: 0,
@@ -132,7 +123,7 @@ export class Document {
   readonly timelineItemParenting: Parenting<TimelineItemData>;
   readonly nodes: NodeManager;
 
-  readonly currentPage: Node;
+  readonly currentSequence: Sequence;
 
   readonly selectedNodeIDs = observable.set<string>();
   readonly selectedTimelineItemIDs = observable.set<string>();

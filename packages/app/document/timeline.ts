@@ -24,6 +24,14 @@ export class Timeline {
       .items.map((id) => this.document.timelineItems.get(id));
   }
 
+  itemsAt(time: number): TimelineItem[] {
+    // todo: optimize
+    return this.items.filter(
+      (item) =>
+        item.data.start <= time && time < item.data.start + item.data.duration
+    );
+  }
+
   readonly id: string;
   readonly document: Document;
   readonly store: Store<TimelineData>;

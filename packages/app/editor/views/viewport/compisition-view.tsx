@@ -4,32 +4,17 @@ import { observer } from "mobx-react-lite";
 
 export const CompositionView: React.FC = observer(() => {
   const editorState = useEditorState();
-  const roots = editorState.document.currentPage.children;
+  const nodes = editorState.document.currentSequence.timelines
+    .flatMap((timeline) => timeline.itemsAt(editorState.currentTime))
+    .map((item) => item.node);
 
-  return roots.map((node) => {
-    if (node.data.type !== "frame") {
-      return;
-    }
-
-    return (
-      <svg
-        key={node.id}
-        data-node-id={node.id}
-        width={node.data.w}
-        height={node.data.h}
-        className="absolute"
-        style={{
-          left: node.data.x,
-          top: node.data.y,
-          background: node.data.fill?.hex,
-        }}
-      >
-        {node.children.map((child) => (
-          <NodeRenderer key={child.id} node={child} />
-        ))}
-      </svg>
-    );
-  });
+  return (
+    <svg width={640} height={480} className="absolute left-0 top-0 bg-white">
+      {nodes.map((child) => (
+        <NodeRenderer key={child.id} node={child} />
+      ))}
+    </svg>
+  );
 });
 
 const NodeRenderer: React.FC<{
