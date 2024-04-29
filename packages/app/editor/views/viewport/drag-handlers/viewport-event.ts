@@ -19,8 +19,11 @@ function clickableAncestor(
       }
     }
   }
-  for (const node of editorState.document.currentPage.children) {
-    clickables.add(node);
+
+  for (const timeline of editorState.document.currentSequence.timelines) {
+    for (const item of timeline.items) {
+      clickables.add(item.node);
+    }
   }
 
   let instance = instanceAtPos;
@@ -31,13 +34,10 @@ function clickableAncestor(
       break;
     }
     const parent = instance.parent;
-    if (!parent || parent.type === "page") {
+    if (!parent) {
       break;
     }
-    if (
-      parent.parent?.type === "page" &&
-      !instance.boundingBox.equals(parent.boundingBox)
-    ) {
+    if (!instance.boundingBox.equals(parent.boundingBox)) {
       // select second-level elements
       // if the bounding boxes of the top-level one and the second-level one are different
       break;

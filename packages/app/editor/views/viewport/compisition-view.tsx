@@ -15,7 +15,7 @@ export const CompositionView: React.FC = observer(() => {
 
   return (
     <div
-      className="relative"
+      className="relative bg-white"
       style={{
         width,
         height,
