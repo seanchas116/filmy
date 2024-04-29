@@ -37,7 +37,7 @@ export type NodeData = NodeCommonData &
         readonly type: "frame";
       }
     | {
-        readonly type: "page";
+        readonly type: "video";
       }
   );
 
