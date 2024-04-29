@@ -2,7 +2,7 @@ import React, { useRef, useCallback, DependencyList } from "react";
 
 interface UsePointerStrokeOptions<T extends Element, InitData> {
   onBegin: (e: React.PointerEvent<T>) => InitData;
-  onMove?: (
+  onMove: (
     e: React.PointerEvent<T>,
     moves: {
       totalDeltaX: number;
