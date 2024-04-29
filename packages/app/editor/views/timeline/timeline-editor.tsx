@@ -7,6 +7,7 @@ export const TimelineEditor: React.FC = () => {
   ].toSorted((a, b) => a.data.order - b.data.order); // TODO: cache sorting
 
   const scale = 0.1;
+  const currentTime = 0; // TODO
 
   return (
     <div className="h-64 bg-white border-t border-gray-200 grid grid-cols-[auto_1fr]">
@@ -17,11 +18,11 @@ export const TimelineEditor: React.FC = () => {
           </div>
         ))}
       </div>
-      <div>
-        {timelines.map((timeline) => {
-          return (
-            <div className="p-1" key={timeline.id}>
-              <div className="flex relative h-10">
+      <div className="p-4 pt-8">
+        <div className="relative">
+          {timelines.map((timeline) => {
+            return (
+              <div className="flex relative h-10" key={timeline.id}>
                 {timeline.items.map((item) => (
                   <div
                     key={item.id}
@@ -33,9 +34,21 @@ export const TimelineEditor: React.FC = () => {
                   ></div>
                 ))}
               </div>
+            );
+          })}
+          {/* time cursor */}
+          <div
+            className="absolute -top-2 bottom-0 bg-red-500"
+            style={{
+              left: currentTime * scale,
+              width: 2,
+            }}
+          >
+            <div className="absolute -top-6 -translate-x-1/2 bg-red-500 text-white text-xs px-2 py-1 rounded-lg">
+              {(currentTime / 1000).toFixed(2)}
             </div>
-          );
-        })}
+          </div>
+        </div>
       </div>
     </div>
   );
