@@ -1,5 +1,5 @@
 import { Document } from "@/document/document";
-import { makeObservable, observable } from "mobx";
+import { action, makeObservable, observable } from "mobx";
 import { ScrollState } from "./scroll-state";
 
 export class EditorState {
@@ -39,19 +39,70 @@ export class EditorState {
   }
 
   private requestFrame() {
-    requestAnimationFrame(() => {
-      if (this.isPlaying) {
-        const currentTime = Date.now();
-        if (!this.isSeeking) {
-          this.currentTime += currentTime - this.lastFrameTime;
+    requestAnimationFrame(
+      action(() => {
+        if (this.isPlaying) {
+          const currentTime = Date.now();
+          if (!this.isSeeking) {
+            this.currentTime += currentTime - this.lastFrameTime;
+          }
+          this.lastFrameTime = currentTime;
+          this.requestFrame();
         }
-        this.lastFrameTime = currentTime;
-        this.requestFrame();
-      }
-    });
+      })
+    );
   }
 
   pause() {
     this.isPlaying = false;
+  }
+
+  togglePlay() {
+    if (this.isPlaying) {
+      this.pause();
+    } else {
+      this.play();
+    }
+  }
+
+  @observable panMode = false;
+  @observable measureMode = false;
+
+  handleKeyDown(event: KeyboardEvent): boolean {
+    // if (dialogState.isAnyOpen) {
+    //   return false;
+    // }
+
+    if (event.key === " ") {
+      this.panMode = true;
+    }
+    if (event.key === "Alt") {
+      this.measureMode = true;
+    }
+
+    if (event.key === "Escape") {
+      this.tool = undefined;
+      return true;
+    }
+
+    // if (
+    //   event.ctrlKey ||
+    //   event.metaKey ||
+    //   !isTextInput(document.activeElement)
+    // ) {
+    //   return this.handleCommand(event);
+    // }
+
+    return false;
+  }
+
+  handleKeyUp(event: KeyboardEvent): void {
+    if (event.key === " ") {
+      this.panMode = false;
+      this.togglePlay();
+    }
+    if (event.key === "Alt") {
+      this.measureMode = false;
+    }
   }
 }
