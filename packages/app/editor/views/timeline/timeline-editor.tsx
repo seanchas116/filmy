@@ -35,7 +35,7 @@ export const TimelineEditor: React.FC = observer(() => {
       <div className="w-64 border-r border-gray-200 p-2">
         <div className="flex mb-2">
           <button
-            className="p-2 text-base bg-gray-800 rounded-lg text-white"
+            className="h-8 w-8 flex items-center justify-center text-xl bg-gray-800 rounded-lg text-white"
             onMouseDown={() => {
               editorState.isPlaying ? editorState.pause() : editorState.play();
             }}
@@ -48,7 +48,7 @@ export const TimelineEditor: React.FC = observer(() => {
           </button>
         </div>
         {timelines.map((timeline) => (
-          <div key={timeline.id} className="p-2 h-10 flex items-center">
+          <div key={timeline.id} className="p-1 h-10 flex items-center">
             {timeline.data.name}
           </div>
         ))}
