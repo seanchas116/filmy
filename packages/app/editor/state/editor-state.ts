@@ -28,6 +28,7 @@ export class EditorState {
 
   @observable currentTime = 0;
   @observable isPlaying = false;
+  @observable isSeeking = false;
 
   private lastFrameTime = 0;
 
@@ -41,7 +42,9 @@ export class EditorState {
     requestAnimationFrame(() => {
       if (this.isPlaying) {
         const currentTime = Date.now();
-        this.currentTime += currentTime - this.lastFrameTime;
+        if (!this.isSeeking) {
+          this.currentTime += currentTime - this.lastFrameTime;
+        }
         this.lastFrameTime = currentTime;
         this.requestFrame();
       }

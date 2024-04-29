@@ -18,11 +18,15 @@ export const TimelineEditor: React.FC = observer(() => {
       const offsetX = e.nativeEvent.offsetX;
       const time = Math.max(0, (offsetX - 16) / scale);
       editorState.currentTime = time;
+      editorState.isSeeking = true;
     }),
     onMove: action((e) => {
       const offsetX = e.nativeEvent.offsetX;
       const time = Math.max(0, (offsetX - 16) / scale);
       editorState.currentTime = time;
+    }),
+    onEnd: action(() => {
+      editorState.isSeeking = false;
     }),
   });
 
