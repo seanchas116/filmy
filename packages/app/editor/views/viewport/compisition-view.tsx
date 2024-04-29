@@ -1,6 +1,7 @@
 import { Node } from "@/document/node";
 import { useEditorState } from "../use-editor-state";
 import { observer } from "mobx-react-lite";
+import { useEffect, useRef } from "react";
 
 export const CompositionView: React.FC = observer(() => {
   const editorState = useEditorState();
@@ -8,12 +9,39 @@ export const CompositionView: React.FC = observer(() => {
     .flatMap((timeline) => timeline.itemsAt(editorState.currentTime))
     .map((item) => item.node);
 
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) {
+      return;
+    }
+
+    video.currentTime = editorState.currentTime / 1000;
+  }, [editorState.currentTime]);
+
   return (
-    <svg width={640} height={480} className="absolute left-0 top-0 bg-white">
-      {nodes.map((child) => (
-        <NodeRenderer key={child.id} node={child} />
-      ))}
-    </svg>
+    <div
+      className="relative"
+      style={{
+        width: 640,
+        height: 480,
+      }}
+    >
+      <video
+        src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+        width={640}
+        height={480}
+        className="absolute left-0 top-0 bg-white"
+        playsInline
+        ref={videoRef}
+      />
+      <svg width={640} height={480} className="absolute left-0 top-0">
+        {nodes.map((child) => (
+          <NodeRenderer key={child.id} node={child} />
+        ))}
+      </svg>
+    </div>
   );
 });
 
