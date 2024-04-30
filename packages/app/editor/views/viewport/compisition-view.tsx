@@ -2,6 +2,7 @@ import { Node } from "@/document/node";
 import { useEditorState } from "../use-editor-state";
 import { observer } from "mobx-react-lite";
 import { useEffect, useRef } from "react";
+import { reaction } from "mobx";
 
 export const CompositionView: React.FC = observer(() => {
   const editorState = useEditorState();
@@ -47,23 +48,45 @@ const VideoRenderer: React.FC<{
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    const video = videoRef.current;
-    if (!video) {
-      return;
-    }
+    return reaction(
+      () => editorState.currentTime,
+      (currentTime) => {
+        const video = videoRef.current;
+        if (!video) {
+          return;
+        }
+        const data = node.data;
+        if (data.type !== "video") {
+          return;
+        }
 
-    const interval = setInterval(() => {
-      const targetTime = editorState.currentTime / 1000;
-      const diff = Math.abs(video.currentTime - targetTime);
-      if (diff < 1 / 60) {
-        return;
+        const targetTime = (currentTime + data.offset) / 1000;
+        const diff = Math.abs(video.currentTime - targetTime);
+        // TODO: better seek precision (using requestVideoFrameCallback)
+        if (diff < 1) {
+          return;
+        }
+        video.currentTime = targetTime;
       }
-      video.currentTime = targetTime;
-    }, 10);
-    return () => {
-      clearInterval(interval);
-    };
-  }, [editorState]);
+    );
+  });
+
+  useEffect(() => {
+    return reaction(
+      () => editorState.isPlaying,
+      (isPlaying) => {
+        const video = videoRef.current;
+        if (!video) {
+          return;
+        }
+        if (isPlaying) {
+          void video.play();
+        } else {
+          video.pause();
+        }
+      }
+    );
+  });
 
   if (node.data.type !== "video") {
     return;
@@ -81,7 +104,6 @@ const VideoRenderer: React.FC<{
         top: node.data.y,
       }}
       playsInline
-      autoPlay
       ref={videoRef}
     />
   );

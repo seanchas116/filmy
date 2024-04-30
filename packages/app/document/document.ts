@@ -107,6 +107,7 @@ export class Document {
       w: 640,
       h: 480,
       src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+      offset: 4 * 60 * 1000,
     });
 
     const timelineItem = this.timelineItems.add(nanoid(), {
