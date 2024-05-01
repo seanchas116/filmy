@@ -11,10 +11,26 @@ import { ClickToEdit } from "@/editor/components/click-to-edit";
 export const NodeIcon: React.FC<{
   node: Node;
   selected?: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-}> = observer(({ node, selected }) => {
-  // TODO: more icons
-  return <Icon className="opacity-70" icon="icon-park-outline:code" />;
+}> = observer(({ node }) => {
+  switch (node.type) {
+    case "rectangle":
+    case "frame":
+    case "video":
+      return (
+        <Icon
+          className="opacity-70"
+          icon="material-symbols:square-outline-rounded"
+        />
+      );
+    case "ellipse":
+      return (
+        <Icon className="opacity-70" icon="material-symbols:circle-outline" />
+      );
+    case "text":
+      return (
+        <Icon className="opacity-70" icon="material-symbols:title-rounded" />
+      );
+  }
 });
 
 NodeIcon.displayName = "NodeIcon";
