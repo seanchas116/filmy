@@ -2,7 +2,7 @@ import { NodeData } from "./schema";
 import { Parenting } from "@/utils/store/parenting";
 import { InstanceManager } from "./instance-manager";
 import { Rect, Vec2 } from "paintvec";
-import { computed, makeObservable } from "mobx";
+import { computed, makeObservable, observable } from "mobx";
 import { Document } from "./document";
 
 export class NodeManager extends InstanceManager<NodeData, Node> {
@@ -78,7 +78,19 @@ export class Node {
     return [...parent.ancestors, parent];
   }
 
-  indexOf(): number {
+  @computed get siblings(): Node[] {
+    return this.parent?.children ?? [];
+  }
+
+  @computed get nextSibling(): Node | undefined {
+    return this.siblings[this.index + 1];
+  }
+
+  @computed get previousSibling(): Node | undefined {
+    return this.siblings[this.index - 1];
+  }
+
+  get index(): number {
     const parentId = this.data.parent;
     if (!parentId) {
       return -1;
@@ -89,9 +101,24 @@ export class Node {
     );
   }
 
-  get insideLocked(): boolean {
-    // TODO
-    return false;
+  @computed get indexPath(): number[] {
+    const parent = this.parent;
+    if (!parent) {
+      return [];
+    }
+    return [...parent.indexPath, this.index];
+  }
+
+  get locked(): boolean {
+    return this.data.locked ?? false;
+  }
+
+  set locked(locked: boolean) {
+    this.data = { ...this.data, locked };
+  }
+
+  get ancestorLocked(): boolean {
+    return this.locked || this.parent?.ancestorLocked || false;
   }
 
   @computed get selected(): boolean {
@@ -113,7 +140,7 @@ export class Node {
   }
 
   @computed get ancestorSelected(): boolean {
-    return this.selected || this.parent?.selected || false;
+    return this.selected || this.parent?.ancestorSelected || false;
   }
 
   @computed get boundingBox(): Rect {
@@ -147,5 +174,39 @@ export class Node {
   set globalBoundingBox(rect: Rect) {
     const parentOffset = this.parent?.globalBoundingBox.topLeft ?? new Vec2(0);
     this.boundingBox = rect.translate(parentOffset.neg);
+  }
+
+  @observable expanded = false;
+
+  expandAllAncestors() {
+    let node = this.parent;
+    while (node) {
+      node.expanded = true;
+      node = node.parent;
+    }
+  }
+
+  @computed get mayHaveChildren() {
+    return this.type === "frame";
+  }
+
+  @computed get hidden() {
+    return this.data.hidden ?? false;
+  }
+
+  set hidden(hidden: boolean) {
+    this.data = { ...this.data, hidden };
+  }
+
+  @computed get ancestorHidden(): boolean {
+    return this.hidden || this.parent?.ancestorHidden || false;
+  }
+
+  @computed get name(): string {
+    return this.data.name ?? this.data.type;
+  }
+
+  set name(name: string) {
+    this.data = { ...this.data, name };
   }
 }

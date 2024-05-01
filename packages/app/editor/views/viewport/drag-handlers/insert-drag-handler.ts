@@ -13,17 +13,10 @@ export class InsertDragHandler implements DragHandler {
     this.startY = event.pos.y;
 
     const document = event.document;
-    const timelineItems = document.selectedTimelineItems;
-    let frame: Node | undefined;
-    for (const timelineItem of timelineItems) {
-      if (timelineItem.node.type === "frame") {
-        frame = timelineItem.node;
-        break;
-      }
-    }
-    if (!frame) {
+    let root = this.editorState.topmostSelectedGraphicRoot;
+    if (!root) {
       // create new frame
-      frame = document.nodes.add(nanoid(), {
+      root = document.nodes.add(nanoid(), {
         order: 0,
         type: "frame",
         x: 0,
@@ -44,13 +37,13 @@ export class InsertDragHandler implements DragHandler {
         timeline: timeline.id,
         start: this.editorState.currentTime,
         duration: 1000,
-        node: frame.id,
+        node: root.id,
       });
     }
 
     this.node = document.nodes.add(nanoid(), {
-      parent: frame.id,
-      order: frame.children.length,
+      parent: root.id,
+      order: root.children.length,
       ...(type === "rectangle"
         ? {
             type: "rectangle",

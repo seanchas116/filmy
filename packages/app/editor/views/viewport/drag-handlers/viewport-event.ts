@@ -64,7 +64,7 @@ export class ViewportEvent {
   ) {
     this.editorState = editorState;
     this.nodesIncludingLocked = allNodesAtPos;
-    this.nodes = this.nodesIncludingLocked.filter((s) => !s.insideLocked);
+    this.nodes = this.nodesIncludingLocked.filter((s) => !s.ancestorLocked);
     this.pos = pos;
     this.event = event;
     this.mode = mode ?? "click";

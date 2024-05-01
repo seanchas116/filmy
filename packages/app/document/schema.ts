@@ -2,6 +2,10 @@ export type NodeCommonData = {
   readonly parent?: string;
   readonly order: number;
 
+  readonly name?: string;
+  readonly hidden?: boolean;
+  readonly locked?: boolean;
+
   readonly fill?: FillData;
   readonly stroke?: StrokeData;
 

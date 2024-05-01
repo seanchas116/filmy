@@ -1,6 +1,7 @@
 import { Document } from "@/document/document";
-import { action, makeObservable, observable } from "mobx";
+import { action, computed, makeObservable, observable } from "mobx";
 import { ScrollState } from "./scroll-state";
+import { Node } from "@/document/node";
 
 export class EditorState {
   constructor() {
@@ -103,6 +104,24 @@ export class EditorState {
     }
     if (event.key === "Alt") {
       this.measureMode = false;
+    }
+  }
+
+  @observable hoveredNodeID: string | undefined = undefined;
+
+  @computed get hoveredNode() {
+    if (this.hoveredNodeID) {
+      return this.document.nodes.safeGet(this.hoveredNodeID);
+    }
+  }
+
+  @computed get topmostSelectedGraphicRoot(): Node | undefined {
+    const timelineItems = this.document.selectedTimelineItems;
+    for (const timelineItem of timelineItems) {
+      // TODO: use group
+      if (timelineItem.node.type === "frame") {
+        return timelineItem.node;
+      }
     }
   }
 }
