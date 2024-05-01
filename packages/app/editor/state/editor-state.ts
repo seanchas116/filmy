@@ -69,44 +69,6 @@ export class EditorState {
   @observable panMode = false;
   @observable measureMode = false;
 
-  handleKeyDown(event: KeyboardEvent): boolean {
-    // if (dialogState.isAnyOpen) {
-    //   return false;
-    // }
-
-    if (event.key === " ") {
-      this.panMode = true;
-    }
-    if (event.key === "Alt") {
-      this.measureMode = true;
-    }
-
-    if (event.key === "Escape") {
-      this.tool = undefined;
-      return true;
-    }
-
-    // if (
-    //   event.ctrlKey ||
-    //   event.metaKey ||
-    //   !isTextInput(document.activeElement)
-    // ) {
-    //   return this.handleCommand(event);
-    // }
-
-    return false;
-  }
-
-  handleKeyUp(event: KeyboardEvent): void {
-    if (event.key === " ") {
-      this.panMode = false;
-      this.togglePlay();
-    }
-    if (event.key === "Alt") {
-      this.measureMode = false;
-    }
-  }
-
   @observable hoveredNodeID: string | undefined = undefined;
 
   @computed get hoveredNode() {

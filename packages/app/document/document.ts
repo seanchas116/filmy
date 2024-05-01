@@ -14,6 +14,7 @@ import { Sequence } from "./sequence";
 import { Parenting } from "@/utils/store/parenting";
 import { computed, makeObservable, observable } from "mobx";
 import { compact } from "lodash-es";
+import { UndoManager } from "@/utils/store/undo-manager";
 
 export class Document {
   constructor() {
@@ -21,6 +22,13 @@ export class Document {
     this.sequenceStore = new Store<SequenceData>();
     this.timelineItemStore = new Store<TimelineItemData>();
     this.nodeStore = new Store<NodeData>();
+
+    this.undoManager = new UndoManager([
+      this.timelineStore,
+      this.sequenceStore,
+      this.timelineItemStore,
+      this.nodeStore,
+    ]);
 
     this.nodes = new NodeManager(this);
     this.timelines = new InstanceManager(
@@ -129,6 +137,8 @@ export class Document {
     makeObservable(this);
   }
 
+  readonly undoManager: UndoManager;
+
   readonly sequenceStore: Store<SequenceData>;
   readonly timelineStore: Store<TimelineData>;
   readonly timelineItemStore: Store<TimelineItemData>;
@@ -171,5 +181,13 @@ export class Document {
     }
 
     return [...timelineItems];
+  }
+
+  deleteSelection() {
+    throw new Error("Not implemented");
+  }
+
+  selectAll() {
+    throw new Error("Not implemented");
   }
 }
