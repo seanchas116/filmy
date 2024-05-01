@@ -6,9 +6,7 @@ import { usePointerStroke } from "@/editor/components/use-pointer-stroke";
 
 export const TimelineEditor: React.FC = observer(() => {
   const editorState = useEditorState();
-  const timelines = [
-    ...editorState.document.timelines.instances.values(),
-  ].toSorted((a, b) => a.data.order - b.data.order); // TODO: cache sorting
+  const timelines = editorState.document.currentSequence.timelines;
 
   const scale = 0.1;
   const currentTime = editorState.currentTime;
