@@ -251,4 +251,13 @@ export class Node {
   set name(name: string) {
     this.data = { ...this.data, name };
   }
+
+  deleteRecursive() {
+    for (const child of this.children) {
+      child.deleteRecursive();
+    }
+
+    this.document.selectedNodeIDs.delete(this.id);
+    this.document.nodeStore.data.delete(this.id);
+  }
 }

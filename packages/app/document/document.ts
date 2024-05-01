@@ -184,7 +184,15 @@ export class Document {
   }
 
   deleteSelection() {
-    throw new Error("Not implemented");
+    for (const node of this.selectedNodes) {
+      if (node.parent) {
+        node.deleteRecursive();
+      }
+    }
+
+    for (const timelineItem of this.selectedTimelineItems) {
+      timelineItem.delete();
+    }
   }
 
   selectAll() {

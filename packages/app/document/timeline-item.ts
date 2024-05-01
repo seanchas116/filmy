@@ -29,6 +29,11 @@ export class TimelineItem {
     return this.document.selectedNodeRoots.has(this.node);
   }
 
+  delete() {
+    this.node.deleteRecursive();
+    this.store.data.delete(this.id);
+  }
+
   readonly id: string;
   readonly document: Document;
   readonly store: Store<TimelineItemData>;
