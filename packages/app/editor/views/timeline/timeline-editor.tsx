@@ -53,7 +53,12 @@ export const TimelineEditor: React.FC = observer(() => {
           </div>
         ))}
       </div>
-      <div className="p-4">
+      <div
+        className="p-4"
+        onMouseDown={action(() => {
+          editorState.document.deselectAllNodes();
+        })}
+      >
         <div className="relative h-full">
           {/* seek area */}
           <div className="h-8 relative">
@@ -65,11 +70,19 @@ export const TimelineEditor: React.FC = observer(() => {
                 {timeline.items.map((item) => (
                   <div
                     key={item.id}
-                    className="bg-gray-100 absolute h-full top-0 rounded-lg border border-gray-200"
+                    className="bg-gray-100 absolute h-full top-0 rounded-lg border border-gray-200 aria-selected:border-blue-500"
+                    aria-selected={item.selected}
                     style={{
                       left: item.data.start * scale,
                       width: item.data.duration * scale,
                     }}
+                    onMouseDown={action((e) => {
+                      if (!e.shiftKey) {
+                        editorState.document.deselectAllNodes();
+                      }
+                      item.node.select();
+                      e.stopPropagation();
+                    })}
                   ></div>
                 ))}
               </div>

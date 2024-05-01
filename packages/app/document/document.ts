@@ -155,18 +155,18 @@ export class Document {
     );
   }
 
+  @computed get selectedNodeRoots(): Set<Node> {
+    return new Set(this.selectedNodes.map((node) => node.root));
+  }
+
   @computed get selectedTimelineItems(): TimelineItem[] {
-    const selectedNodeRoots = new Set(
-      this.selectedNodes.map((node) => node.root)
-    );
+    const selectedNodeRoots = this.selectedNodeRoots;
 
     // TODO: make efficient
     const timelineItems = new Set<TimelineItem>();
-    for (const node of selectedNodeRoots) {
-      for (const timelineItem of this.timelineItems.instances.values()) {
-        if (timelineItem.node.root === node) {
-          timelineItems.add(timelineItem);
-        }
+    for (const timelineItem of this.timelineItems.instances.values()) {
+      if (selectedNodeRoots.has(timelineItem.node.root)) {
+        timelineItems.add(timelineItem);
       }
     }
 
