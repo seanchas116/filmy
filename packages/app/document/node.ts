@@ -5,6 +5,10 @@ import { Rect, Vec2 } from "paintvec";
 import { computed, makeObservable, observable } from "mobx";
 import { Document } from "./document";
 
+function lerp(a: number, b: number, t: number): number {
+  return a * (1 - t) + b * t;
+}
+
 export class NodeManager extends InstanceManager<NodeData, Node> {
   constructor(document: Document) {
     super(document.nodeStore, (id) => new Node(document, id));
@@ -107,6 +111,44 @@ export class Node {
       return [];
     }
     return [...parent.indexPath, this.index];
+  }
+
+  includes(other: Node): boolean {
+    return other.ancestors.includes(this);
+  }
+
+  insertBefore(
+    nodes: readonly Node[],
+    next: Node | undefined
+  ): readonly Node[] {
+    nodes = nodes.filter((node) => !node.includes(this));
+
+    const children = this.children;
+    const prev = children[(next?.index ?? children.length) - 1];
+
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i];
+      const order =
+        prev && next
+          ? lerp(prev.order ?? 0, next.order ?? 0, (i + 1) / (nodes.length + 1))
+          : prev
+            ? (prev.order ?? 0) + i + 1
+            : next
+              ? (next.order ?? 0) - nodes.length + i
+              : i;
+
+      node.data = {
+        ...node.data,
+        parent: this.id,
+        order,
+      };
+    }
+
+    return nodes;
+  }
+
+  get order(): number {
+    return this.data.order;
   }
 
   get locked(): boolean {

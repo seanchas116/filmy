@@ -115,44 +115,14 @@ export class NodeTreeViewItem extends TreeViewItem {
   }
 
   drop(nextItem: NodeTreeViewItem | undefined, shouldCopy: boolean): void {
-    throw new Error("TODO: drop");
-
-    /*
-    const { editorState } = this;
-    const measure = viewportState.measureFunc;
-
-    const parent = this.node;
-    const next = nextItem?.node;
-
-    const nodes = this.editorState.selectedNodes;
-    if (nodes.includes(parent)) {
-      return;
-    }
-
     if (shouldCopy) {
-      const newNodes = editorState.selectedNodes.map((r) => r.clone());
-
-      insertToDropDestination(measure, {
-        dst: createDropDestination(measure, parent, next),
-        targets: newNodes.map((n) => ({
-          node: n,
-        })),
-        reordersAbsolute: true,
-      });
-
-      editorState.replaceSelection(newNodes);
-    } else {
-      insertToDropDestination(measure, {
-        dst: createDropDestination(measure, parent, next),
-        targets: editorState.selectedNodes.map((n) => ({
-          node: n,
-        })),
-        reordersAbsolute: true,
-      });
+      throw new Error("TODO: copy");
     }
 
-    editorState.commitUndo();
-    */
+    this.node.insertBefore(
+      this.editorState.document.selectedNodes,
+      nextItem?.node
+    );
   }
 
   @computed get dimmed(): boolean {
