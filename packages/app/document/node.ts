@@ -62,6 +62,14 @@ export class Node {
     return parentId ? this.manager.instances.get(parentId) : undefined;
   }
 
+  @computed get root(): Node {
+    let node: Node = this;
+    while (node.parent) {
+      node = node.parent;
+    }
+    return node;
+  }
+
   @computed get ancestors(): Node[] {
     const parent = this.parent;
     if (!parent) {

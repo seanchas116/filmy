@@ -1,6 +1,5 @@
 import { DragHandler } from "./drag-handler";
 import { ViewportEvent } from "./viewport-event";
-import { assertNonNull } from "@/utils/assert";
 import { nanoid } from "nanoid";
 import { Node } from "@/document/node";
 import { EditorState } from "@/editor/state/editor-state";
@@ -13,7 +12,40 @@ export class InsertDragHandler implements DragHandler {
     this.startY = event.pos.y;
 
     const document = event.document;
-    const frame = assertNonNull(document.currentPage.childAt(0));
+    const timelineItems = document.selectedTimelineItems;
+    let frame: Node | undefined;
+    for (const timelineItem of timelineItems) {
+      if (timelineItem.node.type === "frame") {
+        frame = timelineItem.node;
+        break;
+      }
+    }
+    if (!frame) {
+      // create new frame
+      frame = document.nodes.add(nanoid(), {
+        order: 0,
+        type: "frame",
+        x: 0,
+        y: 0,
+        w: 640,
+        h: 480,
+        fill: {
+          type: "solid",
+          hex: "#ffffff",
+        },
+      });
+      const timeline = document.timelines.add(nanoid(), {
+        sequence: document.currentSequence.id,
+        order: 0,
+        name: "Timeline 1",
+      });
+      document.timelineItems.add(nanoid(), {
+        timeline: timeline.id,
+        start: 0,
+        duration: 1000,
+        node: frame.id,
+      });
+    }
 
     this.node = document.nodes.add(nanoid(), {
       parent: frame.id,

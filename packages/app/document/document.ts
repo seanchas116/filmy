@@ -110,6 +110,7 @@ export class Document {
       offset: 4 * 60 * 1000,
     });
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const timelineItem = this.timelineItems.add(nanoid(), {
       timeline: timeline1.id,
       start: 1000,
@@ -124,8 +125,6 @@ export class Document {
       duration: 10000,
       node: videoNode.id,
     });
-
-    this.selectedTimelineItemIDs.add(timelineItem.id);
 
     makeObservable(this);
   }
@@ -145,7 +144,6 @@ export class Document {
   readonly currentSequence: Sequence;
 
   readonly selectedNodeIDs = observable.set<string>();
-  readonly selectedTimelineItemIDs = observable.set<string>();
 
   deselectAllNodes(): void {
     this.selectedNodeIDs.clear();
@@ -158,10 +156,20 @@ export class Document {
   }
 
   @computed get selectedTimelineItems(): TimelineItem[] {
-    return compact(
-      [...this.selectedTimelineItemIDs].map((id) =>
-        this.timelineItems.safeGet(id)
-      )
+    const selectedNodeRoots = new Set(
+      this.selectedNodes.map((node) => node.root)
     );
+
+    // TODO: make efficient
+    const timelineItems = new Set<TimelineItem>();
+    for (const node of selectedNodeRoots) {
+      for (const timelineItem of this.timelineItems.instances.values()) {
+        if (timelineItem.node.root === node) {
+          timelineItems.add(timelineItem);
+        }
+      }
+    }
+
+    return [...timelineItems];
   }
 }
