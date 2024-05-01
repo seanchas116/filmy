@@ -42,7 +42,7 @@ export class InsertDragHandler implements DragHandler {
       });
       document.timelineItems.add(nanoid(), {
         timeline: timeline.id,
-        start: 0,
+        start: this.editorState.currentTime,
         duration: 1000,
         node: frame.id,
       });
