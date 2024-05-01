@@ -52,6 +52,7 @@ export class CompositionRenderer {
       if (!video) {
         video = document.createElement("video");
         video.src = data.src;
+        video.muted = true; // TODO: audio
         this.videos.set(node.id, video);
       }
 
@@ -66,7 +67,7 @@ export class CompositionRenderer {
       const targetTime = (this.editorState.currentTime + data.offset) / 1000;
       const diff = Math.abs(video.currentTime - targetTime);
       // TODO: better seek precision (using requestVideoFrameCallback)
-      if (diff >= 1) {
+      if (diff >= 1 / 60) {
         video.currentTime = targetTime;
       }
 
