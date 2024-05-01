@@ -3,6 +3,7 @@ import { ViewportEvent } from "./viewport-event";
 import { nanoid } from "nanoid";
 import { Node } from "@/document/node";
 import { EditorState } from "@/editor/state/editor-state";
+import twColors from "tailwindcss/colors";
 
 export class InsertDragHandler implements DragHandler {
   constructor(event: ViewportEvent, type: "rectangle" | "ellipse" | "text") {
@@ -51,25 +52,59 @@ export class InsertDragHandler implements DragHandler {
       parent: frame.id,
       order: frame.children.length,
       ...(type === "rectangle"
-        ? { type: "rectangle" }
+        ? {
+            type: "rectangle",
+            fill: {
+              type: "solid",
+              hex: twColors.blue[500],
+            },
+            stroke: {
+              width: 1,
+              fill: {
+                type: "solid",
+                hex: "#000000",
+              },
+            },
+          }
         : type === "ellipse"
-          ? { type: "ellipse" }
-          : { type: "text", text: "Text" }),
+          ? {
+              type: "ellipse",
+              fill: {
+                type: "solid",
+                hex: twColors.blue[500],
+              },
+              stroke: {
+                width: 1,
+                fill: {
+                  type: "solid",
+                  hex: "#000000",
+                },
+              },
+            }
+          : {
+              type: "text",
+              text: "Text",
+              font: {
+                family: "Arial",
+                size: 48,
+                weight: 700,
+              },
+              fill: {
+                type: "solid",
+                hex: "#ffffff",
+              },
+              stroke: {
+                width: 2,
+                fill: {
+                  type: "solid",
+                  hex: "#000000",
+                },
+              },
+            }),
       x: event.pos.x,
       y: event.pos.y,
       w: 100,
       h: 100,
-      fill: {
-        type: "solid",
-        hex: "#ff0000",
-      },
-      stroke: {
-        width: 1,
-        fill: {
-          type: "solid",
-          hex: "#000000",
-        },
-      },
     });
   }
 

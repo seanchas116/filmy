@@ -11,6 +11,13 @@ export type NodeCommonData = {
   readonly h: number;
 };
 
+export type FontData = {
+  readonly family: string;
+  readonly size: number;
+  readonly weight?: number;
+  readonly style?: string;
+};
+
 export type FillData = {
   readonly type: "solid";
   readonly hex: string; // #RRGGBB
@@ -26,6 +33,7 @@ export type NodeData = NodeCommonData &
     | {
         readonly type: "text";
         readonly text: string;
+        readonly font: FontData;
       }
     | {
         readonly type: "rectangle";

@@ -159,8 +159,10 @@ const ShapeRenderer: React.FC<{
         <text
           data-node-id={node.id}
           x={data.x}
-          y={data.y + 16}
-          fontSize={16}
+          y={data.y + data.font.size}
+          fontSize={data.font.size}
+          fontFamily={data.font.family}
+          fontWeight={data.font.weight}
           fill={data.fill?.hex}
           strokeWidth={data.stroke?.width}
           stroke={data.stroke?.fill.hex}
