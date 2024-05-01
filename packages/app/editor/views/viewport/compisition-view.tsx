@@ -2,7 +2,7 @@ import { Node } from "@/document/node";
 import { useEditorState } from "../use-editor-state";
 import { observer } from "mobx-react-lite";
 import { useEffect, useRef } from "react";
-import { reaction } from "mobx";
+import { CompositionRenderer } from "./composition-renderer";
 
 export const CompositionView: React.FC = observer(() => {
   const editorState = useEditorState();
@@ -14,6 +14,20 @@ export const CompositionView: React.FC = observer(() => {
   const width = 640;
   const height = 480;
 
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) {
+      return;
+    }
+
+    const renderer = new CompositionRenderer(editorState, canvas);
+    return () => {
+      renderer.dispose();
+    };
+  }, [editorState]);
+
   return (
     <div
       className="relative bg-white"
@@ -22,113 +36,43 @@ export const CompositionView: React.FC = observer(() => {
         height,
       }}
     >
-      {nodes.map((child) =>
-        child.data.type === "video" ? (
-          <VideoRenderer key={child.id} node={child} />
-        ) : (
-          <svg
-            key={child.id}
-            width={width}
-            height={height}
-            className="absolute left-0 top-0"
-          >
-            <NodeRenderer key={child.id} node={child} />
-          </svg>
-        )
-      )}
+      <svg width={width} height={height} className="absolute left-0 top-0">
+        {nodes.map((node) => (
+          <RecursiveHitTest key={node.id} node={node} />
+        ))}
+      </svg>
+      <canvas
+        ref={canvasRef}
+        width={width}
+        height={height}
+        className="absolute left-0 top-0 pointer-events-none"
+      />
     </div>
   );
 });
 
-const VideoRenderer: React.FC<{
-  node: Node;
-}> = observer(({ node }) => {
-  const editorState = useEditorState();
-
-  const videoRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    return reaction(
-      () => editorState.currentTime,
-      (currentTime) => {
-        const video = videoRef.current;
-        if (!video) {
-          return;
-        }
-        const data = node.data;
-        if (data.type !== "video") {
-          return;
-        }
-
-        const targetTime = (currentTime + data.offset) / 1000;
-        const diff = Math.abs(video.currentTime - targetTime);
-        // TODO: better seek precision (using requestVideoFrameCallback)
-        if (diff < 1) {
-          return;
-        }
-        video.currentTime = targetTime;
-      }
-    );
-  });
-
-  useEffect(() => {
-    return reaction(
-      () => editorState.isPlaying,
-      (isPlaying) => {
-        const video = videoRef.current;
-        if (!video) {
-          return;
-        }
-        if (isPlaying) {
-          void video.play();
-        } else {
-          video.pause();
-        }
-      }
-    );
-  });
-
-  if (node.data.type !== "video") {
-    return;
-  }
-
-  return (
-    <video
-      data-node-id={node.id}
-      src={node.data.src}
-      width={node.data.w}
-      height={node.data.h}
-      className="absolute"
-      style={{
-        left: node.data.x,
-        top: node.data.y,
-      }}
-      playsInline
-      ref={videoRef}
-    />
-  );
-});
-
-const NodeRenderer: React.FC<{
+const RecursiveHitTest: React.FC<{
   node: Node;
 }> = observer(({ node }) => {
   return (
     <>
-      <ShapeRenderer node={node} />
+      <HitTest node={node} />
       {node.children.map((child) => (
-        <NodeRenderer key={child.id} node={child} />
+        <RecursiveHitTest key={child.id} node={child} />
       ))}
     </>
   );
 });
 
-const ShapeRenderer: React.FC<{
+const HitTest: React.FC<{
   node: Node;
 }> = observer(({ node }) => {
   const data = node.data;
 
   switch (data.type) {
+    case "video":
     case "rectangle":
+    case "text":
       return (
         <rect
           data-node-id={node.id}
@@ -136,9 +80,9 @@ const ShapeRenderer: React.FC<{
           y={data.y}
           width={data.w}
           height={data.h}
-          fill={data.fill?.hex}
+          fill="transparent"
+          stroke="transparent"
           strokeWidth={data.stroke?.width}
-          stroke={data.stroke?.fill.hex}
         />
       );
     case "ellipse":
@@ -149,26 +93,10 @@ const ShapeRenderer: React.FC<{
           cy={data.y + data.h / 2}
           rx={data.w / 2}
           ry={data.h / 2}
-          fill={data.fill?.hex}
+          fill="transparent"
+          stroke="transparent"
           strokeWidth={data.stroke?.width}
-          stroke={data.stroke?.fill.hex}
         />
-      );
-    case "text":
-      return (
-        <text
-          data-node-id={node.id}
-          x={data.x}
-          y={data.y + data.font.size}
-          fontSize={data.font.size}
-          fontFamily={data.font.family}
-          fontWeight={data.font.weight}
-          fill={data.fill?.hex}
-          strokeWidth={data.stroke?.width}
-          stroke={data.stroke?.fill.hex}
-        >
-          {data.text}
-        </text>
       );
   }
 });
