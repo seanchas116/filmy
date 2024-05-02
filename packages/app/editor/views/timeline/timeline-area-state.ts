@@ -81,6 +81,7 @@ export class TimelineAreaState {
     this.ongoingPreviewRows = undefined;
     this.prependedTimeline = undefined;
     this.appendedTimeline = undefined;
+    this.editorState.document.currentSequence.deleteUnusedTimelines();
   }
 
   get rowsToShow() {

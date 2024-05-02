@@ -45,6 +45,14 @@ export class Sequence {
     });
   }
 
+  deleteUnusedTimelines() {
+    for (const timeline of this.timelines) {
+      if (timeline.items.length === 0) {
+        timeline.delete();
+      }
+    }
+  }
+
   readonly id: string;
   readonly document: Document;
   readonly store: Store<SequenceData>;

@@ -32,6 +32,13 @@ export class Timeline {
     );
   }
 
+  delete() {
+    for (const item of this.items) {
+      item.delete();
+    }
+    this.store.data.delete(this.id);
+  }
+
   readonly id: string;
   readonly document: Document;
   readonly store: Store<TimelineData>;
