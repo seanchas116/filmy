@@ -51,7 +51,7 @@ export class ClickMoveDragHandler implements DragHandler {
       }
       this.node.select();
     }
-    event.editorState.commitUndo();
+    event.editorState.document.undoManager.commit();
   }
 
   private readonly initPos: Vec2;

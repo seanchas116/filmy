@@ -137,6 +137,6 @@ export class NodeResizeBoxState {
       return;
     }
 
-    this.editorState.commitUndo();
+    this.editorState.document.undoManager.commit();
   }
 }

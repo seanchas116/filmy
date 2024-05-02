@@ -55,7 +55,7 @@ export const NodeTreeRow: React.FC<{
       }
     }
 
-    editorState.commitUndo();
+    editorState.document.undoManager.commit();
   };
 
   return (

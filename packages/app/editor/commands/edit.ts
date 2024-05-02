@@ -175,7 +175,7 @@ export class DeleteCommand extends Command {
 
   run() {
     this.editorState.document.deleteSelection();
-    this.editorState.commitUndo();
+    this.editorState.document.undoManager.commit();
   }
 }
 

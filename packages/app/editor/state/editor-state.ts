@@ -15,10 +15,6 @@ export class EditorState {
 
   readonly scroll = new ScrollState();
 
-  commitUndo() {
-    // TODO
-  }
-
   get shouldHideResizeBox() {
     return false;
   }
