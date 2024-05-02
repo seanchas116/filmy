@@ -103,7 +103,7 @@ const TimelineAreaItem: React.FC<{
 
     return (
       <div
-        className="bg-gray-100 absolute h-full top-0 rounded-lg border border-gray-200 aria-selected:border-blue-500 overflow-hidden"
+        className="bg-gray-100 absolute h-full top-0 rounded-lg border-2 border-gray-200 aria-selected:border-blue-500 overflow-hidden"
         aria-selected={item.selected}
         onMouseDown={onMouseDown}
         style={{
