@@ -127,5 +127,6 @@ export class InsertDragHandler implements DragHandler {
 
   end(): void {
     this.editorState.tool = undefined;
+    this.editorState.document.undoManager.commit();
   }
 }
