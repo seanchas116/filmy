@@ -27,10 +27,13 @@ export class VideoThumbnail {
   private video: HTMLVideoElement | undefined;
   private readonly mutex = new Mutex();
   private readonly cache = new Map<number, Promise<VideoThumbnailFrame>>();
+  private readonly interval = 0.1;
 
   getAt(time: number): Promise<VideoThumbnailFrame> {
-    const second = Math.round(time);
-    return getOrCreate(this.cache, second, () => this.getAtImpl(second));
+    const key = Math.round(time / this.interval);
+    return getOrCreate(this.cache, key, () =>
+      this.getAtImpl(key * this.interval)
+    );
   }
 
   private async getAtImpl(time: number): Promise<VideoThumbnailFrame> {
