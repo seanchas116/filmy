@@ -44,7 +44,9 @@ export const NodeTreeRow: React.FC<{
   const [isNameEditing, setNameEditing] = useState(false);
 
   const setHiddenLocked = (value: { hidden?: boolean; locked?: boolean }) => {
-    const targets = node.selected ? editorState.document.selectedNodes : [node];
+    const targets = node.selected
+      ? editorState.document.selection.nodes
+      : [node];
 
     for (const target of targets) {
       if (value.hidden !== undefined) {

@@ -97,13 +97,13 @@ export class NodeTreeViewItem extends TreeViewItem {
   }
 
   @computed get allSelectedItems(): TreeViewItem[] {
-    return this.editorState.document.selectedNodes.map((n) =>
+    return this.editorState.document.selection.nodes.map((n) =>
       NodeTreeViewItem.get(this.editorState, n)
     );
   }
 
   deselectAll(): void {
-    this.editorState.document.deselectAllNodes();
+    this.editorState.document.selection.clear();
   }
 
   @computed get draggable() {
@@ -120,7 +120,7 @@ export class NodeTreeViewItem extends TreeViewItem {
     }
 
     this.node.insertBefore(
-      this.editorState.document.selectedNodes,
+      this.editorState.document.selection.nodes,
       nextItem?.node
     );
   }
@@ -140,7 +140,7 @@ export class NodeTreeViewItem extends TreeViewItem {
     });
   }
 
-  showContextMenu(e: MouseEvent): void {
+  showContextMenu(_e: MouseEvent): void {
     throw new Error("TODO: showContextMenu");
     // showNodeContextMenu(this.editorState, this.node, e);
   }

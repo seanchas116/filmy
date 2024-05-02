@@ -6,7 +6,7 @@ import { Node } from "@/document/node";
 export class MoveDragHandler implements DragHandler {
   constructor(event: ViewportEvent, initPos: Vec2) {
     this.initPos = initPos;
-    const targets = event.editorState.document.selectedNodes;
+    const targets = event.editorState.document.selection.nodes;
     for (const target of targets) {
       this.initialRects.set(target, target.boundingBox);
     }

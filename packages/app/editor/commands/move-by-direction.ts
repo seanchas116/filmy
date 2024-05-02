@@ -13,7 +13,7 @@ export function moveByDirection(
   direction: Direction,
   shiftKey: boolean
 ) {
-  const nodes = editorState.document.selectedNodes;
+  const nodes = editorState.document.selection.nodes;
 
   // absolute move
   const amount = shiftKey ? 8 : 1;

@@ -12,7 +12,7 @@ export function useRevealSelectedRow() {
   useEffect(
     () =>
       reaction(
-        () => editorState.document.selectedNodes,
+        () => editorState.document.selection.nodes,
         async (nodes) => {
           for (const node of nodes) {
             node.parent?.expandAllAncestors();

@@ -174,7 +174,7 @@ export class DeleteCommand extends Command {
   }
 
   run() {
-    this.editorState.document.deleteSelection();
+    this.editorState.document.selection.deleteSelected();
     this.editorState.document.undoManager.commit();
   }
 }
@@ -197,6 +197,6 @@ export class SelectAllCommand extends Command {
   }
 
   run() {
-    this.editorState.document.selectAll();
+    this.editorState.document.selection.selectAllSiblings();
   }
 }

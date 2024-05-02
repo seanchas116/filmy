@@ -57,7 +57,7 @@ export class NodeResizeBoxState {
   private heightChanged = false;
 
   get selectedNodes(): Node[] {
-    return this.editorState.document.selectedNodes;
+    return this.editorState.document.selection.nodes;
   }
 
   @computed get stroke(): string {

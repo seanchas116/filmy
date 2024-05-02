@@ -21,7 +21,7 @@ export class ClickMoveDragHandler implements DragHandler {
 
     if (event.nodes.every((r) => !r.ancestorSelected)) {
       if (!this.additive) {
-        event.editorState.document.deselectAllNodes();
+        event.editorState.document.selection.clear();
       }
       this.node.select();
     }
@@ -47,7 +47,7 @@ export class ClickMoveDragHandler implements DragHandler {
     if (!this.moveHandler) {
       // do click
       if (!this.additive) {
-        event.editorState.document.deselectAllNodes();
+        event.editorState.document.selection.clear();
       }
       this.node.select();
     }

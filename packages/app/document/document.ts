@@ -12,7 +12,7 @@ import { TimelineItem } from "./timeline-item";
 import { nanoid } from "nanoid";
 import { Sequence } from "./sequence";
 import { Parenting } from "@/utils/store/parenting";
-import { computed, makeObservable, observable } from "mobx";
+import { computed, makeObservable } from "mobx";
 import { compact } from "lodash-es";
 import { UndoManager } from "@/utils/store/undo-manager";
 
@@ -22,12 +22,14 @@ export class Document {
     this.sequenceStore = new Store<SequenceData>();
     this.timelineItemStore = new Store<TimelineItemData>();
     this.nodeStore = new Store<NodeData>();
+    this.selectedNodeIDStore = new Store<true>();
 
     this.undoManager = new UndoManager([
       this.timelineStore,
       this.sequenceStore,
       this.timelineItemStore,
       this.nodeStore,
+      this.selectedNodeIDStore,
     ]);
 
     this.nodes = new NodeManager(this);
@@ -53,6 +55,8 @@ export class Document {
       this.sequenceStore,
       (id) => new Sequence(this, id)
     );
+
+    this.selection = new Selection(this);
 
     const sequence = this.sequences.add(nanoid(), {
       name: "Sequence 1",
@@ -144,6 +148,7 @@ export class Document {
   readonly timelineStore: Store<TimelineData>;
   readonly timelineItemStore: Store<TimelineItemData>;
   readonly nodeStore: Store<NodeData>;
+  readonly selectedNodeIDStore: Store<true>;
 
   readonly sequences: InstanceManager<SequenceData, Sequence>;
   readonly timelines: InstanceManager<TimelineData, Timeline>;
@@ -154,28 +159,40 @@ export class Document {
 
   readonly currentSequence: Sequence;
 
-  readonly selectedNodeIDs = observable.set<string>();
+  readonly selection: Selection;
+}
 
-  deselectAllNodes(): void {
-    this.selectedNodeIDs.clear();
+class Selection {
+  constructor(document: Document) {
+    this.document = document;
+    this.selectedNodeIDStore = document.selectedNodeIDStore;
   }
 
-  @computed get selectedNodes(): Node[] {
+  readonly document: Document;
+  readonly selectedNodeIDStore: Store<true>;
+
+  clear(): void {
+    this.selectedNodeIDStore.data.clear();
+  }
+
+  @computed get nodes(): Node[] {
     return compact(
-      [...this.selectedNodeIDs].map((id) => this.nodes.safeGet(id))
+      [...this.selectedNodeIDStore.data.keys()].map((id) =>
+        this.document.nodes.safeGet(id)
+      )
     );
   }
 
-  @computed get selectedNodeRoots(): Set<Node> {
-    return new Set(this.selectedNodes.map((node) => node.root));
+  @computed get nodeRoots(): Set<Node> {
+    return new Set(this.nodes.map((node) => node.root));
   }
 
-  @computed get selectedTimelineItems(): TimelineItem[] {
-    const selectedNodeRoots = this.selectedNodeRoots;
+  @computed get timelineItems(): TimelineItem[] {
+    const selectedNodeRoots = this.nodeRoots;
 
     // TODO: make efficient
     const timelineItems = new Set<TimelineItem>();
-    for (const timelineItem of this.timelineItems.instances.values()) {
+    for (const timelineItem of this.document.timelineItems.instances.values()) {
       if (selectedNodeRoots.has(timelineItem.node.root)) {
         timelineItems.add(timelineItem);
       }
@@ -184,19 +201,19 @@ export class Document {
     return [...timelineItems];
   }
 
-  deleteSelection() {
-    for (const node of this.selectedNodes) {
+  deleteSelected() {
+    for (const node of this.nodes) {
       if (node.parent) {
         node.deleteRecursive();
       }
     }
 
-    for (const timelineItem of this.selectedTimelineItems) {
+    for (const timelineItem of this.timelineItems) {
       timelineItem.delete();
     }
   }
 
-  selectAll() {
+  selectAllSiblings() {
     throw new Error("Not implemented");
   }
 }

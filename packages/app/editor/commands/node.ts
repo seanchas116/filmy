@@ -22,7 +22,7 @@ export class GroupCommand extends Command {
   }
 
   @computed get targets() {
-    return this.editorState.document.selectedNodes;
+    return this.editorState.document.selection.nodes;
   }
 
   run() {
@@ -59,7 +59,7 @@ export class UngroupCommand extends Command {
   }
 
   @computed get targets() {
-    return this.editorState.document.selectedNodes;
+    return this.editorState.document.selection.nodes;
   }
 
   run() {

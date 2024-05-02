@@ -54,7 +54,7 @@ export const TimelineEditor: React.FC = observer(() => {
       <div
         className="p-4"
         onMouseDown={action(() => {
-          editorState.document.deselectAllNodes();
+          editorState.document.selection.clear();
         })}
       >
         <div className="relative h-full">
@@ -76,7 +76,7 @@ export const TimelineEditor: React.FC = observer(() => {
                     }}
                     onMouseDown={action((e) => {
                       if (!e.shiftKey) {
-                        editorState.document.deselectAllNodes();
+                        editorState.document.selection.clear();
                       }
                       item.node.select();
                       e.stopPropagation();

@@ -74,7 +74,7 @@ export class EditorState {
   }
 
   @computed get topmostSelectedGraphicRoot(): Node | undefined {
-    const timelineItems = this.document.selectedTimelineItems;
+    const timelineItems = this.document.selection.timelineItems;
     for (const timelineItem of timelineItems) {
       // TODO: use group
       if (timelineItem.node.type === "frame") {

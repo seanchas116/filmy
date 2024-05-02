@@ -26,7 +26,7 @@ export class TimelineItem {
 
   @computed get selected(): boolean {
     // TODO: make efficient
-    return this.document.selectedNodeRoots.has(this.node);
+    return this.document.selection.nodeRoots.has(this.node);
   }
 
   delete() {

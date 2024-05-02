@@ -164,18 +164,18 @@ export class Node {
   }
 
   @computed get selected(): boolean {
-    return this.document.selectedNodeIDs.has(this.id);
+    return this.document.selectedNodeIDStore.data.has(this.id);
   }
 
   select(): void {
     for (const child of this.children) {
       child.deselect();
     }
-    this.document.selectedNodeIDs.add(this.id);
+    this.document.selectedNodeIDStore.data.set(this.id, true);
   }
 
   deselect(): void {
-    this.document.selectedNodeIDs.delete(this.id);
+    this.document.selectedNodeIDStore.data.delete(this.id);
     for (const child of this.children) {
       child.deselect();
     }
@@ -257,7 +257,7 @@ export class Node {
       child.deleteRecursive();
     }
 
-    this.document.selectedNodeIDs.delete(this.id);
+    this.document.selectedNodeIDStore.data.delete(this.id);
     this.document.nodeStore.data.delete(this.id);
   }
 }
