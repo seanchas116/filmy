@@ -66,8 +66,6 @@ export const TimelineArea: React.FC<{
               // TODO
             }}
             onMove={(totalDeltaX, totalDeltaY) => {
-              console.log("move", totalDeltaX, totalDeltaY);
-
               setCurrentPreviewRows(
                 movePreviewRows(
                   originalPreviewRows,
@@ -150,16 +148,12 @@ const TimelineAreaItem: React.FC<{
         onMoveStart();
       }),
       onMove: action((e, { totalDeltaX, totalDeltaY }) => {
-        console.log("onMove", e.timeStamp);
-
         onMove(totalDeltaX, totalDeltaY);
       }),
       onEnd: action(() => {
         onMoveEnd();
       }),
     });
-
-    console.log("start", start);
 
     return (
       <div
