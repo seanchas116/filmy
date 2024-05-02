@@ -1,8 +1,9 @@
 import { Store } from "@/utils/store/store";
 import { Document } from "./document";
-import { SequenceData } from "./schema";
+import { SequenceData, TimelineData } from "./schema";
 import { Timeline } from "./timeline";
 import { computed, makeObservable } from "mobx";
+import { nanoid } from "nanoid";
 
 export class Sequence {
   constructor(document: Document, id: string) {
@@ -26,6 +27,22 @@ export class Sequence {
 
   @computed get timelines(): Timeline[] {
     return this.timelineIDs.map((id) => this.document.timelines.get(id));
+  }
+
+  prependTimeline(data: Omit<TimelineData, "sequence" | "order">) {
+    return this.document.timelines.add(nanoid(), {
+      ...data,
+      sequence: this.id,
+      order: (this.timelines[0]?.data.order ?? 0) - 1,
+    });
+  }
+
+  appendTimeline(data: Omit<TimelineData, "sequence" | "order">) {
+    return this.document.timelines.add(nanoid(), {
+      ...data,
+      sequence: this.id,
+      order: (this.timelines[this.timelines.length - 1]?.data.order ?? 0) + 1,
+    });
   }
 
   readonly id: string;

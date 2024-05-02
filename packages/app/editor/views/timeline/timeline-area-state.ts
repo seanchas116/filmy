@@ -39,6 +39,28 @@ export class TimelineAreaState {
   private initialPreviewRows: PreviewRow[] | undefined = undefined;
   @observable.ref private ongoingPreviewRows: PreviewRow[] | undefined =
     undefined;
+  private prependedTimeline: Timeline | undefined = undefined;
+  private appendedTimeline: Timeline | undefined = undefined;
+
+  private createPrependedTimeline(): Timeline {
+    if (!this.prependedTimeline) {
+      this.prependedTimeline =
+        this.editorState.document.currentSequence.prependTimeline({
+          name: "New Timeline",
+        });
+    }
+    return this.prependedTimeline;
+  }
+
+  private createAppendedTimeline(): Timeline {
+    if (!this.appendedTimeline) {
+      this.appendedTimeline =
+        this.editorState.document.currentSequence.appendTimeline({
+          name: "New Timeline",
+        });
+    }
+    return this.appendedTimeline;
+  }
 
   move(itemID: string, totalDeltaX: number, totalDeltaY: number) {
     if (!this.initialPreviewRows) {
@@ -57,6 +79,8 @@ export class TimelineAreaState {
   end() {
     this.initialPreviewRows = undefined;
     this.ongoingPreviewRows = undefined;
+    this.prependedTimeline = undefined;
+    this.appendedTimeline = undefined;
   }
 
   get rowsToShow() {
@@ -86,11 +110,13 @@ export class TimelineAreaState {
       return previewRows;
     }
 
-    const nextRowIndex = clamp(
-      previewRowIndex + Math.round(totalDeltaY / this.rowHeight),
-      0,
-      previewRows.length - 1
-    );
+    const newPreview: Preview = {
+      ...preview,
+      start: Math.max(0, preview.start + totalDeltaX / this.scale),
+    };
+
+    const nextRowIndex =
+      previewRowIndex + Math.round(totalDeltaY / this.rowHeight);
     console.log(totalDeltaY);
     const newRows: PreviewRow[] = [];
 
@@ -103,12 +129,21 @@ export class TimelineAreaState {
         ),
       };
       if (i === nextRowIndex) {
-        newRow.previews.push({
-          ...preview,
-          start: Math.max(0, preview.start + totalDeltaX / this.scale),
-        });
+        newRow.previews.push(newPreview);
       }
       newRows.push(newRow);
+    }
+
+    if (nextRowIndex < 0) {
+      newRows.unshift({
+        timeline: this.createPrependedTimeline(),
+        previews: [newPreview],
+      });
+    } else if (nextRowIndex >= previewRows.length) {
+      newRows.push({
+        timeline: this.createAppendedTimeline(),
+        previews: [newPreview],
+      });
     }
 
     return newRows;
@@ -136,8 +171,4 @@ export class TimelineAreaState {
       }
     }
   }
-}
-
-function clamp(value: number, min: number, max: number) {
-  return Math.min(Math.max(value, min), max);
 }
