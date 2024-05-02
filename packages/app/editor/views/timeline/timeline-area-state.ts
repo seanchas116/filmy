@@ -65,19 +65,44 @@ export class TimelineAreaState {
     previewRows: Preview[][],
     movedItemID: string,
     totalDeltaX: number,
-    _totalDeltaY: number
+    totalDeltaY: number
   ): Preview[][] {
-    return previewRows.map((row) => {
-      return row.map((preview) => {
-        if (preview.item.id === movedItemID) {
-          return {
-            ...preview,
-            start: Math.max(0, preview.start + totalDeltaX / this.scale),
-          };
-        }
-        return preview;
-      });
-    });
+    let preview: Preview | undefined;
+    let previewRowIndex = 0;
+    // find preview
+    for (const [i, row] of previewRows.entries()) {
+      preview = row.find((preview) => preview.item.id === movedItemID);
+      if (preview) {
+        previewRowIndex = i;
+        break;
+      }
+    }
+    if (!preview) {
+      return previewRows;
+    }
+
+    const nextRowIndex = clamp(
+      previewRowIndex + Math.round(totalDeltaY / this.rowHeight),
+      0,
+      previewRows.length - 1
+    );
+    console.log(totalDeltaY);
+    const resultRows = [];
+
+    for (let i = 0; i < previewRows.length; i++) {
+      const row = [
+        ...previewRows[i].filter((preview) => preview.item.id !== movedItemID),
+      ];
+      if (i === nextRowIndex) {
+        row.push({
+          ...preview,
+          start: Math.max(0, preview.start + totalDeltaX / this.scale),
+        });
+      }
+      resultRows.push(row);
+    }
+
+    return resultRows;
   }
 
   private applyPreviewRows(previewRows: Preview[][]) {
@@ -98,4 +123,8 @@ export class TimelineAreaState {
       }
     }
   }
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
 }
