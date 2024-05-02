@@ -1,4 +1,5 @@
 import { Node } from "@/document/node";
+import { TrackItem } from "@/document/track-item";
 import { EditorState } from "@/editor/state/editor-state";
 import { assertNonNull } from "@/utils/assert";
 import { autorun } from "mobx";
@@ -30,19 +31,18 @@ export class CompositionRenderer {
   render() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    const nodes = this.editorState.document.currentSequence.tracks
+    const items = this.editorState.document.currentSequence.tracks
       .toReversed()
-      .flatMap((track) => track.itemsAt(this.editorState.currentTime))
-      .map((item) => item.node);
+      .flatMap((track) => track.itemsAt(this.editorState.currentTime));
 
-    for (const node of nodes) {
-      this.renderNode(node);
+    for (const item of items) {
+      this.renderNode(item.node, item);
     }
   }
 
-  renderNode(node: Node) {
+  renderNode(node: Node, trackItem: TrackItem) {
     for (const child of node.children) {
-      this.renderNode(child);
+      this.renderNode(child, trackItem);
     }
 
     const data = node.data;
@@ -64,7 +64,7 @@ export class CompositionRenderer {
         void video.pause();
       }
 
-      const targetTime = (this.editorState.currentTime + data.offset) / 1000;
+      const targetTime = (this.editorState.currentTime + trackItem.trim) / 1000;
       const diff = Math.abs(video.currentTime - targetTime);
       // TODO: better seek precision (using requestVideoFrameCallback)
       if (diff >= 1 / 60) {

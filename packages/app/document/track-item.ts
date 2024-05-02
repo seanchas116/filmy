@@ -46,6 +46,32 @@ export class TrackItem {
     };
   }
 
+  get start(): number {
+    return this.data.start;
+  }
+
+  set start(start: number) {
+    this.data = {
+      ...this.data,
+      start,
+    };
+  }
+
+  get trim(): number {
+    return this.data.trim;
+  }
+
+  set trim(offset: number) {
+    this.data = {
+      ...this.data,
+      trim: offset,
+    };
+  }
+
+  get duration(): number {
+    return this.data.duration;
+  }
+
   readonly id: string;
   readonly document: Document;
   readonly store: Store<TrackItemData>;

@@ -51,7 +51,6 @@ export type NodeData = NodeCommonData &
     | {
         readonly type: "video";
         readonly src: string;
-        readonly offset: number;
       }
   );
 
@@ -64,6 +63,7 @@ export type TrackData = {
 export type TrackItemData = {
   readonly track: string;
   readonly start: number;
+  readonly trim: number;
   readonly duration: number;
   readonly node: string;
 };

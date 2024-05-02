@@ -113,12 +113,12 @@ export class Document {
       w: 640,
       h: 480,
       src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-      offset: 4 * 60 * 1000,
     });
 
     this.trackItems.add(nanoid(), {
       track: track1.id,
       start: 1000,
+      trim: 4 * 60 * 1000,
       duration: 1000,
       node: frameNode.id,
     });
@@ -126,6 +126,7 @@ export class Document {
     this.trackItems.add(nanoid(), {
       track: track2.id,
       start: 0,
+      trim: 0,
       duration: 10000,
       node: videoNode.id,
     });

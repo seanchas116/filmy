@@ -36,6 +36,7 @@ export class InsertDragHandler implements DragHandler {
       document.trackItems.add(nanoid(), {
         track: track.id,
         start: this.editorState.currentTime,
+        trim: 0,
         duration: 1000,
         node: root.id,
       });
