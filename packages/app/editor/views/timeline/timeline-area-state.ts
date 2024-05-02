@@ -118,7 +118,6 @@ export class TimelineAreaState {
 
     const nextRowIndex =
       previewRowIndex + Math.round(totalDeltaY / this.rowHeight);
-    console.log(totalDeltaY);
     const newRows: PreviewRow[] = [];
 
     for (let i = 0; i < previewRows.length; i++) {
