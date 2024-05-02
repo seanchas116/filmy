@@ -1,63 +1,30 @@
 import { observer } from "mobx-react-lite";
 import { useEditorState } from "../use-editor-state";
-import { action, reaction } from "mobx";
+import { action } from "mobx";
 import { twMerge } from "tailwind-merge";
 import { TimelineItem } from "@/document/timeline-item";
-import { Timeline } from "@/document/timeline";
 import { usePointerStroke } from "@/editor/components/use-pointer-stroke";
-import { useEffect, useState } from "react";
-
-interface Preview {
-  timeline: Timeline;
-  item: TimelineItem;
-  start: number;
-  duration: number;
-}
-
-const rowHeight = 32;
-const scale = 0.1;
+import { useState } from "react";
+import { TimelineAreaState } from "./timeline-area-state";
 
 export const TimelineArea: React.FC<{
   className?: string;
 }> = observer(({ className }) => {
   const editorState = useEditorState();
 
-  const [originalPreviewRows, setOriginalPreviewRows] = useState<Preview[][]>(
-    []
-  );
-  const [currentPreviewRows, setCurrentPreviewRows] = useState<Preview[][]>([]);
-
-  useEffect(() => {
-    return reaction(
-      () => {
-        const timelines = editorState.document.currentSequence.timelines;
-
-        return timelines.map((timeline) =>
-          timeline.items.map((item) => ({
-            timeline,
-            item,
-            start: item.data.start,
-            duration: item.data.duration,
-          }))
-        );
-      },
-      (previewRows) => {
-        setOriginalPreviewRows(previewRows);
-        setCurrentPreviewRows(previewRows);
-      },
-      { fireImmediately: true }
-    );
-  }, [editorState]);
+  const [state] = useState(() => new TimelineAreaState(editorState));
 
   return (
     <div
       className={twMerge("relative", className)}
       onMouseDown={(e) => e.stopPropagation()}
     >
-      {currentPreviewRows.flatMap((row, timelineIndex) => {
+      {state.rowsToShow.flatMap((row, timelineIndex) => {
         return row.map((preview) => (
           <TimelineAreaItem
             key={preview.item.id}
+            rowHeight={state.rowHeight}
+            scale={state.scale}
             item={preview.item}
             start={preview.start}
             duration={preview.duration}
@@ -66,32 +33,10 @@ export const TimelineArea: React.FC<{
               // TODO
             }}
             onMove={(totalDeltaX, totalDeltaY) => {
-              setCurrentPreviewRows(
-                movePreviewRows(
-                  originalPreviewRows,
-                  preview,
-                  totalDeltaX,
-                  totalDeltaY
-                )
-              );
+              state.move(preview.item.id, totalDeltaX, totalDeltaY);
             }}
             onMoveEnd={action(() => {
-              for (const row of currentPreviewRows) {
-                for (const preview of row) {
-                  const item = preview.item;
-
-                  if (
-                    item.data.start !== preview.start ||
-                    item.data.duration !== preview.duration
-                  ) {
-                    item.data = {
-                      ...item.data,
-                      start: preview.start,
-                      duration: preview.duration,
-                    };
-                  }
-                }
-              }
+              state.end();
             })}
           />
         ));
@@ -100,26 +45,9 @@ export const TimelineArea: React.FC<{
   );
 });
 
-function movePreviewRows(
-  previewRows: Preview[][],
-  movedItem: Preview,
-  totalDeltaX: number,
-  totalDeltaY: number
-): Preview[][] {
-  return previewRows.map((row) => {
-    return row.map((preview) => {
-      if (preview.item === movedItem.item) {
-        return {
-          ...preview,
-          start: Math.max(0, preview.start + totalDeltaX / scale),
-        };
-      }
-      return preview;
-    });
-  });
-}
-
 const TimelineAreaItem: React.FC<{
+  rowHeight: number;
+  scale: number;
   item: TimelineItem;
   timelineIndex: number;
   start: number;
@@ -129,6 +57,8 @@ const TimelineAreaItem: React.FC<{
   onMoveEnd: () => void;
 }> = observer(
   ({
+    rowHeight,
+    scale,
     item,
     timelineIndex,
     start,
