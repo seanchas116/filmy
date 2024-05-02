@@ -258,9 +258,12 @@ export class Node {
     this.data = { ...this.data, name };
   }
 
-  deleteRecursive() {
+  delete() {
+    for (const trackItem of this.trackItems) {
+      this.document.trackItemStore.data.delete(trackItem.id);
+    }
     for (const child of this.children) {
-      child.deleteRecursive();
+      child.delete();
     }
 
     this.document.selectedNodeIDStore.data.delete(this.id);

@@ -34,7 +34,7 @@ export class Track {
 
   delete() {
     for (const item of this.items) {
-      item.delete();
+      item.node.delete();
     }
     this.store.data.delete(this.id);
   }

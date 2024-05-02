@@ -35,15 +35,16 @@ export class Selection {
   }
 
   deleteSelected() {
-    for (const node of this.nodes) {
-      if (node.parent) {
-        node.deleteRecursive();
-      }
+    const nodes = new Set(this.nodes);
+    const trackItem = this.trackItems.at(0);
+    const containingTrackItem =
+      trackItem && !trackItem.selected ? trackItem : undefined;
+
+    for (const node of nodes) {
+      node.delete();
     }
 
-    for (const trackItem of this.trackItems) {
-      trackItem.delete();
-    }
+    containingTrackItem?.node.select();
   }
 
   selectAllSiblings() {

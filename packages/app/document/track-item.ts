@@ -30,11 +30,6 @@ export class TrackItem {
     return this.document.selection.nodeRoots.has(this.node);
   }
 
-  delete() {
-    this.node.deleteRecursive();
-    this.store.data.delete(this.id);
-  }
-
   get track(): Track {
     return this.document.tracks.get(this.data.track);
   }
