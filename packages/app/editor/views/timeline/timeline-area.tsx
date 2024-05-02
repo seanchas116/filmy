@@ -19,7 +19,7 @@ export const TimelineArea: React.FC<{
       onMouseDown={(e) => e.stopPropagation()}
     >
       {state.rowsToShow.flatMap((row, timelineIndex) => {
-        return row.map((preview) => (
+        return row.previews.map((preview) => (
           <TimelineAreaItem
             key={preview.item.id}
             rowHeight={state.rowHeight}
