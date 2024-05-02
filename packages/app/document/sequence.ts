@@ -53,6 +53,26 @@ export class Sequence {
     }
   }
 
+  get width() {
+    return this.data.w;
+  }
+  set width(width: number) {
+    this.data = {
+      ...this.data,
+      w: width,
+    };
+  }
+
+  get height() {
+    return this.data.h;
+  }
+  set height(height: number) {
+    this.data = {
+      ...this.data,
+      h: height,
+    };
+  }
+
   readonly id: string;
   readonly document: Document;
   readonly store: Store<SequenceData>;

@@ -71,4 +71,6 @@ export type TrackItemData = {
 export type SequenceData = {
   readonly name: string;
   readonly order: number;
+  readonly w: number;
+  readonly h: number;
 };

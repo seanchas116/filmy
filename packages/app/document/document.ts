@@ -53,9 +53,14 @@ export class Document {
 
     this.selection = new Selection(this);
 
+    const videoWidth = 640;
+    const videoHeight = 480;
+
     const sequence = this.sequences.add(nanoid(), {
       name: "Sequence 1",
       order: 0,
+      w: videoWidth,
+      h: videoHeight,
     });
     this.currentSequence = this.sequences.get(sequence.id);
 
@@ -75,8 +80,8 @@ export class Document {
       type: "frame",
       x: 0,
       y: 0,
-      w: 640,
-      h: 480,
+      w: videoWidth,
+      h: videoHeight,
       fill: {
         type: "solid",
         hex: "#ffffff",
@@ -110,8 +115,8 @@ export class Document {
       type: "video",
       x: 0,
       y: 0,
-      w: 640,
-      h: 480,
+      w: videoWidth,
+      h: videoHeight,
       src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
     });
 

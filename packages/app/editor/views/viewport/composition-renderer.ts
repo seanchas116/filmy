@@ -49,8 +49,6 @@ const videos = new Map<string, HTMLVideoElement>();
 export class CompositionRenderer {
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
-    this.canvas.width = 640;
-    this.canvas.height = 480;
     this.context = assertNonNull(this.canvas.getContext("2d"));
   }
 

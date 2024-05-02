@@ -6,13 +6,12 @@ import { CurrentFrameRenderer } from "./composition-renderer";
 
 export const CompositionView: React.FC = observer(() => {
   const editorState = useEditorState();
-  const nodes = editorState.document.currentSequence.tracks
+  const sequence = editorState.document.currentSequence;
+  const nodes = sequence.tracks
     .toReversed()
     .flatMap((track) => track.itemsAt(editorState.currentTime))
     .map((item) => item.node);
-
-  const width = 640;
-  const height = 480;
+  const { width, height } = sequence;
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -21,12 +20,14 @@ export const CompositionView: React.FC = observer(() => {
     if (!canvas) {
       return;
     }
+    canvas.width = width;
+    canvas.height = height;
 
     const renderer = new CurrentFrameRenderer(editorState, canvas);
     return () => {
       renderer.dispose();
     };
-  }, [editorState]);
+  }, [editorState, width, height]);
 
   return (
     <div

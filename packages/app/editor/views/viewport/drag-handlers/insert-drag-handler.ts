@@ -21,8 +21,8 @@ export class InsertDragHandler implements DragHandler {
         type: "frame",
         x: 0,
         y: 0,
-        w: 640,
-        h: 480,
+        w: this.editorState.document.currentSequence.width,
+        h: this.editorState.document.currentSequence.height,
         fill: {
           type: "solid",
           hex: "#ffffff",
