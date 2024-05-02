@@ -38,7 +38,7 @@ export class Selection {
     const nodes = new Set(this.nodes);
     const trackItem = this.trackItems.at(0);
     const containingTrackItem =
-      trackItem && !trackItem.selected ? trackItem : undefined;
+      trackItem && !trackItem.node.selected ? trackItem : undefined;
 
     for (const node of nodes) {
       node.delete();
