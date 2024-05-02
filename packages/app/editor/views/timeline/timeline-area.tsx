@@ -110,7 +110,81 @@ const TimelineAreaItem: React.FC<{
           left: start * scale,
           width: duration * scale,
         }}
-      />
+      >
+        {/* drag start */}
+        <div
+          className="absolute top-0 left-0 bottom-0 w-2 cursor-ew-resize"
+          onMouseDown={(e) => {
+            e.stopPropagation();
+
+            const initX = e.clientX;
+            const initStart = start;
+            const initDuration = duration;
+
+            const onMouseMove = action((e: MouseEvent) => {
+              const totalDeltaX = e.clientX - initX;
+
+              const newStart = Math.max(0, initStart + totalDeltaX / scale);
+              const newDuration = Math.max(
+                0,
+                initDuration - totalDeltaX / scale
+              );
+
+              item.data = {
+                ...item.data,
+                start: newStart,
+                duration: newDuration,
+              };
+            });
+
+            const onMouseUp = action(() => {
+              window.removeEventListener("mousemove", onMouseMove);
+              window.removeEventListener("mouseup", onMouseUp);
+
+              editorState.document.undoManager.commit();
+            });
+
+            window.addEventListener("mousemove", onMouseMove);
+            window.addEventListener("mouseup", onMouseUp);
+          }}
+        />
+
+        {/* drag end */}
+
+        <div
+          className="absolute top-0 right-0 bottom-0 w-2 cursor-ew-resize"
+          onMouseDown={(e) => {
+            e.stopPropagation();
+
+            const initX = e.clientX;
+            const initDuration = duration;
+
+            const onMouseMove = action((e: MouseEvent) => {
+              const totalDeltaX = e.clientX - initX;
+
+              const newDuration = Math.max(
+                0,
+                initDuration + totalDeltaX / scale
+              );
+
+              item.data = {
+                ...item.data,
+                duration: newDuration,
+              };
+            });
+
+            const onMouseUp = action(() => {
+              window.removeEventListener("mousemove", onMouseMove);
+              window.removeEventListener("mouseup", onMouseUp);
+
+              editorState.document.undoManager.commit();
+            });
+
+            window.addEventListener("mousemove", onMouseMove);
+            window.addEventListener("mouseup", onMouseUp);
+          }}
+        />
+      </div>
     );
   }
 );

@@ -82,6 +82,7 @@ export class TimelineAreaState {
     this.prependedTimeline = undefined;
     this.appendedTimeline = undefined;
     this.editorState.document.currentSequence.deleteUnusedTimelines();
+    this.editorState.document.undoManager.commit();
   }
 
   get rowsToShow() {
