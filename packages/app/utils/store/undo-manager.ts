@@ -10,8 +10,6 @@ export class UndoManager {
     for (const store of stores) {
       this.disposers.push(
         store.data.observe_((change) => {
-          console.log(change);
-
           if (change.type === "add") {
             this.stageChanges(store, change.name, undefined, change.newValue);
           } else if (change.type === "delete") {
@@ -114,7 +112,6 @@ class UndoManagerCommand {
 
   undo() {
     try {
-      console.debug("-- undo");
       this.undoManager.duringUndoRedo = true;
 
       for (const [store, changes] of this.changesForStore) {
@@ -128,12 +125,10 @@ class UndoManagerCommand {
       }
     } finally {
       this.undoManager.duringUndoRedo = false;
-      console.debug("-- undo done");
     }
   }
   redo() {
     try {
-      console.debug("-- redo");
       this.undoManager.duringUndoRedo = true;
 
       for (const [store, changes] of this.changesForStore) {
@@ -147,7 +142,6 @@ class UndoManagerCommand {
       }
     } finally {
       this.undoManager.duringUndoRedo = false;
-      console.debug("-- redo done");
     }
   }
 }
