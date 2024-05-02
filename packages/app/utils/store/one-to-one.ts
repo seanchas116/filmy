@@ -4,36 +4,36 @@ import { Store } from "./store";
 export class OneToOne<TData> {
   constructor(
     store: Store<TData>,
-    getValue: (row: TData) => string | undefined
+    getRef: (value: TData) => string | undefined
   ) {
-    this.getValue = getValue;
+    this.getRef = getRef;
     store.data.observe_(this.onChange.bind(this));
   }
 
-  private getValue: (row: TData) => string | undefined;
-  private valueToKey = new Map<string, string>();
+  private getRef: (value: TData) => string | undefined;
+  private refToID = new Map<string, string>();
 
-  get(value: string): string | undefined {
-    return this.valueToKey.get(value);
+  get(ref: string): string | undefined {
+    return this.refToID.get(ref);
   }
 
   private onChange(change: IMapDidChange<string, TData>) {
-    const oldRow = "oldValue" in change ? change.oldValue : undefined;
-    const newRow = "newValue" in change ? change.newValue : undefined;
+    const oldValue = "oldValue" in change ? change.oldValue : undefined;
+    const newValue = "newValue" in change ? change.newValue : undefined;
 
-    const oldValue = oldRow ? this.getValue(oldRow) : undefined;
-    const newValue = newRow ? this.getValue(newRow) : undefined;
+    const oldRef = oldValue ? this.getRef(oldValue) : undefined;
+    const newRef = newValue ? this.getRef(newValue) : undefined;
 
-    if (oldValue === newValue) {
+    if (oldRef === newRef) {
       return;
     }
 
-    if (oldValue) {
-      this.valueToKey.delete(oldValue);
+    if (oldRef) {
+      this.refToID.delete(oldRef);
     }
 
-    if (newValue) {
-      this.valueToKey.set(newValue, change.name);
+    if (newRef) {
+      this.refToID.set(newRef, change.name);
     }
   }
 }
