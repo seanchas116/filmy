@@ -118,89 +118,91 @@ const TimelineAreaItem: React.FC<{
           width: duration * scale,
         }}
       >
-        <Thumbnail
-          item={item}
-          widthPerMS={scale}
-          width={duration * scale}
-          height={rowHeight}
-          thumbnailWidth={64}
-        />
-        {/* drag start */}
-        <div
-          className="absolute top-0 left-0 bottom-0 w-2 cursor-ew-resize bg-gray-200/50"
-          onMouseDown={(e) => {
-            e.stopPropagation();
+        <div className="absolute -inset-0.5">
+          <Thumbnail
+            item={item}
+            widthPerMS={scale}
+            width={duration * scale}
+            height={rowHeight}
+            thumbnailWidth={64}
+          />
+          {/* drag start */}
+          <div
+            className="absolute top-0 left-0 bottom-0 w-2 cursor-ew-resize bg-gray-200/50"
+            onMouseDown={(e) => {
+              e.stopPropagation();
 
-            const initX = e.clientX;
-            const initStart = item.start;
-            const initTrim = item.trim;
-            const initDuration = item.duration;
+              const initX = e.clientX;
+              const initStart = item.start;
+              const initTrim = item.trim;
+              const initDuration = item.duration;
 
-            const onMouseMove = action((e: MouseEvent) => {
-              const totalDeltaX = e.clientX - initX;
+              const onMouseMove = action((e: MouseEvent) => {
+                const totalDeltaX = e.clientX - initX;
 
-              const newStart = Math.max(0, initStart + totalDeltaX / scale);
-              const newTrim = Math.max(0, initTrim + totalDeltaX / scale);
-              const newDuration = Math.max(
-                0,
-                initDuration - totalDeltaX / scale
-              );
+                const newStart = Math.max(0, initStart + totalDeltaX / scale);
+                const newTrim = Math.max(0, initTrim + totalDeltaX / scale);
+                const newDuration = Math.max(
+                  0,
+                  initDuration - totalDeltaX / scale
+                );
 
-              item.data = {
-                ...item.data,
-                start: newStart,
-                trim: newTrim,
-                duration: newDuration,
-              };
-            });
+                item.data = {
+                  ...item.data,
+                  start: newStart,
+                  trim: newTrim,
+                  duration: newDuration,
+                };
+              });
 
-            const onMouseUp = action(() => {
-              window.removeEventListener("mousemove", onMouseMove);
-              window.removeEventListener("mouseup", onMouseUp);
+              const onMouseUp = action(() => {
+                window.removeEventListener("mousemove", onMouseMove);
+                window.removeEventListener("mouseup", onMouseUp);
 
-              editorState.document.undoManager.commit();
-            });
+                editorState.document.undoManager.commit();
+              });
 
-            window.addEventListener("mousemove", onMouseMove);
-            window.addEventListener("mouseup", onMouseUp);
-          }}
-        />
+              window.addEventListener("mousemove", onMouseMove);
+              window.addEventListener("mouseup", onMouseUp);
+            }}
+          />
 
-        {/* drag end */}
+          {/* drag end */}
 
-        <div
-          className="absolute top-0 right-0 bottom-0 w-2 cursor-ew-resize bg-gray-200/50"
-          onMouseDown={(e) => {
-            e.stopPropagation();
+          <div
+            className="absolute top-0 right-0 bottom-0 w-2 cursor-ew-resize bg-gray-200/50"
+            onMouseDown={(e) => {
+              e.stopPropagation();
 
-            const initX = e.clientX;
-            const initDuration = duration;
+              const initX = e.clientX;
+              const initDuration = duration;
 
-            const onMouseMove = action((e: MouseEvent) => {
-              const totalDeltaX = e.clientX - initX;
+              const onMouseMove = action((e: MouseEvent) => {
+                const totalDeltaX = e.clientX - initX;
 
-              const newDuration = Math.max(
-                0,
-                initDuration + totalDeltaX / scale
-              );
+                const newDuration = Math.max(
+                  0,
+                  initDuration + totalDeltaX / scale
+                );
 
-              item.data = {
-                ...item.data,
-                duration: newDuration,
-              };
-            });
+                item.data = {
+                  ...item.data,
+                  duration: newDuration,
+                };
+              });
 
-            const onMouseUp = action(() => {
-              window.removeEventListener("mousemove", onMouseMove);
-              window.removeEventListener("mouseup", onMouseUp);
+              const onMouseUp = action(() => {
+                window.removeEventListener("mousemove", onMouseMove);
+                window.removeEventListener("mouseup", onMouseUp);
 
-              editorState.document.undoManager.commit();
-            });
+                editorState.document.undoManager.commit();
+              });
 
-            window.addEventListener("mousemove", onMouseMove);
-            window.addEventListener("mouseup", onMouseUp);
-          }}
-        />
+              window.addEventListener("mousemove", onMouseMove);
+              window.addEventListener("mouseup", onMouseUp);
+            }}
+          />
+        </div>
       </div>
     );
   }
