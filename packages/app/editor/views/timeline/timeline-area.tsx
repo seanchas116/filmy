@@ -274,6 +274,7 @@ const VideoThumbnail: React.FC<{
         for (let i = 0; i < width / thumbnailWidth; i++) {
           const time =
             ((i + 0.5) * (thumbnailWidth / widthPerMS) + trim) / 1000;
+          console.log(time);
           thumbnails.push(await videoThumbnail.getAt(time));
         }
 
@@ -290,10 +291,18 @@ const VideoThumbnail: React.FC<{
     }
 
     return (
-      <div
-        className={twMerge("flex pointer-events-none", className)}
-        style={{ width, height, background: `url(${thumbnails[0].dataURL})` }}
-      ></div>
+      <div className={twMerge("flex pointer-events-none", className)}>
+        {thumbnails.map((thumbnail, i) => (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            key={i}
+            alt=""
+            src={thumbnail.dataURL}
+            width={thumbnailWidth}
+            height={height}
+          />
+        ))}
+      </div>
     );
   }
 );
