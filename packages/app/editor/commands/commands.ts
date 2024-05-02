@@ -11,9 +11,10 @@ import {
   SelectAllCommand,
 } from "./edit";
 import {
-  InsertBoxCommand,
+  InsertRectangleCommand,
   InsertImageCommand,
   InsertTextCommand,
+  InsertOvalCommand,
 } from "./insert";
 import { GroupCommand, UngroupCommand } from "./node";
 import { ResetZoomCommand, ZoomInCommand, ZoomOutCommand } from "./view";
@@ -55,7 +56,8 @@ export class Commands {
   readonly deleteCommand = new DeleteCommand(this);
   readonly selectAllCommand = new SelectAllCommand(this);
 
-  readonly insertBoxCommand = new InsertBoxCommand(this);
+  readonly insertRectangleCommand = new InsertRectangleCommand(this);
+  readonly insertOvalCommand = new InsertOvalCommand(this);
   readonly insertTextCommand = new InsertTextCommand(this);
   readonly insertImageCommand = new InsertImageCommand(this);
 
@@ -100,7 +102,8 @@ export class Commands {
       type: "sub",
       text: "Create",
       children: [
-        this.insertBoxCommand.menu,
+        this.insertRectangleCommand.menu,
+        this.insertOvalCommand.menu,
         this.insertTextCommand.menu,
         this.insertImageCommand.menu,
         // { type: "separator" },

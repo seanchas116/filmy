@@ -13,6 +13,7 @@ import { ClickMoveDragHandler } from "./drag-handlers/click-move-drag-handler";
 import { action } from "mobx";
 import { showContextMenu } from "@/editor/components/context-menu-state";
 import { showNodeContextMenu } from "../show-context-menu";
+import { twMerge } from "tailwind-merge";
 
 class ViewportNodePicker {
   constructor(editorState: EditorState) {
@@ -94,6 +95,9 @@ export const EventTarget = observer(() => {
       className="absolute inset-0"
       {...pointerProps}
       onContextMenu={onContextMenu}
+      style={{
+        cursor: editorState.tool ? "crosshair" : "default",
+      }}
     />
   );
 });
