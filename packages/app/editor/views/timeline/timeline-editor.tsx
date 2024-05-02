@@ -3,6 +3,7 @@ import { useEditorState } from "../use-editor-state";
 import { Icon } from "@iconify/react";
 import { action } from "mobx";
 import { usePointerStroke } from "@/editor/components/use-pointer-stroke";
+import { TimelineArea } from "./timeline-area";
 
 export const TimelineEditor: React.FC = observer(() => {
   const editorState = useEditorState();
@@ -62,30 +63,7 @@ export const TimelineEditor: React.FC = observer(() => {
           <div className="h-8 relative">
             <div className="absolute -inset-4" {...seekPointerProps} />
           </div>
-          {timelines.map((timeline) => {
-            return (
-              <div className="flex relative h-10" key={timeline.id}>
-                {timeline.items.map((item) => (
-                  <div
-                    key={item.id}
-                    className="bg-gray-100 absolute h-full top-0 rounded-lg border border-gray-200 aria-selected:border-blue-500"
-                    aria-selected={item.selected}
-                    style={{
-                      left: item.data.start * scale,
-                      width: item.data.duration * scale,
-                    }}
-                    onMouseDown={action((e) => {
-                      if (!e.shiftKey) {
-                        editorState.document.selection.clear();
-                      }
-                      item.node.select();
-                      e.stopPropagation();
-                    })}
-                  ></div>
-                ))}
-              </div>
-            );
-          })}
+          <TimelineArea />
           {/* time cursor */}
           <div
             className="absolute top-4 bottom-0 bg-red-500 pointer-events-none"
