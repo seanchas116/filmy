@@ -74,7 +74,7 @@ export const NodeTreeRow: React.FC<{
       </span>
       <ClickToEdit
         className="flex-1 min-w-0 truncate h-full"
-        inputClassName="bg-white text-rera-gray-800 outline-0 h-full w-full focus:ring-1 focus:ring-inset focus:ring-blue-500 rounded-r-lg"
+        inputClassName="bg-white text-gray-800 outline-0 h-full w-full focus:ring-1 focus:ring-inset focus:ring-blue-500 rounded-r-lg"
         previewClassName="h-full w-full min-w-0 flex items-center truncate"
         editing={isNameEditing}
         onChangeEditing={setNameEditing}

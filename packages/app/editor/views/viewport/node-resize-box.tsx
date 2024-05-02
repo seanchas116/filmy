@@ -6,6 +6,7 @@ import { NodeResizeBoxState } from "./node-resize-box-state";
 import { useEditorState } from "../use-editor-state";
 import twColors from "tailwindcss/colors";
 import { ResizeBox } from "@/editor/components/resize-box/resize-box";
+import { showNodeContextMenu } from "../show-context-menu";
 
 export const NodeResizeBox: React.FC = observer(function NodeResizeBox() {
   const editorState = useEditorState();
@@ -42,7 +43,7 @@ export const NodeResizeBox: React.FC = observer(function NodeResizeBox() {
         e.stopPropagation();
 
         if (state.selectedNodes.length) {
-          // showNodeContextMenu(editorState, state.selectedNodes[0], e);
+          showNodeContextMenu(editorState, state.selectedNodes[0], e);
         }
       }}
     >

@@ -6,6 +6,7 @@ import { ToolBar } from "./tool-bar/tool-bar";
 import { TimelineEditor } from "./timeline/timeline-editor";
 import { Viewport } from "./viewport/viewport";
 import { useKeyHandling } from "./use-key-handling";
+import { ContextMenuHost } from "../components/context-menu-host";
 
 export function Editor() {
   useKeyHandling();
@@ -19,6 +20,7 @@ export function Editor() {
         <RightSideBar />
       </div>
       <TimelineEditor />
+      <ContextMenuHost />
     </div>
   );
 }

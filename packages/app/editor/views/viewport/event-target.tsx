@@ -11,6 +11,8 @@ import { Node } from "@/document/node";
 import { useMemo } from "react";
 import { ClickMoveDragHandler } from "./drag-handlers/click-move-drag-handler";
 import { action } from "mobx";
+import { showContextMenu } from "@/editor/components/context-menu-state";
+import { showNodeContextMenu } from "../show-context-menu";
 
 class ViewportNodePicker {
   constructor(editorState: EditorState) {
@@ -44,7 +46,7 @@ export const EventTarget = observer(() => {
 
   const createViewportEvent = useMemo(
     () =>
-      (event: React.PointerEvent): ViewportEvent => {
+      (event: React.PointerEvent | React.MouseEvent): ViewportEvent => {
         return new ViewportEvent(
           editorState,
           event.nativeEvent,
@@ -77,5 +79,21 @@ export const EventTarget = observer(() => {
     }),
   });
 
-  return <div className="absolute inset-0" {...pointerProps} />;
+  const onContextMenu = action((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const node = createViewportEvent(e).node;
+    if (node) {
+      showNodeContextMenu(editorState, node, e);
+    }
+  });
+
+  return (
+    <div
+      className="absolute inset-0"
+      {...pointerProps}
+      onContextMenu={onContextMenu}
+    />
+  );
 });

@@ -11,27 +11,26 @@ import {
 } from "@/utils/menu-template";
 
 const shortcutClassNames = `
-  text-rera-gray-400 text-xs ml-auto pl-4
+  text-gray-400 text-xs ml-auto pl-4
    [[data-highlighted]>&]:text-white
 `;
 
 export const menuContentClassNames = `
 text-gray-900 text-xs
-bg-white z-10 border border-rera-gray-200 rounded-lg shadow-xl overflow-hidden p-1 outline-0
+bg-white z-10 border border-gray-200 rounded-lg shadow-xl overflow-hidden p-1 outline-0
 flex flex-col
 `;
 
 export const menuItemClassNames = `
 h-7 outline-0 rounded pr-4 pl-5 flex items-center
-aria-disabled:text-rera-gray-500
+aria-disabled:text-gray-500
 data-[highlighted]:bg-blue-500 data-[highlighted]:text-white
 data-[state=open]:bg-blue-500 data-[state=open]:text-white
 `;
 
-export const menuLabelClassNames =
-  "text-rera-gray-400 text-2xs pr-4 pl-5 leading-6";
+export const menuLabelClassNames = "text-gray-400 text-2xs pr-4 pl-5 leading-6";
 
-export const menuSeparatorClassNames = "my-1 mx-1 bg-rera-gray-200 h-px";
+export const menuSeparatorClassNames = "my-1 mx-1 bg-gray-200 h-px";
 
 export type MenuComponents = typeof DropdownMenu | typeof ContextMenu;
 

@@ -5,6 +5,7 @@ import React from "react";
 import { TreeViewItem } from "@/editor/components/treeview/tree-view-item";
 import { EditorState } from "@/editor/state/editor-state";
 import { Node } from "@/document/node";
+import { showNodeContextMenu } from "../show-context-menu";
 
 const instances = new WeakMap<Node, NodeTreeViewItem>();
 
@@ -140,8 +141,7 @@ export class NodeTreeViewItem extends TreeViewItem {
     });
   }
 
-  showContextMenu(_e: MouseEvent): void {
-    throw new Error("TODO: showContextMenu");
-    // showNodeContextMenu(this.editorState, this.node, e);
+  showContextMenu(e: MouseEvent): void {
+    showNodeContextMenu(this.editorState, this.node, e);
   }
 }
