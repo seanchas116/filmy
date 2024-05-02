@@ -327,8 +327,18 @@ const Thumbnail: React.FC<{
     return (
       <div
         className={twMerge("flex pointer-events-none", className)}
-        style={{ width, height, background: `url(${thumbnail})` }}
-      />
+        style={{
+          width,
+          height,
+          backgroundColor: "transparent",
+          backgroundImage:
+            "linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%), linear-gradient(45deg, #ddd 25%, transparent 25%, transparent 75%, #ddd 75%)",
+          backgroundSize: "16px 16px",
+          backgroundPosition: "0 0, 8px 8px",
+        }}
+      >
+        <div style={{ width, height, background: `url(${thumbnail})` }}></div>
+      </div>
     );
   }
 );
