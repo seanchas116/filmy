@@ -10,7 +10,6 @@ import { Parenting } from "@/utils/store/parenting";
 import { makeObservable } from "mobx";
 import { UndoManager } from "@/utils/store/undo-manager";
 import { Selection } from "./selection";
-import { OneToOne } from "@/utils/store/one-to-one";
 
 export class Document {
   constructor() {
@@ -47,9 +46,10 @@ export class Document {
       (data) => data.track,
       (data) => data.start
     );
-    this.trackItemFromNode = new OneToOne(
+    this.trackItemFromNode = new Parenting(
       this.trackItemStore,
-      (data) => data.node
+      (data) => data.node,
+      () => 0
     );
     this.sequences = new InstanceManager(
       this.sequenceStore,
@@ -159,7 +159,7 @@ export class Document {
   readonly trackItems: InstanceManager<TrackItemData, TrackItem>;
   readonly trackParenting: Parenting<TrackData>;
   readonly trackItemParenting: Parenting<TrackItemData>;
-  readonly trackItemFromNode: OneToOne<TrackItemData>;
+  readonly trackItemFromNode: Parenting<TrackItemData>;
   readonly nodes: NodeManager;
 
   readonly currentSequence: Sequence;

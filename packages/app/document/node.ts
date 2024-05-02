@@ -75,11 +75,9 @@ export class Node {
     return node;
   }
 
-  get trackItem(): TrackItem | undefined {
-    const id = this.document.trackItemFromNode.get(this.id);
-    if (id) {
-      return this.document.trackItems.safeGet(id);
-    }
+  get trackItems(): TrackItem[] {
+    const ids = this.document.trackItemFromNode.getChildren(this.id).items;
+    return ids.map((id) => this.document.trackItems.get(id));
   }
 
   @computed get ancestors(): Node[] {
