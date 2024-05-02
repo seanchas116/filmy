@@ -32,11 +32,11 @@ export class VideoThumbnail {
   getAt(time: number): Promise<VideoThumbnailFrame> {
     const key = Math.round(time / this.interval);
     return getOrCreate(this.cache, key, () =>
-      this.getAtImpl(key * this.interval)
+      this.generateAt(key * this.interval)
     );
   }
 
-  private async getAtImpl(time: number): Promise<VideoThumbnailFrame> {
+  private async generateAt(time: number): Promise<VideoThumbnailFrame> {
     return await this.mutex.runExclusive(async () => {
       const video = await this.loadVideo();
       const { context, canvas } = this;
