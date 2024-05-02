@@ -10,6 +10,8 @@ export class UndoManager {
     for (const store of stores) {
       this.disposers.push(
         store.data.observe_((change) => {
+          console.log(change);
+
           if (change.type === "add") {
             this.stageChanges(store, change.name, undefined, change.newValue);
           } else if (change.type === "delete") {
@@ -71,6 +73,10 @@ export class UndoManager {
     oldData: unknown,
     newData: unknown
   ) {
+    if (this.duringUndoRedo) {
+      return;
+    }
+
     if (!this.lastCommand || this.lastCommand.timestamp < Date.now() - 1000) {
       this.lastCommand = new UndoManagerCommand(this);
       this.undoStack.push(this.lastCommand);

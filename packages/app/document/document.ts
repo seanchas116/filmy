@@ -135,6 +135,8 @@ export class Document {
     });
 
     makeObservable(this);
+
+    this.undoManager.clear();
   }
 
   readonly undoManager: UndoManager;
