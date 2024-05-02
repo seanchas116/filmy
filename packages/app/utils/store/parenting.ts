@@ -1,7 +1,7 @@
 import { IMapDidChange } from "mobx";
 import { Store } from "./store";
 import { FractionalSort, FractionalSortResult } from "./fractiona-sort";
-import { getOrAdd } from "../get-or-add";
+import { getOrCreate } from "../get-or-create";
 
 export class Parenting<TData> {
   constructor(
@@ -51,7 +51,7 @@ export class Parenting<TData> {
   }
 
   private getChildrenSort(parent: string): FractionalSort<TData> {
-    return getOrAdd(
+    return getOrCreate(
       this.childrenMap,
       parent,
       () => new FractionalSort(this.store, this.getOrder)

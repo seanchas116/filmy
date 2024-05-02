@@ -22,17 +22,13 @@ import { Node } from "@/document/node";
 import { EditorState } from "../state/editor-state";
 import { MenuSubTemplate, MenuTemplate } from "@/utils/menu-template";
 import { isTextInput } from "@/utils/is-text-input";
+import { getOrCreate } from "@/utils/get-or-create";
 
 const instances = new WeakMap<EditorState, Commands>();
 
 export class Commands {
   static get(editorState: EditorState): Commands {
-    let commands = instances.get(editorState);
-    if (!commands) {
-      commands = new Commands(editorState);
-      instances.set(editorState, commands);
-    }
-    return commands;
+    return getOrCreate(instances, editorState, () => new Commands(editorState));
   }
 
   private constructor(editorState: EditorState) {
@@ -46,8 +42,8 @@ export class Commands {
     makeObservable(this);
   }
 
-  editorState: EditorState;
-  commands: Command[] = [];
+  readonly editorState: EditorState;
+  readonly commands: Command[] = [];
 
   readonly undoCommand = new UndoCommand(this);
   readonly redoCommand = new RedoCommand(this);

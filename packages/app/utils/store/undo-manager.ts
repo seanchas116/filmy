@@ -1,4 +1,4 @@
-import { getOrAdd } from "../get-or-add";
+import { getOrCreate } from "../get-or-create";
 import { UndoStack } from "../undo-stack";
 import { Store } from "./store";
 
@@ -82,7 +82,7 @@ export class UndoManager {
       this.lastCommand.timestamp = Date.now();
     }
 
-    const changes = getOrAdd(
+    const changes = getOrCreate(
       this.lastCommand.changesForStore,
       store,
       () => new Map<string, { oldData: unknown; newData: unknown }>()

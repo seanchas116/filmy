@@ -1,4 +1,4 @@
-export function getOrAdd<K, V>(
+export function getOrCreate<K, V>(
   map: {
     has(key: K): boolean;
     get(key: K): V | undefined;
