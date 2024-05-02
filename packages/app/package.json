@@ -13,6 +13,9 @@
   },
   "dependencies": {
     "@iconify/react": "^4.1.1",
+    "@radix-ui/react-context-menu": "^2.1.5",
+    "@radix-ui/react-dropdown-menu": "^2.0.6",
+    "@radix-ui/react-popover": "^1.0.7",
     "async-mutex": "^0.5.0",
     "lodash-es": "^4.17.21",
     "mobx": "^6.12.3",
