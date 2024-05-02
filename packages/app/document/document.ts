@@ -1,14 +1,9 @@
 import { Store } from "@/utils/store/store";
-import {
-  NodeData,
-  SequenceData,
-  TimelineData,
-  TimelineItemData,
-} from "./schema";
+import { NodeData, SequenceData, TrackData, TrackItemData } from "./schema";
 import { Node, NodeManager } from "./node";
 import { InstanceManager } from "./instance-manager";
-import { Timeline } from "./timeline";
-import { TimelineItem } from "./timeline-item";
+import { Track } from "./track";
+import { TrackItem } from "./track-item";
 import { nanoid } from "nanoid";
 import { Sequence } from "./sequence";
 import { Parenting } from "@/utils/store/parenting";
@@ -18,37 +13,37 @@ import { UndoManager } from "@/utils/store/undo-manager";
 
 export class Document {
   constructor() {
-    this.timelineStore = new Store<TimelineData>();
+    this.trackStore = new Store<TrackData>();
     this.sequenceStore = new Store<SequenceData>();
-    this.timelineItemStore = new Store<TimelineItemData>();
+    this.trackItemStore = new Store<TrackItemData>();
     this.nodeStore = new Store<NodeData>();
     this.selectedNodeIDStore = new Store<true>();
 
     this.undoManager = new UndoManager([
-      this.timelineStore,
+      this.trackStore,
       this.sequenceStore,
-      this.timelineItemStore,
+      this.trackItemStore,
       this.nodeStore,
       this.selectedNodeIDStore,
     ]);
 
     this.nodes = new NodeManager(this);
-    this.timelines = new InstanceManager(
-      this.timelineStore,
-      (id) => new Timeline(this, id)
+    this.tracks = new InstanceManager(
+      this.trackStore,
+      (id) => new Track(this, id)
     );
-    this.timelineItems = new InstanceManager(
-      this.timelineItemStore,
-      (id) => new TimelineItem(this, id)
+    this.trackItems = new InstanceManager(
+      this.trackItemStore,
+      (id) => new TrackItem(this, id)
     );
-    this.timelineParenting = new Parenting(
-      this.timelineStore,
+    this.trackParenting = new Parenting(
+      this.trackStore,
       (data) => data.sequence,
       (data) => data.order
     );
-    this.timelineItemParenting = new Parenting(
-      this.timelineItemStore,
-      (data) => data.timeline,
+    this.trackItemParenting = new Parenting(
+      this.trackItemStore,
+      (data) => data.track,
       (data) => data.start
     );
     this.sequences = new InstanceManager(
@@ -64,15 +59,15 @@ export class Document {
     });
     this.currentSequence = this.sequences.get(sequence.id);
 
-    const timeline1 = this.timelines.add(nanoid(), {
+    const track1 = this.tracks.add(nanoid(), {
       order: 0,
       sequence: sequence.id,
-      name: "Timeline 1",
+      name: "Track 1",
     });
-    const timeline2 = this.timelines.add(nanoid(), {
+    const track2 = this.tracks.add(nanoid(), {
       order: 1,
       sequence: sequence.id,
-      name: "Timeline 2",
+      name: "Track 2",
     });
 
     const frameNode = this.nodes.add(nanoid(), {
@@ -121,17 +116,15 @@ export class Document {
       offset: 4 * 60 * 1000,
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const timelineItem = this.timelineItems.add(nanoid(), {
-      timeline: timeline1.id,
+    this.trackItems.add(nanoid(), {
+      track: track1.id,
       start: 1000,
       duration: 1000,
       node: frameNode.id,
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const timelineItem2 = this.timelineItems.add(nanoid(), {
-      timeline: timeline2.id,
+    this.trackItems.add(nanoid(), {
+      track: track2.id,
       start: 0,
       duration: 10000,
       node: videoNode.id,
@@ -145,16 +138,16 @@ export class Document {
   readonly undoManager: UndoManager;
 
   readonly sequenceStore: Store<SequenceData>;
-  readonly timelineStore: Store<TimelineData>;
-  readonly timelineItemStore: Store<TimelineItemData>;
+  readonly trackStore: Store<TrackData>;
+  readonly trackItemStore: Store<TrackItemData>;
   readonly nodeStore: Store<NodeData>;
   readonly selectedNodeIDStore: Store<true>;
 
   readonly sequences: InstanceManager<SequenceData, Sequence>;
-  readonly timelines: InstanceManager<TimelineData, Timeline>;
-  readonly timelineItems: InstanceManager<TimelineItemData, TimelineItem>;
-  readonly timelineParenting: Parenting<TimelineData>;
-  readonly timelineItemParenting: Parenting<TimelineItemData>;
+  readonly tracks: InstanceManager<TrackData, Track>;
+  readonly trackItems: InstanceManager<TrackItemData, TrackItem>;
+  readonly trackParenting: Parenting<TrackData>;
+  readonly trackItemParenting: Parenting<TrackItemData>;
   readonly nodes: NodeManager;
 
   readonly currentSequence: Sequence;
@@ -187,18 +180,18 @@ class Selection {
     return new Set(this.nodes.map((node) => node.root));
   }
 
-  @computed get timelineItems(): TimelineItem[] {
+  @computed get trackItems(): TrackItem[] {
     const selectedNodeRoots = this.nodeRoots;
 
     // TODO: make efficient
-    const timelineItems = new Set<TimelineItem>();
-    for (const timelineItem of this.document.timelineItems.instances.values()) {
-      if (selectedNodeRoots.has(timelineItem.node.root)) {
-        timelineItems.add(timelineItem);
+    const trackItems = new Set<TrackItem>();
+    for (const trackItem of this.document.trackItems.instances.values()) {
+      if (selectedNodeRoots.has(trackItem.node.root)) {
+        trackItems.add(trackItem);
       }
     }
 
-    return [...timelineItems];
+    return [...trackItems];
   }
 
   deleteSelected() {
@@ -208,8 +201,8 @@ class Selection {
       }
     }
 
-    for (const timelineItem of this.timelineItems) {
-      timelineItem.delete();
+    for (const trackItem of this.trackItems) {
+      trackItem.delete();
     }
   }
 

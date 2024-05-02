@@ -20,8 +20,8 @@ function clickableAncestor(
     }
   }
 
-  for (const timeline of editorState.document.currentSequence.timelines) {
-    for (const item of timeline.items) {
+  for (const track of editorState.document.currentSequence.tracks) {
+    for (const item of track.items) {
       clickables.add(item.node);
     }
   }

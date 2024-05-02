@@ -30,9 +30,9 @@ export class CompositionRenderer {
   render() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    const nodes = this.editorState.document.currentSequence.timelines
+    const nodes = this.editorState.document.currentSequence.tracks
       .toReversed()
-      .flatMap((timeline) => timeline.itemsAt(this.editorState.currentTime))
+      .flatMap((track) => track.itemsAt(this.editorState.currentTime))
       .map((item) => item.node);
 
     for (const node of nodes) {

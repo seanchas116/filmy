@@ -7,7 +7,7 @@ import { TimelineArea } from "./timeline-area";
 
 export const TimelineEditor: React.FC = observer(() => {
   const editorState = useEditorState();
-  const timelines = editorState.document.currentSequence.timelines;
+  const tracks = editorState.document.currentSequence.tracks;
 
   const scale = 0.1;
   const currentTime = editorState.currentTime;
@@ -46,9 +46,9 @@ export const TimelineEditor: React.FC = observer(() => {
             )}
           </button>
         </div>
-        {timelines.map((timeline) => (
-          <div key={timeline.id} className="p-1 h-10 flex items-center">
-            {timeline.data.name}
+        {tracks.map((track) => (
+          <div key={track.id} className="p-1 h-10 flex items-center">
+            {track.data.name}
           </div>
         ))}
       </div>

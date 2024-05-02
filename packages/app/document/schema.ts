@@ -55,14 +55,14 @@ export type NodeData = NodeCommonData &
       }
   );
 
-export type TimelineData = {
+export type TrackData = {
   readonly sequence: string;
   readonly order: number;
   readonly name: string;
 };
 
-export type TimelineItemData = {
-  readonly timeline: string;
+export type TrackItemData = {
+  readonly track: string;
   readonly start: number;
   readonly duration: number;
   readonly node: string;

@@ -28,13 +28,13 @@ export class InsertDragHandler implements DragHandler {
           hex: "#ffffff",
         },
       });
-      const timeline = document.timelines.add(nanoid(), {
+      const track = document.tracks.add(nanoid(), {
         sequence: document.currentSequence.id,
         order: 0,
-        name: "Timeline 1",
+        name: "Track 1",
       });
-      document.timelineItems.add(nanoid(), {
-        timeline: timeline.id,
+      document.trackItems.add(nanoid(), {
+        track: track.id,
         start: this.editorState.currentTime,
         duration: 1000,
         node: root.id,

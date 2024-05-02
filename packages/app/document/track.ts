@@ -1,30 +1,30 @@
 import { Store } from "@/utils/store/store";
 import { Document } from "./document";
-import { TimelineData } from "./schema";
-import { TimelineItem } from "./timeline-item";
+import { TrackData } from "./schema";
+import { TrackItem } from "./track-item";
 
-export class Timeline {
+export class Track {
   constructor(document: Document, id: string) {
     this.id = id;
     this.document = document;
-    this.store = document.timelineStore;
+    this.store = document.trackStore;
   }
 
-  get data(): TimelineData {
+  get data(): TrackData {
     return this.store.data.get(this.id)!;
   }
 
-  set data(data: TimelineData) {
+  set data(data: TrackData) {
     this.store.data.set(this.id, data);
   }
 
-  get items(): TimelineItem[] {
-    return this.document.timelineItemParenting
+  get items(): TrackItem[] {
+    return this.document.trackItemParenting
       .getChildren(this.id)
-      .items.map((id) => this.document.timelineItems.get(id));
+      .items.map((id) => this.document.trackItems.get(id));
   }
 
-  itemsAt(time: number): TimelineItem[] {
+  itemsAt(time: number): TrackItem[] {
     // todo: optimize
     return this.items.filter(
       (item) =>
@@ -41,5 +41,5 @@ export class Timeline {
 
   readonly id: string;
   readonly document: Document;
-  readonly store: Store<TimelineData>;
+  readonly store: Store<TrackData>;
 }

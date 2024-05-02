@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import { useEditorState } from "../use-editor-state";
 import { action } from "mobx";
 import { twMerge } from "tailwind-merge";
-import { TimelineItem } from "@/document/timeline-item";
+import { TrackItem } from "@/document/track-item";
 import { useState } from "react";
 import { TimelineAreaState } from "./timeline-area-state";
 
@@ -18,7 +18,7 @@ export const TimelineArea: React.FC<{
       className={twMerge("relative", className)}
       onMouseDown={(e) => e.stopPropagation()}
     >
-      {state.rowsToShow.flatMap((row, timelineIndex) => {
+      {state.rowsToShow.flatMap((row, trackIndex) => {
         return row.previews.map((preview) => (
           <TimelineAreaItem
             key={preview.item.id}
@@ -27,7 +27,7 @@ export const TimelineArea: React.FC<{
             item={preview.item}
             start={preview.start}
             duration={preview.duration}
-            timelineIndex={timelineIndex}
+            trackIndex={trackIndex}
             onMoveStart={() => {}}
             onMove={(totalDeltaX, totalDeltaY) => {
               state.move(preview.item.id, totalDeltaX, totalDeltaY);
@@ -45,8 +45,8 @@ export const TimelineArea: React.FC<{
 const TimelineAreaItem: React.FC<{
   rowHeight: number;
   scale: number;
-  item: TimelineItem;
-  timelineIndex: number;
+  item: TrackItem;
+  trackIndex: number;
   start: number;
   duration: number;
   onMoveStart: () => void;
@@ -57,7 +57,7 @@ const TimelineAreaItem: React.FC<{
     rowHeight,
     scale,
     item,
-    timelineIndex,
+    trackIndex,
     start,
     duration,
     onMove,
@@ -105,7 +105,7 @@ const TimelineAreaItem: React.FC<{
         aria-selected={item.selected}
         onMouseDown={onMouseDown}
         style={{
-          top: timelineIndex * rowHeight,
+          top: trackIndex * rowHeight,
           height: rowHeight,
           left: start * scale,
           width: duration * scale,

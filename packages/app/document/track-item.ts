@@ -1,23 +1,23 @@
 import { Store } from "@/utils/store/store";
 import { Document } from "./document";
-import { TimelineItemData } from "./schema";
+import { TrackItemData } from "./schema";
 import { Node } from "./node";
 import { computed, makeObservable } from "mobx";
-import { Timeline } from "./timeline";
+import { Track } from "./track";
 
-export class TimelineItem {
+export class TrackItem {
   constructor(document: Document, id: string) {
     this.id = id;
     this.document = document;
-    this.store = document.timelineItemStore;
+    this.store = document.trackItemStore;
     makeObservable(this);
   }
 
-  @computed get data(): TimelineItemData {
+  @computed get data(): TrackItemData {
     return this.store.data.get(this.id)!;
   }
 
-  set data(data: TimelineItemData) {
+  set data(data: TrackItemData) {
     this.store.data.set(this.id, data);
   }
 
@@ -35,18 +35,18 @@ export class TimelineItem {
     this.store.data.delete(this.id);
   }
 
-  get timeline(): Timeline {
-    return this.document.timelines.get(this.data.timeline);
+  get track(): Track {
+    return this.document.tracks.get(this.data.track);
   }
 
-  set timeline(timeline: Timeline) {
+  set track(track: Track) {
     this.data = {
       ...this.data,
-      timeline: timeline.id,
+      track: track.id,
     };
   }
 
   readonly id: string;
   readonly document: Document;
-  readonly store: Store<TimelineItemData>;
+  readonly store: Store<TrackItemData>;
 }

@@ -6,9 +6,9 @@ import { CompositionRenderer } from "./composition-renderer";
 
 export const CompositionView: React.FC = observer(() => {
   const editorState = useEditorState();
-  const nodes = editorState.document.currentSequence.timelines
+  const nodes = editorState.document.currentSequence.tracks
     .toReversed()
-    .flatMap((timeline) => timeline.itemsAt(editorState.currentTime))
+    .flatMap((track) => track.itemsAt(editorState.currentTime))
     .map((item) => item.node);
 
   const width = 640;

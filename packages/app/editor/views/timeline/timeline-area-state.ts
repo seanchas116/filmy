@@ -1,16 +1,16 @@
-import { Timeline } from "@/document/timeline";
-import { TimelineItem } from "@/document/timeline-item";
+import { Track } from "@/document/track";
+import { TrackItem } from "@/document/track-item";
 import { EditorState } from "@/editor/state/editor-state";
 import { makeObservable, observable } from "mobx";
 
 export interface Preview {
-  item: TimelineItem;
+  item: TrackItem;
   start: number;
   duration: number;
 }
 
 export interface PreviewRow {
-  timeline: Timeline;
+  track: Track;
   previews: Preview[];
 }
 
@@ -23,12 +23,11 @@ export class TimelineAreaState {
   readonly editorState: EditorState;
 
   private get previewRows(): PreviewRow[] {
-    const timelines = this.editorState.document.currentSequence.timelines;
+    const tracks = this.editorState.document.currentSequence.tracks;
 
-    return timelines.map((timeline) => ({
-      timeline,
-      previews: timeline.items.map((item) => ({
-        timeline,
+    return tracks.map((track) => ({
+      track,
+      previews: track.items.map((item) => ({
         item,
         start: item.data.start,
         duration: item.data.duration,
@@ -39,27 +38,27 @@ export class TimelineAreaState {
   private initialPreviewRows: PreviewRow[] | undefined = undefined;
   @observable.ref private ongoingPreviewRows: PreviewRow[] | undefined =
     undefined;
-  private prependedTimeline: Timeline | undefined = undefined;
-  private appendedTimeline: Timeline | undefined = undefined;
+  private prependedTrack: Track | undefined = undefined;
+  private appendedTrack: Track | undefined = undefined;
 
-  private createPrependedTimeline(): Timeline {
-    if (!this.prependedTimeline) {
-      this.prependedTimeline =
-        this.editorState.document.currentSequence.prependTimeline({
-          name: "New Timeline",
+  private createPrependedTrack(): Track {
+    if (!this.prependedTrack) {
+      this.prependedTrack =
+        this.editorState.document.currentSequence.prependTrack({
+          name: "Track",
         });
     }
-    return this.prependedTimeline;
+    return this.prependedTrack;
   }
 
-  private createAppendedTimeline(): Timeline {
-    if (!this.appendedTimeline) {
-      this.appendedTimeline =
-        this.editorState.document.currentSequence.appendTimeline({
-          name: "New Timeline",
+  private createAppendedTrack(): Track {
+    if (!this.appendedTrack) {
+      this.appendedTrack =
+        this.editorState.document.currentSequence.appendTrack({
+          name: "Track",
         });
     }
-    return this.appendedTimeline;
+    return this.appendedTrack;
   }
 
   move(itemID: string, totalDeltaX: number, totalDeltaY: number) {
@@ -79,9 +78,9 @@ export class TimelineAreaState {
   end() {
     this.initialPreviewRows = undefined;
     this.ongoingPreviewRows = undefined;
-    this.prependedTimeline = undefined;
-    this.appendedTimeline = undefined;
-    this.editorState.document.currentSequence.deleteUnusedTimelines();
+    this.prependedTrack = undefined;
+    this.appendedTrack = undefined;
+    this.editorState.document.currentSequence.deleteUnusedTracks();
     this.editorState.document.undoManager.commit();
   }
 
@@ -138,12 +137,12 @@ export class TimelineAreaState {
 
     if (nextRowIndex < 0) {
       newRows.unshift({
-        timeline: this.createPrependedTimeline(),
+        track: this.createPrependedTrack(),
         previews: [newPreview],
       });
     } else if (nextRowIndex >= previewRows.length) {
       newRows.push({
-        timeline: this.createAppendedTimeline(),
+        track: this.createAppendedTrack(),
         previews: [newPreview],
       });
     }
@@ -167,8 +166,8 @@ export class TimelineAreaState {
           };
         }
 
-        if (row.timeline !== item.timeline) {
-          item.timeline = row.timeline;
+        if (row.track !== item.track) {
+          item.track = row.track;
         }
       }
     }
