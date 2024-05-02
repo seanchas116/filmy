@@ -29,12 +29,12 @@ export const TimelineArea: React.FC<{
             duration={preview.duration}
             timelineIndex={timelineIndex}
             onMoveStart={() => {}}
-            onMove={action((totalDeltaX, totalDeltaY) => {
+            onMove={(totalDeltaX, totalDeltaY) => {
               state.move(preview.item.id, totalDeltaX, totalDeltaY);
-            })}
-            onMoveEnd={action(() => {
+            }}
+            onMoveEnd={() => {
               state.end();
-            })}
+            }}
           />
         ));
       })}
@@ -66,7 +66,7 @@ const TimelineAreaItem: React.FC<{
   }) => {
     const editorState = useEditorState();
 
-    const onMouseDown = (e: React.MouseEvent) => {
+    const onMouseDown = action((e: React.MouseEvent) => {
       if (e.button !== 0) {
         return;
       }
@@ -81,23 +81,23 @@ const TimelineAreaItem: React.FC<{
       const initX = e.clientX;
       const initY = e.clientY;
 
-      const onMouseMove = (e: MouseEvent) => {
+      const onMouseMove = action((e: MouseEvent) => {
         const totalDeltaX = e.clientX - initX;
         const totalDeltaY = e.clientY - initY;
 
         onMove(totalDeltaX, totalDeltaY);
-      };
+      });
 
-      const onMouseUp = () => {
+      const onMouseUp = action(() => {
         window.removeEventListener("mousemove", onMouseMove);
         window.removeEventListener("mouseup", onMouseUp);
 
         onMoveEnd();
-      };
+      });
 
       window.addEventListener("mousemove", onMouseMove);
       window.addEventListener("mouseup", onMouseUp);
-    };
+    });
 
     return (
       <div
