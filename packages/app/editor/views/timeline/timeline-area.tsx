@@ -118,91 +118,89 @@ const TimelineAreaItem: React.FC<{
           width: duration * scale,
         }}
       >
-        <div className="absolute -inset-0.5">
-          <Thumbnail
-            item={item}
-            widthPerMS={scale}
-            width={duration * scale}
-            height={rowHeight}
-            thumbnailWidth={64}
-          />
-          {/* drag start */}
-          <div
-            className="absolute top-0 left-0 bottom-0 w-2 cursor-ew-resize bg-gray-200/50"
-            onMouseDown={(e) => {
-              e.stopPropagation();
+        <Thumbnail
+          item={item}
+          widthPerMS={scale}
+          width={duration * scale}
+          height={rowHeight}
+          thumbnailWidth={48}
+        />
+        {/* drag start */}
+        <div
+          className="absolute top-0 left-0 bottom-0 w-2 cursor-ew-resize bg-gray-200/50"
+          onMouseDown={(e) => {
+            e.stopPropagation();
 
-              const initX = e.clientX;
-              const initStart = item.start;
-              const initTrim = item.trim;
-              const initDuration = item.duration;
+            const initX = e.clientX;
+            const initStart = item.start;
+            const initTrim = item.trim;
+            const initDuration = item.duration;
 
-              const onMouseMove = action((e: MouseEvent) => {
-                const totalDeltaX = e.clientX - initX;
+            const onMouseMove = action((e: MouseEvent) => {
+              const totalDeltaX = e.clientX - initX;
 
-                const newStart = Math.max(0, initStart + totalDeltaX / scale);
-                const newTrim = Math.max(0, initTrim + totalDeltaX / scale);
-                const newDuration = Math.max(
-                  0,
-                  initDuration - totalDeltaX / scale
-                );
+              const newStart = Math.max(0, initStart + totalDeltaX / scale);
+              const newTrim = Math.max(0, initTrim + totalDeltaX / scale);
+              const newDuration = Math.max(
+                0,
+                initDuration - totalDeltaX / scale
+              );
 
-                item.data = {
-                  ...item.data,
-                  start: newStart,
-                  trim: newTrim,
-                  duration: newDuration,
-                };
-              });
+              item.data = {
+                ...item.data,
+                start: newStart,
+                trim: newTrim,
+                duration: newDuration,
+              };
+            });
 
-              const onMouseUp = action(() => {
-                window.removeEventListener("mousemove", onMouseMove);
-                window.removeEventListener("mouseup", onMouseUp);
+            const onMouseUp = action(() => {
+              window.removeEventListener("mousemove", onMouseMove);
+              window.removeEventListener("mouseup", onMouseUp);
 
-                editorState.document.undoManager.commit();
-              });
+              editorState.document.undoManager.commit();
+            });
 
-              window.addEventListener("mousemove", onMouseMove);
-              window.addEventListener("mouseup", onMouseUp);
-            }}
-          />
+            window.addEventListener("mousemove", onMouseMove);
+            window.addEventListener("mouseup", onMouseUp);
+          }}
+        />
 
-          {/* drag end */}
+        {/* drag end */}
 
-          <div
-            className="absolute top-0 right-0 bottom-0 w-2 cursor-ew-resize bg-gray-200/50"
-            onMouseDown={(e) => {
-              e.stopPropagation();
+        <div
+          className="absolute top-0 right-0 bottom-0 w-2 cursor-ew-resize bg-gray-200/50"
+          onMouseDown={(e) => {
+            e.stopPropagation();
 
-              const initX = e.clientX;
-              const initDuration = duration;
+            const initX = e.clientX;
+            const initDuration = duration;
 
-              const onMouseMove = action((e: MouseEvent) => {
-                const totalDeltaX = e.clientX - initX;
+            const onMouseMove = action((e: MouseEvent) => {
+              const totalDeltaX = e.clientX - initX;
 
-                const newDuration = Math.max(
-                  0,
-                  initDuration + totalDeltaX / scale
-                );
+              const newDuration = Math.max(
+                0,
+                initDuration + totalDeltaX / scale
+              );
 
-                item.data = {
-                  ...item.data,
-                  duration: newDuration,
-                };
-              });
+              item.data = {
+                ...item.data,
+                duration: newDuration,
+              };
+            });
 
-              const onMouseUp = action(() => {
-                window.removeEventListener("mousemove", onMouseMove);
-                window.removeEventListener("mouseup", onMouseUp);
+            const onMouseUp = action(() => {
+              window.removeEventListener("mousemove", onMouseMove);
+              window.removeEventListener("mouseup", onMouseUp);
 
-                editorState.document.undoManager.commit();
-              });
+              editorState.document.undoManager.commit();
+            });
 
-              window.addEventListener("mousemove", onMouseMove);
-              window.addEventListener("mouseup", onMouseUp);
-            }}
-          />
-        </div>
+            window.addEventListener("mousemove", onMouseMove);
+            window.addEventListener("mouseup", onMouseUp);
+          }}
+        />
       </div>
     );
   }
@@ -210,11 +208,14 @@ const TimelineAreaItem: React.FC<{
 
 const videoThumbnails = new Map<string, VideoThumbnailRenderer>();
 
+const thumbnailRenderWidth = 48;
+const thumbnailRenderHeight = 36;
+
 class ShapeThumbnailRenderer {
   constructor() {
     const canvas = document.createElement("canvas");
-    canvas.width = this.width;
-    canvas.height = this.height;
+    canvas.width = thumbnailRenderWidth;
+    canvas.height = thumbnailRenderHeight;
     this.renderer = new CompositionRenderer(canvas);
   }
 
@@ -222,8 +223,8 @@ class ShapeThumbnailRenderer {
     this.renderer.context.resetTransform();
     this.renderer.clear();
     this.renderer.context.scale(
-      this.width / sequence.width,
-      this.height / sequence.height
+      thumbnailRenderWidth / sequence.width,
+      thumbnailRenderHeight / sequence.height
     );
     this.renderer.renderNode(
       item.node,
@@ -234,8 +235,6 @@ class ShapeThumbnailRenderer {
     return this.renderer.canvas.toDataURL();
   }
 
-  width = 64;
-  height = 48;
   renderer: CompositionRenderer;
 }
 
@@ -265,7 +264,12 @@ const VideoThumbnail: React.FC<{
       const videoThumbnail = getOrCreate(
         videoThumbnails,
         nodeID,
-        () => new VideoThumbnailRenderer(src, 64, 48)
+        () =>
+          new VideoThumbnailRenderer(
+            src,
+            thumbnailRenderWidth,
+            thumbnailRenderHeight
+          )
       );
 
       const generateThumbnails = async () => {

@@ -47,7 +47,7 @@ export const TimelineEditor: React.FC = observer(() => {
           </button>
         </div>
         {tracks.map((track) => (
-          <div key={track.id} className="p-1 h-12 flex items-center">
+          <div key={track.id} className="p-1 h-10 flex items-center">
             {track.data.name}
           </div>
         ))}

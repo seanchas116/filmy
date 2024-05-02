@@ -88,7 +88,7 @@ export class TimelineAreaState {
     return this.ongoingPreviewRows ?? this.previewRows;
   }
 
-  readonly rowHeight = 48;
+  readonly rowHeight = 40;
   readonly scale = 0.1;
 
   private movePreviewRows(
