@@ -2,7 +2,7 @@ import { Node } from "@/document/node";
 import { useEditorState } from "../use-editor-state";
 import { observer } from "mobx-react-lite";
 import { useEffect, useRef } from "react";
-import { CompositionRenderer } from "./composition-renderer";
+import { CurrentFrameRenderer } from "./composition-renderer";
 
 export const CompositionView: React.FC = observer(() => {
   const editorState = useEditorState();
@@ -22,7 +22,7 @@ export const CompositionView: React.FC = observer(() => {
       return;
     }
 
-    const renderer = new CompositionRenderer(editorState, canvas);
+    const renderer = new CurrentFrameRenderer(editorState, canvas);
     return () => {
       renderer.dispose();
     };

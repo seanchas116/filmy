@@ -4,19 +4,54 @@ import { EditorState } from "@/editor/state/editor-state";
 import { assertNonNull } from "@/utils/assert";
 import { autorun } from "mobx";
 
-export class CompositionRenderer {
+export class CurrentFrameRenderer {
   constructor(editorState: EditorState, canvas: HTMLCanvasElement) {
+    this.renderer = new CompositionRenderer(canvas);
     this.editorState = editorState;
-    this.canvas = canvas;
-    this.canvas.width = 640;
-    this.canvas.height = 480;
-    this.context = assertNonNull(this.canvas.getContext("2d"));
-
     this.disposers.push(
       autorun(() => {
         this.render();
       })
     );
+  }
+
+  readonly editorState: EditorState;
+  readonly renderer: CompositionRenderer;
+  private disposers: (() => void)[] = [];
+
+  dispose() {
+    for (const disposer of this.disposers) {
+      disposer();
+    }
+    this.disposers = [];
+  }
+
+  render() {
+    this.renderer.clear();
+
+    const items = this.editorState.document.currentSequence.tracks
+      .toReversed()
+      .flatMap((track) => track.itemsAt(this.editorState.currentTime));
+
+    for (const item of items) {
+      this.renderer.renderNode(
+        item.node,
+        item,
+        this.editorState.currentTime,
+        this.editorState.isPlaying
+      );
+    }
+  }
+}
+
+const videos = new Map<string, HTMLVideoElement>();
+
+export class CompositionRenderer {
+  constructor(canvas: HTMLCanvasElement) {
+    this.canvas = canvas;
+    this.canvas.width = 640;
+    this.canvas.height = 480;
+    this.context = assertNonNull(this.canvas.getContext("2d"));
   }
 
   disposers: (() => void)[] = [];
@@ -28,35 +63,31 @@ export class CompositionRenderer {
     this.disposers = [];
   }
 
-  render() {
+  clear() {
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-    const items = this.editorState.document.currentSequence.tracks
-      .toReversed()
-      .flatMap((track) => track.itemsAt(this.editorState.currentTime));
-
-    for (const item of items) {
-      this.renderNode(item.node, item);
-    }
   }
 
-  renderNode(node: Node, trackItem: TrackItem) {
+  renderNode(
+    node: Node,
+    trackItem: TrackItem,
+    currentTime: number,
+    isPlaying: boolean
+  ) {
     for (const child of node.children) {
-      this.renderNode(child, trackItem);
+      this.renderNode(child, trackItem, currentTime, isPlaying);
     }
 
     const data = node.data;
 
     if (data.type === "video") {
-      let video = this.videos.get(node.id);
+      let video = videos.get(node.id);
       if (!video) {
         video = document.createElement("video");
         video.src = data.src;
         video.muted = true; // TODO: audio
-        this.videos.set(node.id, video);
+        videos.set(node.id, video);
       }
 
-      const isPlaying = this.editorState.isPlaying;
       if (isPlaying && video.paused) {
         void video.play();
       }
@@ -65,8 +96,7 @@ export class CompositionRenderer {
       }
 
       const targetTime =
-        (this.editorState.currentTime - trackItem.start + trackItem.trim) /
-        1000;
+        (currentTime - trackItem.start + trackItem.trim) / 1000;
       const diff = Math.abs(video.currentTime - targetTime);
       // TODO: better seek precision (using requestVideoFrameCallback)
       if (diff >= 1 / 60) {
@@ -107,8 +137,6 @@ export class CompositionRenderer {
     }
   }
 
-  editorState: EditorState;
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
-  videos = new Map<string, HTMLVideoElement>();
 }
