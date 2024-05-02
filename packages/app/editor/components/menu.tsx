@@ -16,16 +16,16 @@ const shortcutClassNames = `
 `;
 
 export const menuContentClassNames = `
-text-rera-text text-xs
-bg-rera-background z-10 border border-rera-gray-200 rounded-lg shadow-xl overflow-hidden p-1 outline-0
+text-gray-900 text-xs
+bg-white z-10 border border-rera-gray-200 rounded-lg shadow-xl overflow-hidden p-1 outline-0
 flex flex-col
 `;
 
 export const menuItemClassNames = `
 h-7 outline-0 rounded pr-4 pl-5 flex items-center
 aria-disabled:text-rera-gray-500
-data-[highlighted]:bg-rera-accent data-[highlighted]:text-white
-data-[state=open]:bg-rera-accent data-[state=open]:text-white
+data-[highlighted]:bg-blue-500 data-[highlighted]:text-white
+data-[state=open]:bg-blue-500 data-[state=open]:text-white
 `;
 
 export const menuLabelClassNames =

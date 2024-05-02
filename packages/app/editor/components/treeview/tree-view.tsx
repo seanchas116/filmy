@@ -81,7 +81,7 @@ const ToChildrenDropArea: React.FC<{
 
 const DropBarOval = () => {
   return (
-    <div className="absolute left-[-6px] top-[-5px] w-3 h-3 bg-rera-background rounded-full border-2 border-blue-500" />
+    <div className="absolute left-[-6px] top-[-5px] w-3 h-3 bg-white rounded-full border-2 border-blue-500" />
   );
 };
 

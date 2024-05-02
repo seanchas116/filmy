@@ -3,7 +3,7 @@ import * as Popover from "@radix-ui/react-popover";
 import tw from "tailwind-styled-components";
 
 export const PopoverContent = tw(Popover.Content)`
-  bg-rera-background rounded-lg overflow-hidden border border-rera-gray-200 text-xs text-rera-text shadow-xl p-3
+  bg-white rounded-lg overflow-hidden border border-rera-gray-200 text-xs text-gray-900 shadow-xl p-3
 `;
 
 export const PopoverArrowContent = React.forwardRef<
@@ -21,10 +21,7 @@ export const PopoverArrowContent = React.forwardRef<
         transform: "translateY(-1px)",
       }}
     >
-      <path
-        d="M0,0 L8,8 L16,0"
-        className="fill-rera-background stroke-rera-gray-200"
-      />
+      <path d="M0,0 L8,8 L16,0" className="fill-white stroke-rera-gray-200" />
     </svg>
   );
 });
