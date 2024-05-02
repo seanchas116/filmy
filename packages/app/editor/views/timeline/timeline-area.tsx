@@ -101,7 +101,7 @@ const TimelineAreaItem: React.FC<{
 
     return (
       <div
-        className="bg-gray-100 absolute h-full top-0 rounded-lg border border-gray-200 aria-selected:border-blue-500"
+        className="bg-gray-100 absolute h-full top-0 rounded-lg border border-gray-200 aria-selected:border-blue-500 overflow-hidden"
         aria-selected={item.selected}
         onMouseDown={onMouseDown}
         style={{
@@ -113,7 +113,7 @@ const TimelineAreaItem: React.FC<{
       >
         {/* drag start */}
         <div
-          className="absolute top-0 left-0 bottom-0 w-2 cursor-ew-resize"
+          className="absolute top-0 left-0 bottom-0 w-2 cursor-ew-resize bg-gray-200/50"
           onMouseDown={(e) => {
             e.stopPropagation();
 
@@ -152,7 +152,7 @@ const TimelineAreaItem: React.FC<{
         {/* drag end */}
 
         <div
-          className="absolute top-0 right-0 bottom-0 w-2 cursor-ew-resize"
+          className="absolute top-0 right-0 bottom-0 w-2 cursor-ew-resize bg-gray-200/50"
           onMouseDown={(e) => {
             e.stopPropagation();
 
