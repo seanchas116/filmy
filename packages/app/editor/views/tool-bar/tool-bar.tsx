@@ -3,6 +3,7 @@ import { useEditorState } from "../use-editor-state";
 import { action } from "mobx";
 import { observer } from "mobx-react-lite";
 import tw from "tailwind-styled-components";
+import { MainMenu } from "./main-menu";
 
 const IconButton = tw.button`
   p-2 hover:bg-gray-100 rounded-lg aria-pressed:bg-blue-100 aria-pressed:text-blue-500
@@ -13,6 +14,11 @@ export const ToolBar: React.FC = observer(() => {
 
   return (
     <div className="h-10 bg-white border-b border-gray-200 flex items-center px-2">
+      <MainMenu>
+        <IconButton>
+          <Icon icon="material-symbols:menu" />
+        </IconButton>
+      </MainMenu>
       <IconButton
         aria-pressed={editorState.tool === "rectangle"}
         onClick={action(() => {
