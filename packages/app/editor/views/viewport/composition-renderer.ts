@@ -6,11 +6,7 @@ import { autorun } from "mobx";
 
 export class CurrentFrameRenderer {
   constructor(editorState: EditorState, canvas: HTMLCanvasElement) {
-    this.renderer = new CompositionRenderer(
-      canvas,
-      editorState.document.currentSequence.width,
-      editorState.document.currentSequence.height
-    );
+    this.renderer = new CompositionRenderer(canvas);
     this.editorState = editorState;
     this.disposers.push(
       autorun(() => {
@@ -51,17 +47,9 @@ export class CurrentFrameRenderer {
 const videos = new Map<string, HTMLVideoElement>();
 
 export class CompositionRenderer {
-  constructor(
-    canvas: HTMLCanvasElement,
-    sequenceWidth: number,
-    sequenceHeight: number
-  ) {
+  constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
     this.context = assertNonNull(this.canvas.getContext("2d"));
-    this.context.scale(
-      this.canvas.width / sequenceWidth,
-      this.canvas.height / sequenceHeight
-    );
   }
 
   disposers: (() => void)[] = [];

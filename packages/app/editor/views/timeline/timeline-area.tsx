@@ -5,8 +5,13 @@ import { twMerge } from "tailwind-merge";
 import { TrackItem } from "@/document/track-item";
 import { useEffect, useState } from "react";
 import { TimelineAreaState } from "./timeline-area-state";
-import { VideoThumbnail, VideoThumbnailFrame } from "@/utils/video-thumbnail";
+import {
+  VideoThumbnailRenderer,
+  VideoThumbnailFrame,
+} from "@/utils/video-thumbnail";
 import { getOrCreate } from "@/utils/get-or-create";
+import { CompositionRenderer } from "../viewport/composition-renderer";
+import { Sequence } from "@/document/sequence";
 
 export const TimelineArea: React.FC<{
   className?: string;
@@ -201,9 +206,40 @@ const TimelineAreaItem: React.FC<{
   }
 );
 
-const videoThumbnails = new Map<string, VideoThumbnail>();
+const videoThumbnails = new Map<string, VideoThumbnailRenderer>();
 
-export const Thumbnail: React.FC<{
+class ShapeThumbnailRenderer {
+  constructor() {
+    const canvas = document.createElement("canvas");
+    canvas.width = this.width;
+    canvas.height = this.height;
+    this.renderer = new CompositionRenderer(canvas);
+  }
+
+  render(sequence: Sequence, item: TrackItem) {
+    this.renderer.context.resetTransform();
+    this.renderer.clear();
+    this.renderer.context.scale(
+      this.width / sequence.width,
+      this.height / sequence.height
+    );
+    this.renderer.renderNode(
+      item.node,
+      item,
+      item.start + item.duration / 2,
+      false
+    );
+    return this.renderer.canvas.toDataURL();
+  }
+
+  width = 64;
+  height = 48;
+  renderer: CompositionRenderer;
+}
+
+const shapeThumbnailRenderer = new ShapeThumbnailRenderer();
+
+const VideoThumbnail: React.FC<{
   item: TrackItem;
   widthPerMS: number;
   width: number;
@@ -227,7 +263,7 @@ export const Thumbnail: React.FC<{
       const videoThumbnail = getOrCreate(
         videoThumbnails,
         nodeID,
-        () => new VideoThumbnail(src, 64, 48)
+        () => new VideoThumbnailRenderer(src, 64, 48)
       );
 
       const generateThumbnails = async () => {
@@ -251,26 +287,48 @@ export const Thumbnail: React.FC<{
       return null;
     }
 
-    // place images in array
+    return (
+      <div
+        className={twMerge("flex pointer-events-none", className)}
+        style={{ width, height, background: `url(${thumbnails[0].dataURL})` }}
+      ></div>
+    );
+  }
+);
+
+const Thumbnail: React.FC<{
+  item: TrackItem;
+  widthPerMS: number;
+  width: number;
+  height: number;
+  thumbnailWidth: number;
+  className?: string;
+}> = observer(
+  ({ item, widthPerMS, width, height, thumbnailWidth, className }) => {
+    if (item.node.type === "video") {
+      return (
+        <VideoThumbnail
+          item={item}
+          widthPerMS={widthPerMS}
+          width={width}
+          height={height}
+          thumbnailWidth={thumbnailWidth}
+          className={className}
+        />
+      );
+    }
+
+    // TODO: cache with computed
+    const thumbnail = shapeThumbnailRenderer.render(
+      item.document.currentSequence,
+      item
+    );
 
     return (
       <div
         className={twMerge("flex pointer-events-none", className)}
-        style={{ width, height }}
-      >
-        {thumbnails.map((thumbnail, i) => (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            key={i}
-            src={thumbnail.dataURL}
-            alt=""
-            style={{
-              width: thumbnailWidth,
-              height: height,
-            }}
-          />
-        ))}
-      </div>
+        style={{ width, height, background: `url(${thumbnail})` }}
+      />
     );
   }
 );

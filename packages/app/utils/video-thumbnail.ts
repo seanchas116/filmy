@@ -6,7 +6,7 @@ export interface VideoThumbnailFrame {
   dataURL: string;
 }
 
-export class VideoThumbnail {
+export class VideoThumbnailRenderer {
   constructor(src: string, width: number, height: number) {
     this.src = src;
     this.width = width;
