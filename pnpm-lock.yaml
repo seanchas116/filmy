@@ -17,6 +17,9 @@ importers:
       '@iconify/react':
         specifier: ^4.1.1
         version: 4.1.1(react@18.3.0)
+      async-mutex:
+        specifier: ^0.5.0
+        version: 0.5.0
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21
@@ -809,6 +812,9 @@ packages:
 
   ast-types-flow@0.0.8:
     resolution: {integrity: sha512-OH/2E5Fg20h2aPrbe+QL8JZQFko0YZaF+j4mnQ7BGhfavO7OpSLa8a0y9sBwomHdSbkhTS8TQNayBfnW5DwbvQ==}
+
+  async-mutex@0.5.0:
+    resolution: {integrity: sha512-1A94B18jkJ3DYq284ohPxoXbfTA5HsQ7/Mf4DEhcyLx3Bz27Rh59iScbB6EPiP+B+joue6YCxcMXSbFC1tZKwA==}
 
   available-typed-arrays@1.0.7:
     resolution: {integrity: sha512-wvUjBtSGN7+7SjNpq/9M2Tg350UZD3q62IFZLbRAR1bSMlCo1ZaeW+BJ+D090e4hIIZLBcTDWe4Mh4jvUDajzQ==}
@@ -3606,6 +3612,10 @@ snapshots:
   assertion-error@1.1.0: {}
 
   ast-types-flow@0.0.8: {}
+
+  async-mutex@0.5.0:
+    dependencies:
+      tslib: 2.6.2
 
   available-typed-arrays@1.0.7:
     dependencies:
