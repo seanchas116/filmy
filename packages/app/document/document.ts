@@ -1,15 +1,15 @@
 import { Store } from "@/utils/store/store";
 import { NodeData, SequenceData, TrackData, TrackItemData } from "./schema";
-import { Node, NodeManager } from "./node";
+import { NodeManager } from "./node";
 import { InstanceManager } from "./instance-manager";
 import { Track } from "./track";
 import { TrackItem } from "./track-item";
 import { nanoid } from "nanoid";
 import { Sequence } from "./sequence";
 import { Parenting } from "@/utils/store/parenting";
-import { computed, makeObservable } from "mobx";
-import { compact } from "lodash-es";
+import { makeObservable } from "mobx";
 import { UndoManager } from "@/utils/store/undo-manager";
+import { Selection } from "./selection";
 
 export class Document {
   constructor() {
@@ -159,60 +159,4 @@ export class Document {
   readonly currentSequence: Sequence;
 
   readonly selection: Selection;
-}
-
-class Selection {
-  constructor(document: Document) {
-    this.document = document;
-    this.selectedNodeIDStore = document.selectedNodeIDStore;
-  }
-
-  readonly document: Document;
-  readonly selectedNodeIDStore: Store<true>;
-
-  clear(): void {
-    this.selectedNodeIDStore.data.clear();
-  }
-
-  @computed get nodes(): Node[] {
-    return compact(
-      [...this.selectedNodeIDStore.data.keys()].map((id) =>
-        this.document.nodes.safeGet(id)
-      )
-    );
-  }
-
-  @computed get nodeRoots(): Set<Node> {
-    return new Set(this.nodes.map((node) => node.root));
-  }
-
-  @computed get trackItems(): TrackItem[] {
-    const selectedNodeRoots = this.nodeRoots;
-
-    // TODO: make efficient
-    const trackItems = new Set<TrackItem>();
-    for (const trackItem of this.document.trackItems.instances.values()) {
-      if (selectedNodeRoots.has(trackItem.node.root)) {
-        trackItems.add(trackItem);
-      }
-    }
-
-    return [...trackItems];
-  }
-
-  deleteSelected() {
-    for (const node of this.nodes) {
-      if (node.parent) {
-        node.deleteRecursive();
-      }
-    }
-
-    for (const trackItem of this.trackItems) {
-      trackItem.delete();
-    }
-  }
-
-  selectAllSiblings() {
-    throw new Error("Not implemented");
-  }
 }
