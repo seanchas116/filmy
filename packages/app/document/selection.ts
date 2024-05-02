@@ -31,17 +31,7 @@ export class Selection {
   }
 
   @computed get trackItems(): TrackItem[] {
-    const selectedNodeRoots = this.nodeRoots;
-
-    // TODO: make efficient
-    const trackItems = new Set<TrackItem>();
-    for (const trackItem of this.document.trackItems.instances.values()) {
-      if (selectedNodeRoots.has(trackItem.node.root)) {
-        trackItems.add(trackItem);
-      }
-    }
-
-    return [...trackItems];
+    return compact([...this.nodeRoots].map((root) => root.trackItem));
   }
 
   deleteSelected() {

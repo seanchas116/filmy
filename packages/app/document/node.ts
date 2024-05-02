@@ -4,6 +4,7 @@ import { InstanceManager } from "./instance-manager";
 import { Rect, Vec2 } from "paintvec";
 import { computed, makeObservable, observable } from "mobx";
 import { Document } from "./document";
+import { TrackItem } from "./track-item";
 
 function lerp(a: number, b: number, t: number): number {
   return a * (1 - t) + b * t;
@@ -72,6 +73,13 @@ export class Node {
       node = node.parent;
     }
     return node;
+  }
+
+  get trackItem(): TrackItem | undefined {
+    const id = this.document.trackItemFromNode.get(this.id);
+    if (id) {
+      return this.document.trackItems.safeGet(id);
+    }
   }
 
   @computed get ancestors(): Node[] {
