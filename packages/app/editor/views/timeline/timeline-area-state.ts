@@ -1,10 +1,8 @@
-import { Timeline } from "@/document/timeline";
 import { TimelineItem } from "@/document/timeline-item";
 import { EditorState } from "@/editor/state/editor-state";
 import { makeObservable, observable } from "mobx";
 
 export interface Preview {
-  timeline: Timeline;
   item: TimelineItem;
   start: number;
   duration: number;
@@ -106,7 +104,9 @@ export class TimelineAreaState {
   }
 
   private applyPreviewRows(previewRows: Preview[][]) {
-    for (const row of previewRows) {
+    const timelines = this.editorState.document.currentSequence.timelines;
+
+    for (const [timelineIndex, row] of previewRows.entries()) {
       for (const preview of row) {
         const item = preview.item;
 
@@ -119,6 +119,10 @@ export class TimelineAreaState {
             start: preview.start,
             duration: preview.duration,
           };
+        }
+
+        if (timelines[timelineIndex] !== item.timeline) {
+          item.timeline = timelines[timelineIndex];
         }
       }
     }

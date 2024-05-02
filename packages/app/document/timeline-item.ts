@@ -3,6 +3,7 @@ import { Document } from "./document";
 import { TimelineItemData } from "./schema";
 import { Node } from "./node";
 import { computed, makeObservable } from "mobx";
+import { Timeline } from "./timeline";
 
 export class TimelineItem {
   constructor(document: Document, id: string) {
@@ -32,6 +33,17 @@ export class TimelineItem {
   delete() {
     this.node.deleteRecursive();
     this.store.data.delete(this.id);
+  }
+
+  get timeline(): Timeline {
+    return this.document.timelines.get(this.data.timeline);
+  }
+
+  set timeline(timeline: Timeline) {
+    this.data = {
+      ...this.data,
+      timeline: timeline.id,
+    };
   }
 
   readonly id: string;
