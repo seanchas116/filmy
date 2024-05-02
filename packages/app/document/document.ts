@@ -65,7 +65,6 @@ export class Document {
       sequence: sequence.id,
       name: "Timeline 1",
     });
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const timeline2 = this.timelines.add(nanoid(), {
       order: 1,
       sequence: sequence.id,
