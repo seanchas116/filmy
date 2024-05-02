@@ -5,10 +5,7 @@ import { twMerge } from "tailwind-merge";
 import { TrackItem } from "@/document/track-item";
 import { useEffect, useState } from "react";
 import { TimelineAreaState } from "./timeline-area-state";
-import {
-  VideoThumbnail,
-  VideoThumbnailFrame,
-} from "@/utils/video-thumbnail-generator";
+import { VideoThumbnail, VideoThumbnailFrame } from "@/utils/video-thumbnail";
 import { getOrCreate } from "@/utils/get-or-create";
 
 export const TimelineArea: React.FC<{
