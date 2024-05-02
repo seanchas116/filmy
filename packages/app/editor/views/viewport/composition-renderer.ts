@@ -64,7 +64,9 @@ export class CompositionRenderer {
         void video.pause();
       }
 
-      const targetTime = (this.editorState.currentTime + trackItem.trim) / 1000;
+      const targetTime =
+        (this.editorState.currentTime - trackItem.start + trackItem.trim) /
+        1000;
       const diff = Math.abs(video.currentTime - targetTime);
       // TODO: better seek precision (using requestVideoFrameCallback)
       if (diff >= 1 / 60) {

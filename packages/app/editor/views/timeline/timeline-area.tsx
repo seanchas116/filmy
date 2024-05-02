@@ -118,13 +118,15 @@ const TimelineAreaItem: React.FC<{
             e.stopPropagation();
 
             const initX = e.clientX;
-            const initStart = start;
-            const initDuration = duration;
+            const initStart = item.start;
+            const initTrim = item.trim;
+            const initDuration = item.duration;
 
             const onMouseMove = action((e: MouseEvent) => {
               const totalDeltaX = e.clientX - initX;
 
               const newStart = Math.max(0, initStart + totalDeltaX / scale);
+              const newTrim = Math.max(0, initTrim + totalDeltaX / scale);
               const newDuration = Math.max(
                 0,
                 initDuration - totalDeltaX / scale
@@ -133,6 +135,7 @@ const TimelineAreaItem: React.FC<{
               item.data = {
                 ...item.data,
                 start: newStart,
+                trim: newTrim,
                 duration: newDuration,
               };
             });

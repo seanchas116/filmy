@@ -118,7 +118,7 @@ export class Document {
     this.trackItems.add(nanoid(), {
       track: track1.id,
       start: 1000,
-      trim: 4 * 60 * 1000,
+      trim: 0,
       duration: 1000,
       node: frameNode.id,
     });
@@ -126,7 +126,7 @@ export class Document {
     this.trackItems.add(nanoid(), {
       track: track2.id,
       start: 0,
-      trim: 0,
+      trim: 4 * 60 * 1000,
       duration: 10000,
       node: videoNode.id,
     });
