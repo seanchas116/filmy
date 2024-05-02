@@ -3,7 +3,6 @@ import { useEditorState } from "../use-editor-state";
 import { action } from "mobx";
 import { twMerge } from "tailwind-merge";
 import { TimelineItem } from "@/document/timeline-item";
-import { usePointerStroke } from "@/editor/components/use-pointer-stroke";
 import { useState } from "react";
 import { TimelineAreaState } from "./timeline-area-state";
 
@@ -29,12 +28,10 @@ export const TimelineArea: React.FC<{
             start={preview.start}
             duration={preview.duration}
             timelineIndex={timelineIndex}
-            onMoveStart={() => {
-              // TODO
-            }}
-            onMove={(totalDeltaX, totalDeltaY) => {
+            onMoveStart={() => {}}
+            onMove={action((totalDeltaX, totalDeltaY) => {
               state.move(preview.item.id, totalDeltaX, totalDeltaY);
-            }}
+            })}
             onMoveEnd={action(() => {
               state.end();
             })}
@@ -68,34 +65,51 @@ const TimelineAreaItem: React.FC<{
     onMoveStart,
   }) => {
     const editorState = useEditorState();
-    const pointerProps = usePointerStroke<HTMLDivElement, void>({
-      onBegin: action((e) => {
-        if (!e.shiftKey) {
-          editorState.document.selection.clear();
-        }
-        item.node.select();
 
-        onMoveStart();
-      }),
-      onMove: action((e, { totalDeltaX, totalDeltaY }) => {
+    const onMouseDown = (e: React.MouseEvent) => {
+      if (e.button !== 0) {
+        return;
+      }
+
+      if (!e.shiftKey) {
+        editorState.document.selection.clear();
+      }
+      item.node.select();
+
+      onMoveStart();
+
+      const initX = e.clientX;
+      const initY = e.clientY;
+
+      const onMouseMove = (e: MouseEvent) => {
+        const totalDeltaX = e.clientX - initX;
+        const totalDeltaY = e.clientY - initY;
+
         onMove(totalDeltaX, totalDeltaY);
-      }),
-      onEnd: action(() => {
+      };
+
+      const onMouseUp = () => {
+        window.removeEventListener("mousemove", onMouseMove);
+        window.removeEventListener("mouseup", onMouseUp);
+
         onMoveEnd();
-      }),
-    });
+      };
+
+      window.addEventListener("mousemove", onMouseMove);
+      window.addEventListener("mouseup", onMouseUp);
+    };
 
     return (
       <div
         className="bg-gray-100 absolute h-full top-0 rounded-lg border border-gray-200 aria-selected:border-blue-500"
         aria-selected={item.selected}
+        onMouseDown={onMouseDown}
         style={{
           top: timelineIndex * rowHeight,
           height: rowHeight,
           left: start * scale,
           width: duration * scale,
         }}
-        {...pointerProps}
       />
     );
   }
