@@ -1,7 +1,6 @@
 import { Document } from "@/document/document";
 import { action, computed, makeObservable, observable } from "mobx";
 import { ScrollState } from "./scroll-state";
-import { Node } from "@/document/node";
 
 export class EditorState {
   constructor() {
@@ -70,16 +69,6 @@ export class EditorState {
   @computed get hoveredNode() {
     if (this.hoveredNodeID) {
       return this.document.nodes.safeGet(this.hoveredNodeID);
-    }
-  }
-
-  @computed get topmostSelectedGraphicRoot(): Node | undefined {
-    const trackItems = this.document.selection.trackItems;
-    for (const item of trackItems) {
-      // TODO: use group
-      if (item.node.type === "frame") {
-        return item.node;
-      }
     }
   }
 }

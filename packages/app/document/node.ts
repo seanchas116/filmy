@@ -178,6 +178,11 @@ export class Node {
       child.deselect();
     }
     this.document.selectedNodeIDStore.data.set(this.id, true);
+
+    const rootTrackItem = this.root.trackItems[0];
+    if (rootTrackItem) {
+      this.document.currentSceneStore.data.set("value", rootTrackItem.id);
+    }
   }
 
   deselect(): void {

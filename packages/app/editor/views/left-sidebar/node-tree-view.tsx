@@ -7,7 +7,7 @@ import { TreeView } from "@/editor/components/treeview/tree-view";
 
 export const NodeTreeView: React.FC = observer(() => {
   const editorState = useEditorState();
-  const root = editorState.topmostSelectedGraphicRoot;
+  const root = editorState.document.selection.currentScene?.node;
 
   useRevealSelectedRow();
 

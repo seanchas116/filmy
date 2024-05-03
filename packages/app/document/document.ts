@@ -18,6 +18,7 @@ export class Document {
     this.trackItemStore = new Store<string, TrackItemData>();
     this.nodeStore = new Store<string, NodeData>();
     this.selectedNodeIDStore = new Store<string, true>();
+    this.currentSceneStore = new Store<"value", string>();
 
     this.undoManager = new UndoManager([
       this.trackStore,
@@ -25,6 +26,7 @@ export class Document {
       this.trackItemStore,
       this.nodeStore,
       this.selectedNodeIDStore,
+      this.currentSceneStore,
     ]);
 
     this.nodes = new NodeManager(this);
@@ -153,6 +155,7 @@ export class Document {
   readonly trackItemStore: Store<string, TrackItemData>;
   readonly nodeStore: Store<string, NodeData>;
   readonly selectedNodeIDStore: Store<string, true>;
+  readonly currentSceneStore: Store<"value", string>;
 
   readonly sequences: InstanceManager<SequenceData, Sequence>;
   readonly tracks: InstanceManager<TrackData, Track>;

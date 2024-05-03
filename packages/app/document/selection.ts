@@ -26,6 +26,16 @@ export class Selection {
     );
   }
 
+  @computed get currentScene(): TrackItem | undefined {
+    const id = this.document.currentSceneStore.data.get("value");
+    if (id) {
+      const trackItem = this.document.trackItems.safeGet(id);
+      if (trackItem?.node.type === "frame") {
+        return trackItem;
+      }
+    }
+  }
+
   @computed get nodeRoots(): Set<Node> {
     return new Set(this.nodes.map((node) => node.root));
   }
