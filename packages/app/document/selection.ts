@@ -45,16 +45,9 @@ export class Selection {
   }
 
   deleteSelected() {
-    const nodes = new Set(this.nodes);
-    const trackItem = this.trackItems.at(0);
-    const containingTrackItem =
-      trackItem && !trackItem.node.selected ? trackItem : undefined;
-
-    for (const node of nodes) {
+    for (const node of this.nodes) {
       node.delete();
     }
-
-    containingTrackItem?.node.select();
   }
 
   selectAllSiblings() {
