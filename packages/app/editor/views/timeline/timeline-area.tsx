@@ -108,8 +108,12 @@ const TimelineAreaItem: React.FC<{
 
     return (
       <div
-        className="bg-gray-100 absolute h-full top-0 rounded-lg border-2 border-gray-200 aria-selected:border-blue-500 overflow-hidden"
-        aria-selected={item.selected}
+        className={twMerge(
+          "bg-gray-100 absolute h-full top-0 rounded-lg border-2 border-gray-200 overflow-hidden",
+          item === editorState.document.selection.currentScene &&
+            "border-blue-300",
+          item.selected && "border-blue-500"
+        )}
         onMouseDown={onMouseDown}
         style={{
           top: trackIndex * rowHeight,
