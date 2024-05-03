@@ -1,5 +1,5 @@
 import { ReactNode, MouseEvent } from "react";
-import { NodeTreeRow } from "./node-tree-row";
+import { NodeTreeRow, TrackItemTreeRow } from "./node-tree-row";
 import { makeObservable, computed } from "mobx";
 import React from "react";
 import { TreeViewItem } from "@/editor/components/treeview/tree-view-item";
@@ -137,9 +137,20 @@ export class NodeTreeViewItem extends TreeViewItem {
   }
 
   renderContent(): ReactNode {
-    return React.createElement(NodeTreeRow, {
-      item: this,
-    });
+    if (this.node.parent) {
+      return React.createElement(NodeTreeRow, {
+        item: this,
+      });
+    } else {
+      const trackItem = this.node.trackItems[0];
+
+      if (trackItem) {
+        return React.createElement(TrackItemTreeRow, {
+          trackItem: trackItem,
+          item: this,
+        });
+      }
+    }
   }
 
   showContextMenu(e: MouseEvent): void {
