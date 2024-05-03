@@ -29,10 +29,7 @@ export class CurrentFrameRenderer {
   render() {
     this.renderer.clear();
 
-    const items = this.editorState.document.currentSequence.tracks
-      .toReversed()
-      .flatMap((track) => track.itemsAt(this.editorState.currentTime));
-
+    const items = this.editorState.getTrackItemsForCurrentTime().toReversed();
     for (const item of items) {
       this.renderer.renderNode(
         item.node,

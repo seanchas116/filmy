@@ -71,4 +71,10 @@ export class EditorState {
       return this.document.nodes.safeGet(this.hoveredNodeID);
     }
   }
+
+  getTrackItemsForCurrentTime() {
+    return this.document.currentSequence.tracks.flatMap((track) =>
+      track.itemsAt(this.currentTime)
+    );
+  }
 }
