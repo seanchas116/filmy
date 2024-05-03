@@ -11,9 +11,7 @@ import { Node } from "@/document/node";
 import { useMemo } from "react";
 import { ClickMoveDragHandler } from "./drag-handlers/click-move-drag-handler";
 import { action } from "mobx";
-import { showContextMenu } from "@/editor/components/context-menu-state";
 import { showNodeContextMenu } from "../show-context-menu";
-import { twMerge } from "tailwind-merge";
 
 class ViewportNodePicker {
   constructor(editorState: EditorState) {
@@ -70,7 +68,12 @@ export const EventTarget = observer(() => {
       if (editorState.tool) {
         return new InsertDragHandler(viewportEvent, editorState.tool);
       }
-      return ClickMoveDragHandler.create(viewportEvent);
+      const clickMoveDragHandler = ClickMoveDragHandler.create(viewportEvent);
+      if (clickMoveDragHandler) {
+        return clickMoveDragHandler;
+      }
+
+      editorState.document.selection.clear();
     }),
     onMove: action((e, { initData }) => {
       initData?.move(createViewportEvent(e));
