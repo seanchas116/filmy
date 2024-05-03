@@ -2,7 +2,7 @@ import { computed, makeObservable } from "mobx";
 import { Vec2, Rect, Transform } from "paintvec";
 import twColors from "tailwindcss/colors";
 import { EditorState } from "../../state/editor-state";
-import { Node } from "@/document/node";
+import { Node, flattenGroup } from "@/document/node";
 import { assertNonNull } from "@/utils/assert";
 
 function roundRectXYWH(rect: Rect): Rect {
@@ -56,8 +56,8 @@ export class NodeResizeBoxState {
   private widthChanged = false;
   private heightChanged = false;
 
-  get selectedNodes(): Node[] {
-    return this.editorState.document.selection.nodes;
+  get nodes(): Node[] {
+    return flattenGroup(this.editorState.document.selection.nodes);
   }
 
   @computed get stroke(): string {
@@ -65,7 +65,7 @@ export class NodeResizeBoxState {
   }
 
   @computed get boundingBox(): Rect | undefined {
-    return Rect.union(...this.selectedNodes.map((n) => n.globalBoundingBox));
+    return Rect.union(...this.nodes.map((n) => n.globalBoundingBox));
   }
 
   @computed get viewportBoundingBox(): Rect | undefined {
@@ -75,7 +75,7 @@ export class NodeResizeBoxState {
   }
 
   begin() {
-    this.resizers = this.selectedNodes.map((node) => new ElementResizer(node));
+    this.resizers = this.nodes.map((node) => new ElementResizer(node));
     this.initWholeBoundingBox = this.boundingBox ?? new Rect();
     this.leftChanged = false;
     this.topChanged = false;

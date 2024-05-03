@@ -42,8 +42,8 @@ export const NodeResizeBox: React.FC = observer(function NodeResizeBox() {
         e.preventDefault();
         e.stopPropagation();
 
-        if (state.selectedNodes.length) {
-          showNodeContextMenu(editorState, state.selectedNodes[0], e);
+        if (state.nodes.length) {
+          showNodeContextMenu(editorState, state.nodes[0], e);
         }
       }}
     >

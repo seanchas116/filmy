@@ -7,6 +7,7 @@ import { action } from "mobx";
 import { twMerge } from "tailwind-merge";
 import { ReactNode } from "react";
 import { Icon } from "@iconify/react";
+import { flattenGroup } from "@/document/node";
 
 const InputWrap: React.FC<{
   label: ReactNode;
@@ -29,7 +30,7 @@ const InputBody = tw(
 
 export const RightSideBar: React.FC = observer(() => {
   const editorState = useEditorState();
-  const selectedNodes = editorState.document.selection.nodes;
+  const selectedNodes = flattenGroup(editorState.document.selection.nodes);
 
   const x = sameOrMixed(selectedNodes.map((node) => node.data.x));
   const y = sameOrMixed(selectedNodes.map((node) => node.data.y));

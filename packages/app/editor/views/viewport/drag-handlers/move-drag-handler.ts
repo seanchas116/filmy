@@ -1,12 +1,12 @@
 import { Rect, Vec2 } from "paintvec";
 import { DragHandler } from "./drag-handler";
 import { ViewportEvent } from "./viewport-event";
-import { Node } from "@/document/node";
+import { Node, flattenGroup } from "@/document/node";
 
 export class MoveDragHandler implements DragHandler {
   constructor(event: ViewportEvent, initPos: Vec2) {
     this.initPos = initPos;
-    const targets = event.editorState.document.selection.nodes;
+    const targets = flattenGroup(event.editorState.document.selection.nodes);
     for (const target of targets) {
       this.initialRects.set(target, target.boundingBox);
     }

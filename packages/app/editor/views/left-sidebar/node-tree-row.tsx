@@ -14,13 +14,16 @@ export const NodeIcon: React.FC<{
 }> = observer(({ node }) => {
   switch (node.type) {
     case "rectangle":
-    case "frame":
     case "video":
       return (
         <Icon
           className="opacity-70"
           icon="material-symbols:square-outline-rounded"
         />
+      );
+    case "group":
+      return (
+        <Icon className="opacity-70" icon="material-symbols:select-rounded" />
       );
     case "ellipse":
       return (

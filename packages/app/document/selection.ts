@@ -30,7 +30,7 @@ export class Selection {
     const id = this.document.currentSceneStore.data.get("value");
     if (id) {
       const trackItem = this.document.trackItems.safeGet(id);
-      if (trackItem?.node.type === "frame") {
+      if (trackItem?.node.type === "group") {
         return trackItem;
       }
     }

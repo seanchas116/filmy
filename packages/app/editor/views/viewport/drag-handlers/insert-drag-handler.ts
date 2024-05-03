@@ -18,15 +18,11 @@ export class InsertDragHandler implements DragHandler {
       // create new frame
       root = document.nodes.add(nanoid(), {
         order: 0,
-        type: "frame",
+        type: "group",
         x: 0,
         y: 0,
-        w: this.editorState.document.currentSequence.width,
-        h: this.editorState.document.currentSequence.height,
-        fill: {
-          type: "solid",
-          hex: "#ffffff",
-        },
+        w: 0,
+        h: 0,
       });
       const track = document.tracks.add(nanoid(), {
         sequence: document.currentSequence.id,

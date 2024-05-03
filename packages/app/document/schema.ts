@@ -46,11 +46,11 @@ export type NodeData = NodeCommonData &
         readonly type: "ellipse";
       }
     | {
-        readonly type: "frame";
-      }
-    | {
         readonly type: "video";
         readonly src: string;
+      }
+    | {
+        readonly type: "group";
       }
   );
 

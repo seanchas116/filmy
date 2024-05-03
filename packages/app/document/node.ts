@@ -240,7 +240,7 @@ export class Node {
   }
 
   @computed get mayHaveChildren() {
-    return this.type === "frame";
+    return this.type === "group";
   }
 
   @computed get hidden() {
@@ -274,4 +274,10 @@ export class Node {
     this.document.selectedNodeIDStore.data.delete(this.id);
     this.document.nodeStore.data.delete(this.id);
   }
+}
+
+export function flattenGroup(nodes: Node[]): Node[] {
+  return nodes.flatMap((node) =>
+    node.type === "group" ? flattenGroup(node.children) : node
+  );
 }

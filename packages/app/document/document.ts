@@ -84,15 +84,11 @@ export class Document {
 
     const frameNode = this.nodes.add(nanoid(), {
       order: 0,
-      type: "frame",
+      type: "group",
       x: 0,
       y: 0,
-      w: videoWidth,
-      h: videoHeight,
-      fill: {
-        type: "solid",
-        hex: "#ffffff",
-      },
+      w: 0,
+      h: 0,
     });
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
