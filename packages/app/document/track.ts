@@ -33,8 +33,9 @@ export class Track {
   }
 
   delete() {
-    for (const item of this.items) {
-      item.node.delete();
+    const nodes = new Set(this.items.map((item) => item.node));
+    for (const node of nodes) {
+      node.delete();
     }
     this.store.data.delete(this.id);
   }
