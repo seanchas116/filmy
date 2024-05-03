@@ -7,12 +7,12 @@ export interface FractionalSortResult {
 }
 
 export class FractionalSort<TData> {
-  constructor(store: Store<TData>, getOrder: (data: TData) => number) {
+  constructor(store: Store<string, TData>, getOrder: (data: TData) => number) {
     this.store = store;
     this.getOrder = getOrder;
   }
 
-  readonly store: Store<TData>;
+  readonly store: Store<string, TData>;
   readonly getOrder: (data: TData) => number;
 
   readonly items = new Set<string>();

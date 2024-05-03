@@ -4,13 +4,19 @@ import { UndoManager } from "./undo-manager";
 
 describe(UndoManager, () => {
   it("undo/redo", () => {
-    const users = new Store<{
-      firstName: string;
-      lastName: string;
-    }>();
-    const documents = new Store<{
-      title: string;
-    }>();
+    const users = new Store<
+      string,
+      {
+        firstName: string;
+        lastName: string;
+      }
+    >();
+    const documents = new Store<
+      string,
+      {
+        title: string;
+      }
+    >();
 
     users.data.set("1", { firstName: "Jane", lastName: "Doe" });
     documents.data.set("1", { title: "Original" });

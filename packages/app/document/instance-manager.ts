@@ -1,7 +1,7 @@
 import { Store } from "@/utils/store/store";
 
 export class InstanceManager<TData, TInstance> {
-  constructor(store: Store<TData>, factory: (id: string) => TInstance) {
+  constructor(store: Store<string, TData>, factory: (id: string) => TInstance) {
     this.store = store;
     this.store.data.observe_((change) => {
       if (change.type === "add") {
@@ -12,7 +12,7 @@ export class InstanceManager<TData, TInstance> {
     });
   }
 
-  readonly store: Store<TData>;
+  readonly store: Store<string, TData>;
   readonly instances = new Map<string, TInstance>();
 
   add(id: string, data: TData): TInstance {

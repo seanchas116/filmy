@@ -12,7 +12,7 @@ export class Selection {
   }
 
   readonly document: Document;
-  readonly selectedNodeIDStore: Store<true>;
+  readonly selectedNodeIDStore: Store<string, true>;
 
   clear(): void {
     this.selectedNodeIDStore.data.clear();

@@ -13,11 +13,11 @@ import { Selection } from "./selection";
 
 export class Document {
   constructor() {
-    this.trackStore = new Store<TrackData>();
-    this.sequenceStore = new Store<SequenceData>();
-    this.trackItemStore = new Store<TrackItemData>();
-    this.nodeStore = new Store<NodeData>();
-    this.selectedNodeIDStore = new Store<true>();
+    this.trackStore = new Store<string, TrackData>();
+    this.sequenceStore = new Store<string, SequenceData>();
+    this.trackItemStore = new Store<string, TrackItemData>();
+    this.nodeStore = new Store<string, NodeData>();
+    this.selectedNodeIDStore = new Store<string, true>();
 
     this.undoManager = new UndoManager([
       this.trackStore,
@@ -148,11 +148,11 @@ export class Document {
 
   readonly undoManager: UndoManager;
 
-  readonly sequenceStore: Store<SequenceData>;
-  readonly trackStore: Store<TrackData>;
-  readonly trackItemStore: Store<TrackItemData>;
-  readonly nodeStore: Store<NodeData>;
-  readonly selectedNodeIDStore: Store<true>;
+  readonly sequenceStore: Store<string, SequenceData>;
+  readonly trackStore: Store<string, TrackData>;
+  readonly trackItemStore: Store<string, TrackItemData>;
+  readonly nodeStore: Store<string, NodeData>;
+  readonly selectedNodeIDStore: Store<string, true>;
 
   readonly sequences: InstanceManager<SequenceData, Sequence>;
   readonly tracks: InstanceManager<TrackData, Track>;

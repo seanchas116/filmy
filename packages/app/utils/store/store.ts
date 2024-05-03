@@ -1,7 +1,7 @@
 import { observable } from "mobx";
 
-export class Store<T> {
+export class Store<K extends string, T> {
   constructor() {}
 
-  readonly data = observable.map<string, T>([], { deep: false });
+  readonly data = observable.map<K, T>([], { deep: false });
 }

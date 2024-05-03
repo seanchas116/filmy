@@ -5,7 +5,7 @@ import { getOrCreate } from "../get-or-create";
 
 export class Parenting<TData> {
   constructor(
-    store: Store<TData>,
+    store: Store<string, TData>,
     getParent: (data: TData) => string | undefined,
     getOrder: (data: TData) => number
   ) {
@@ -21,7 +21,7 @@ export class Parenting<TData> {
     }
   }
 
-  private store: Store<TData>;
+  private store: Store<string, TData>;
   private childrenMap = new Map<string, FractionalSort<TData>>();
   private getParent: (data: TData) => string | undefined;
   private getOrder: (data: TData) => number;

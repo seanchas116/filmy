@@ -4,11 +4,14 @@ import { Store } from "./store";
 
 describe(Parenting, () => {
   it("manages parent/child relationships", () => {
-    const store = new Store<{
-      parent?: string;
-      order: number;
-      name: string;
-    }>();
+    const store = new Store<
+      string,
+      {
+        parent?: string;
+        order: number;
+        name: string;
+      }
+    >();
     const parenting = new Parenting(
       store,
       (data) => data.parent,
@@ -33,11 +36,14 @@ describe(Parenting, () => {
   });
 
   it("loads initial data", () => {
-    const store = new Store<{
-      parent?: string;
-      order: number;
-      name: string;
-    }>();
+    const store = new Store<
+      string,
+      {
+        parent?: string;
+        order: number;
+        name: string;
+      }
+    >();
 
     const a = { parent: undefined, order: 0, name: "a" };
     const b = { parent: "a", order: 1, name: "b" };

@@ -69,5 +69,5 @@ export class TrackItem {
 
   readonly id: string;
   readonly document: Document;
-  readonly store: Store<TrackItemData>;
+  readonly store: Store<string, TrackItemData>;
 }

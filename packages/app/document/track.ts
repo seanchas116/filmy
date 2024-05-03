@@ -41,5 +41,5 @@ export class Track {
 
   readonly id: string;
   readonly document: Document;
-  readonly store: Store<TrackData>;
+  readonly store: Store<string, TrackData>;
 }

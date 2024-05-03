@@ -75,5 +75,5 @@ export class Sequence {
 
   readonly id: string;
   readonly document: Document;
-  readonly store: Store<SequenceData>;
+  readonly store: Store<string, SequenceData>;
 }

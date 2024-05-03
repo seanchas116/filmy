@@ -4,7 +4,7 @@ import { Store } from "./store";
 
 export class UndoManager {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(stores: Store<any>[]) {
+  constructor(stores: Store<string, any>[]) {
     this.stores = stores;
 
     for (const store of stores) {
@@ -34,7 +34,7 @@ export class UndoManager {
   }
 
   readonly disposers: (() => void)[] = [];
-  readonly stores: Store<unknown>[];
+  readonly stores: Store<string, unknown>[];
   private lastCommand: UndoManagerCommand | undefined;
   private undoStack = new UndoStack<UndoManagerCommand>();
 
@@ -66,7 +66,7 @@ export class UndoManager {
   }
 
   stageChanges(
-    store: Store<unknown>,
+    store: Store<string, unknown>,
     id: string,
     oldData: unknown,
     newData: unknown
@@ -106,7 +106,7 @@ class UndoManagerCommand {
   readonly undoManager: UndoManager;
   timestamp = Date.now();
   readonly changesForStore = new Map<
-    Store<unknown>,
+    Store<string, unknown>,
     Map<string, { oldData: unknown; newData: unknown }>
   >();
 
