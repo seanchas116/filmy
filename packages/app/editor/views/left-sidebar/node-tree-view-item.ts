@@ -142,7 +142,7 @@ export class NodeTreeViewItem extends TreeViewItem {
         item: this,
       });
     } else {
-      const trackItem = this.node.trackItems[0];
+      const trackItem = this.node.trackItem;
 
       if (trackItem) {
         return React.createElement(TrackItemTreeRow, {

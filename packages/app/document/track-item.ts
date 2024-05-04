@@ -22,7 +22,7 @@ export class TrackItem {
   }
 
   @computed get node(): Node {
-    return this.document.nodes.get(this.data.node);
+    return this.document.nodes.get(this.id);
   }
 
   @computed get selected(): boolean {

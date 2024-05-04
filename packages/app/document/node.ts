@@ -75,9 +75,8 @@ export class Node {
     return node;
   }
 
-  get trackItems(): TrackItem[] {
-    const ids = this.document.trackItemFromNode.getChildren(this.id).items;
-    return ids.map((id) => this.document.trackItems.get(id));
+  get trackItem(): TrackItem | undefined {
+    return this.document.trackItems.safeGet(this.id);
   }
 
   @computed get ancestors(): Node[] {
@@ -179,7 +178,7 @@ export class Node {
     }
     this.document.selectedNodeIDStore.data.set(this.id, true);
 
-    const rootTrackItem = this.root.trackItems[0];
+    const rootTrackItem = this.root.trackItem;
     if (rootTrackItem) {
       this.document.currentSceneStore.data.set("value", rootTrackItem.id);
     }
@@ -264,7 +263,8 @@ export class Node {
   }
 
   delete() {
-    for (const trackItem of this.trackItems) {
+    const trackItem = this.trackItem;
+    if (trackItem) {
       this.document.trackItemStore.data.delete(trackItem.id);
     }
     for (const child of this.children) {

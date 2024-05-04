@@ -2,7 +2,7 @@ import { Store } from "@/utils/store/store";
 import { Node } from "./node";
 import { TrackItem } from "./track-item";
 import { computed } from "mobx";
-import { compact, flatMap } from "lodash-es";
+import { compact } from "lodash-es";
 import { Document } from "./document";
 
 export class Selection {
@@ -41,7 +41,7 @@ export class Selection {
   }
 
   @computed get trackItems(): TrackItem[] {
-    return flatMap([...this.nodeRoots].map((root) => root.trackItems));
+    return compact([...this.nodeRoots].map((root) => root.trackItem));
   }
 
   deleteSelected() {

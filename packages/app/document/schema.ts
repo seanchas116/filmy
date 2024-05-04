@@ -65,7 +65,6 @@ export type TrackItemData = {
   readonly track: string;
   readonly start: number;
   readonly duration: number;
-  readonly node: string;
 };
 
 export type SequenceData = {

@@ -29,11 +29,10 @@ export class InsertDragHandler implements DragHandler {
         order: 0,
         name: "Track 1",
       });
-      document.trackItems.add(nanoid(), {
+      document.trackItems.add(root.id, {
         track: track.id,
         start: this.editorState.currentTime,
         duration: 1000,
-        node: root.id,
       });
     }
 

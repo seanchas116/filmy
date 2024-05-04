@@ -48,11 +48,6 @@ export class Document {
       (data) => data.track,
       (data) => data.start
     );
-    this.trackItemFromNode = new Parenting(
-      this.trackItemStore,
-      (data) => data.node,
-      () => 0
-    );
     this.sequences = new InstanceManager(
       this.sequenceStore,
       (id) => new Sequence(this, id)
@@ -82,7 +77,28 @@ export class Document {
       name: "Track 2",
     });
 
-    const frameNode = this.nodes.add(nanoid(), {
+    const trackItem1 = this.trackItems.add(nanoid(), {
+      track: track1.id,
+      start: 1000,
+      duration: 1000,
+    });
+
+    const trackItem2 = this.trackItems.add(nanoid(), {
+      track: track2.id,
+      start: 0,
+      duration: 10000,
+    });
+
+    const trackItem1Node = this.nodes.add(trackItem1.id, {
+      order: 0,
+      type: "group",
+      x: 0,
+      y: 0,
+      w: 0,
+      h: 0,
+    });
+
+    const trackItem2Node = this.nodes.add(trackItem2.id, {
       order: 0,
       type: "group",
       x: 0,
@@ -93,7 +109,7 @@ export class Document {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const rectNode = this.nodes.add(nanoid(), {
-      parent: frameNode.id,
+      parent: trackItem1Node.id,
       order: 0,
       type: "rectangle",
       x: 0,
@@ -113,7 +129,8 @@ export class Document {
       },
     });
 
-    const videoNode = this.nodes.add(nanoid(), {
+    this.nodes.add(nanoid(), {
+      parent: trackItem2Node.id,
       order: 1,
       type: "video",
       start: -4 * 60 * 1000,
@@ -122,20 +139,6 @@ export class Document {
       w: videoWidth,
       h: videoHeight,
       src: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-    });
-
-    this.trackItems.add(nanoid(), {
-      track: track1.id,
-      start: 1000,
-      duration: 1000,
-      node: frameNode.id,
-    });
-
-    this.trackItems.add(nanoid(), {
-      track: track2.id,
-      start: 0,
-      duration: 10000,
-      node: videoNode.id,
     });
 
     makeObservable(this);
@@ -157,7 +160,6 @@ export class Document {
   readonly trackItems: InstanceManager<TrackItemData, TrackItem>;
   readonly trackParenting: Parenting<TrackData>;
   readonly trackItemParenting: Parenting<TrackItemData>;
-  readonly trackItemFromNode: Parenting<TrackItemData>;
   readonly nodes: NodeManager;
 
   readonly currentSequence: Sequence;
