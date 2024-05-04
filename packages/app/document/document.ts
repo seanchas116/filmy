@@ -119,6 +119,7 @@ export class Document {
       y: 0,
       w: 100,
       h: 100,
+      opacity: 0.5,
       fill: {
         type: "solid",
         hex: "#ff0000",

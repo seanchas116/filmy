@@ -36,6 +36,7 @@ export const RightSideBar: React.FC = observer(() => {
   const y = sameOrMixed(selectedNodes.map((node) => node.data.y));
   const width = sameOrMixed(selectedNodes.map((node) => node.data.w));
   const height = sameOrMixed(selectedNodes.map((node) => node.data.h));
+  const opacity = sameOrMixed(selectedNodes.map((node) => node.data.opacity));
   const fill = sameOrMixed(selectedNodes.map((node) => node.data.fill));
   const strokeFill = sameOrMixed(
     selectedNodes.map((node) => node.data.stroke?.fill)
@@ -113,6 +114,25 @@ export const RightSideBar: React.FC = observer(() => {
                   node.data = {
                     ...node.data,
                     h: n,
+                  };
+                }
+              })}
+            />
+          </InputWrap>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <InputWrap label={<Icon icon="material-symbols:opacity" />}>
+            <InputBody
+              value={opacity === MIXED ? "" : String(opacity ?? "")}
+              onChangeValue={action((value) => {
+                const n = Number(value);
+                if (isNaN(n)) {
+                  return;
+                }
+                for (const node of selectedNodes) {
+                  node.data = {
+                    ...node.data,
+                    opacity: n,
                   };
                 }
               })}

@@ -29,6 +29,7 @@ export type NodeCommonData = {
 
   readonly fill?: FillData;
   readonly stroke?: StrokeData;
+  readonly opacity?: number;
 
   readonly x: number;
   readonly y: number;
