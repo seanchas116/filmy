@@ -36,6 +36,10 @@ export class Selection {
     }
   }
 
+  clearCurrentScene(): void {
+    this.document.currentSceneStore.data.delete("value");
+  }
+
   @computed get nodeRoots(): Set<Node> {
     return new Set(this.nodes.map((node) => node.root));
   }

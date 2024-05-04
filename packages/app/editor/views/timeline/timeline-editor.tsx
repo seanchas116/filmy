@@ -56,6 +56,7 @@ export const TimelineEditor: React.FC = observer(() => {
         className="p-4"
         onMouseDown={action(() => {
           editorState.document.selection.clear();
+          editorState.document.selection.clearCurrentScene();
         })}
       >
         <div className="relative h-full">
