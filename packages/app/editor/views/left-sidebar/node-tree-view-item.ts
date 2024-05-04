@@ -136,20 +136,9 @@ export class NodeTreeViewItem extends TreeViewItem {
   }
 
   renderContent(): ReactNode {
-    if (this.node.parent) {
-      return React.createElement(NodeTreeRow, {
-        item: this,
-      });
-    } else {
-      const trackItem = this.node.trackItem;
-
-      if (trackItem) {
-        return React.createElement(TrackItemTreeRow, {
-          trackItem: trackItem,
-          item: this,
-        });
-      }
-    }
+    return React.createElement(NodeTreeRow, {
+      item: this,
+    });
   }
 
   showContextMenu(e: MouseEvent): void {
