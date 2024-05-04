@@ -32,7 +32,7 @@ export const TimelineEditor: React.FC = observer(() => {
   });
 
   return (
-    <div className="h-64 bg-white border-t border-gray-200 grid grid-cols-[auto_1fr]">
+    <div className="h-48 bg-white border-t border-gray-200 grid grid-cols-[auto_1fr]">
       <div className="w-64 border-r border-gray-200 p-2">
         <div className="flex mb-2">
           <button
@@ -54,54 +54,52 @@ export const TimelineEditor: React.FC = observer(() => {
           </div>
         ))}
       </div>
-      <div className="grid grid-rows-[2fr_1fr]">
-        <div
-          className="p-4"
-          onMouseDown={action(() => {
-            editorState.document.selection.clear();
-            editorState.document.selection.clearCurrentScene();
-          })}
-        >
-          <div className="relative h-full">
-            {/* seek area */}
-            <div className="h-8 relative">
-              <div className="absolute -inset-4" {...seekPointerProps} />
-            </div>
-            <TimelineArea />
-            {/* time cursor */}
-            <div
-              className="absolute top-4 bottom-0 bg-red-500 pointer-events-none"
-              style={{
-                left: currentTime * scale,
-                width: 2,
-              }}
-            >
-              <div className="absolute -top-6 -translate-x-1/2 bg-red-500 text-white text-xs px-2 py-1 rounded-lg">
-                {(currentTime / 1000).toFixed(2)}
-              </div>
+      <div
+        className="p-4"
+        onMouseDown={action(() => {
+          editorState.document.selection.clear();
+          editorState.document.selection.clearCurrentScene();
+        })}
+      >
+        <div className="relative h-full">
+          {/* seek area */}
+          <div className="h-8 relative">
+            <div className="absolute -inset-4" {...seekPointerProps} />
+          </div>
+          <TimelineArea />
+          {/* time cursor */}
+          <div
+            className="absolute top-4 -bottom-4 bg-red-500 pointer-events-none"
+            style={{
+              left: currentTime * scale,
+              width: 2,
+            }}
+          >
+            <div className="absolute -top-6 -translate-x-1/2 bg-red-500 text-white text-xs px-2 py-1 rounded-lg">
+              {(currentTime / 1000).toFixed(2)}
             </div>
           </div>
-        </div>
-        <div className="p-4 border-t border-gray-200">
-          <AnimationEditor />
         </div>
       </div>
     </div>
   );
 });
 
-const AnimationEditor = observer(() => {
+export const AnimationEditor = observer(() => {
   const editorState = useEditorState();
   const currentScene = editorState.document.selection.currentScene;
   if (!currentScene) {
-    return;
+    return <div className="h-32 bg-white border-t border-gray-200"></div>;
   }
 
-  const animations: AnimationData[] = [];
+  const animations: {
+    node: Node;
+    animation: AnimationData;
+  }[] = [];
 
   const visitNode = (node: Node) => {
     for (const animation of node.animations) {
-      animations.push(animation);
+      animations.push({ node, animation });
     }
     for (const child of node.children) {
       visitNode(child);
@@ -113,33 +111,49 @@ const AnimationEditor = observer(() => {
   const scale = 0.1;
 
   return (
-    <div className="relative">
-      {animations.map((animation, i) => {
-        if (animation.type !== "property") {
-          return;
-        }
+    <div className="h-32 bg-white border-t border-gray-200 grid grid-cols-[auto_1fr]">
+      <div className="w-64 border-r border-gray-200 p-4 px-2">
+        {animations.map((anim, i) => {
+          return (
+            <div key={i} className="p-1 h-8 flex items-center">
+              {anim.node.name} -{" "}
+              {anim.animation.type === "property"
+                ? anim.animation.property
+                : anim.animation.type}
+            </div>
+          );
+        })}
+      </div>
+      <div className="p-4">
+        <div className="relative h-full">
+          {animations.map(({ animation }, i) => {
+            if (animation.type !== "property") {
+              return;
+            }
 
-        return (
-          <div
-            key={i}
-            className="absolute bg-gray-100 flex items-center justify-center border-gray-200 border-2 text-xs"
-            style={{
-              left: (currentScene.start + animation.start) * scale,
-              width: animation.duration * scale,
-              height: 20,
-              top: i * 20,
-            }}
-          >
-            {animation.property}
-            <div className="absolute left-0 -top-0.5 w-fit h-5 px-2 leading-5 rounded-full bg-gray-200 -translate-x-1/2">
-              {animation.from}
-            </div>
-            <div className="absolute right-0 -top-0.5 w-fit h-5 px-2 leading-5 rounded-full bg-gray-200 translate-x-1/2">
-              {animation.to}
-            </div>
-          </div>
-        );
-      })}
+            return (
+              <div
+                key={i}
+                className="absolute flex items-center justify-center text-xs"
+                style={{
+                  left: (currentScene.start + animation.start) * scale,
+                  width: animation.duration * scale,
+                  height: 32,
+                  top: i * 32,
+                }}
+              >
+                <div className="absolute inset-x-0 top-1 bottom-1 bg-gray-100 border-gray-200 border-2" />
+                <div className="absolute left-0 top-0 bottom-0 my-auto w-fit h-6 px-2 leading-6 rounded-full bg-gray-200 -translate-x-1/2">
+                  {animation.from}
+                </div>
+                <div className="absolute right-0 top-0 bottom-0 my-auto w-fit h-6 px-2 leading-6 rounded-full bg-gray-200 translate-x-1/2">
+                  {animation.to}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 });

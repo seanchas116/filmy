@@ -3,12 +3,15 @@
 import { LeftSideBar } from "./left-sidebar/left-sidebar";
 import { RightSideBar } from "./right-sidebar/right-sidebar";
 import { ToolBar } from "./tool-bar/tool-bar";
-import { TimelineEditor } from "./timeline/timeline-editor";
+import { AnimationEditor, TimelineEditor } from "./timeline/timeline-editor";
 import { Viewport } from "./viewport/viewport";
 import { useKeyHandling } from "./use-key-handling";
 import { ContextMenuHost } from "../components/context-menu-host";
+import { observer } from "mobx-react-lite";
+import { useEditorState } from "./use-editor-state";
 
-export function Editor() {
+export const Editor = observer(() => {
+  const editorState = useEditorState();
   useKeyHandling();
 
   return (
@@ -19,8 +22,11 @@ export function Editor() {
         <Viewport />
         <RightSideBar />
       </div>
-      <TimelineEditor />
+      <div className="flex flex-col">
+        <TimelineEditor />
+        {editorState.mode === "animate" && <AnimationEditor />}
+      </div>
       <ContextMenuHost />
     </div>
   );
-}
+});

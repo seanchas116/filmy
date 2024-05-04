@@ -14,8 +14,8 @@ export class InsertDragHandler implements DragHandler {
 
     const document = event.document;
     let root = this.editorState.document.selection.currentScene?.node;
-    if (!root) {
-      // create new frame
+    if (!root || root.type !== "group") {
+      // create new group
       root = document.nodes.add(nanoid(), {
         order: 0,
         type: "group",

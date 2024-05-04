@@ -10,6 +10,8 @@ export class EditorState {
   readonly document = new Document();
   @observable tool: "rectangle" | "ellipse" | "text" | undefined = undefined;
 
+  @observable mode: "design" | "animate" = "design";
+
   // TODO
 
   readonly scroll = new ScrollState();

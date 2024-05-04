@@ -32,6 +32,12 @@ export const RightSideBar: React.FC = observer(() => {
   const editorState = useEditorState();
   const selectedNodes = flattenGroup(editorState.document.selection.nodes);
 
+  if (!selectedNodes.length) {
+    return (
+      <div className="w-[256px] bg-white border-l border-gray-200 text-xs" />
+    );
+  }
+
   const x = sameOrMixed(selectedNodes.map((node) => node.data.x));
   const y = sameOrMixed(selectedNodes.map((node) => node.data.y));
   const width = sameOrMixed(selectedNodes.map((node) => node.data.w));
@@ -47,6 +53,26 @@ export const RightSideBar: React.FC = observer(() => {
 
   return (
     <div className="w-[256px] bg-white border-l border-gray-200 text-xs">
+      <div className="p-2 flex">
+        <button
+          className="p-1 aria-selected:text-blue-500"
+          aria-selected={editorState.mode == "design"}
+          onClick={action(() => {
+            editorState.mode = "design";
+          })}
+        >
+          Arrange
+        </button>
+        <button
+          className="p-1 aria-selected:text-blue-500"
+          aria-selected={editorState.mode == "animate"}
+          onClick={action(() => {
+            editorState.mode = "animate";
+          })}
+        >
+          Animate
+        </button>
+      </div>
       <div className="p-2 flex flex-col gap-2">
         <div className="grid grid-cols-2 gap-2">
           <InputWrap label="X">

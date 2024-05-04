@@ -29,10 +29,7 @@ export class Selection {
   @computed get currentScene(): TrackItem | undefined {
     const id = this.document.currentSceneStore.data.get("value");
     if (id) {
-      const trackItem = this.document.trackItems.safeGet(id);
-      if (trackItem?.node.type === "group") {
-        return trackItem;
-      }
+      return this.document.trackItems.safeGet(id);
     }
   }
 
