@@ -1,12 +1,11 @@
 import { ReactNode, MouseEvent } from "react";
-import { NodeTreeRow, TrackItemTreeRow } from "./node-tree-row";
+import { NodeTreeRow } from "./node-tree-row";
 import { makeObservable, computed } from "mobx";
 import React from "react";
 import { TreeViewItem } from "@/editor/components/treeview/tree-view-item";
 import { EditorState } from "@/editor/state/editor-state";
 import { Node } from "@/document/node";
 import { showNodeContextMenu } from "../show-context-menu";
-import { getOrCreate } from "@/utils/get-or-create";
 
 const instances = new WeakMap<Node, NodeTreeViewItem>();
 
@@ -155,109 +154,5 @@ export class NodeTreeViewItem extends TreeViewItem {
 
   showContextMenu(e: MouseEvent): void {
     showNodeContextMenu(this.editorState, this.node, e);
-  }
-}
-
-export class RootTreeViewItem extends TreeViewItem {
-  private static instances = new WeakMap<EditorState, RootTreeViewItem>();
-
-  static get(editorState: EditorState) {
-    return getOrCreate(
-      this.instances,
-      editorState,
-      () => new RootTreeViewItem(editorState)
-    );
-  }
-
-  constructor(editorState: EditorState) {
-    super();
-    this.editorState = editorState;
-    makeObservable(this);
-  }
-
-  readonly editorState: EditorState;
-
-  @computed get id(): string {
-    return "__root__";
-  }
-
-  get parent() {
-    return undefined;
-  }
-
-  get previousSibling() {
-    return undefined;
-  }
-
-  get nextSibling() {
-    return undefined;
-  }
-
-  @computed get children(): NodeTreeViewItem[] {
-    return this.editorState.getTrackItemsForCurrentTime().map((item) => {
-      return NodeTreeViewItem.get(this.editorState, item.node);
-    });
-  }
-
-  @computed get indexPath(): readonly number[] {
-    return [];
-  }
-
-  get collapsed() {
-    return true;
-  }
-  set collapsed(value: boolean) {}
-
-  get hovered() {
-    return false;
-  }
-  enterHover(): void {}
-  leaveHover(): void {}
-
-  get selected() {
-    return false;
-  }
-
-  select(): void {}
-  deselect(): void {
-    this.editorState.document.selection.clear();
-  }
-
-  @computed get allSelectedItems(): TreeViewItem[] {
-    return this.editorState.document.selection.nodes.map((n) =>
-      NodeTreeViewItem.get(this.editorState, n)
-    );
-  }
-
-  deselectAll(): void {
-    this.editorState.document.selection.clear();
-  }
-
-  @computed get draggable() {
-    return !this.editorState.isReadonly;
-  }
-
-  @computed get droppable() {
-    return false;
-  }
-
-  drop(_nextItem: NodeTreeViewItem | undefined, _shouldCopy: boolean): void {
-    // no op
-  }
-
-  get dimmed(): boolean {
-    return false;
-  }
-
-  get isInstanceContent(): boolean {
-    return false;
-  }
-
-  renderContent(): ReactNode {
-    return null;
-  }
-
-  showContextMenu(e: MouseEvent): void {
-    throw new Error("TODO");
   }
 }

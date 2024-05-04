@@ -7,7 +7,6 @@ import { NodeTreeViewItem } from "./node-tree-view-item";
 import { Node } from "@/document/node";
 import { useEditorState } from "../use-editor-state";
 import { ClickToEdit } from "@/editor/components/click-to-edit";
-import { TrackItem } from "@/document/track-item";
 
 export const NodeIcon: React.FC<{
   node: Node;
@@ -44,20 +43,6 @@ export const NodeIcon: React.FC<{
 });
 
 NodeIcon.displayName = "NodeIcon";
-
-export const TrackItemTreeRow: React.FC<{
-  trackItem: TrackItem;
-  item: NodeTreeViewItem;
-}> = observer(({ trackItem }) => {
-  return (
-    <div className="flex-1 min-w-0 h-full flex items-center">
-      <span className="mr-2 p-1 rounded-full">
-        <NodeIcon node={trackItem.node} />
-      </span>
-      {trackItem.track.data.name}
-    </div>
-  );
-});
 
 export const NodeTreeRow: React.FC<{
   item: NodeTreeViewItem;
