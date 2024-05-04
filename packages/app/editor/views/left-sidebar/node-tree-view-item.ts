@@ -241,8 +241,8 @@ export class RootTreeViewItem extends TreeViewItem {
     return false;
   }
 
-  drop(nextItem: NodeTreeViewItem | undefined, shouldCopy: boolean): void {
-    throw new Error("TODO");
+  drop(_nextItem: NodeTreeViewItem | undefined, _shouldCopy: boolean): void {
+    // no op
   }
 
   get dimmed(): boolean {

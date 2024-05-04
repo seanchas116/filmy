@@ -98,15 +98,6 @@ export class Document {
       h: 0,
     });
 
-    const trackItem2Node = this.nodes.add(trackItem2.id, {
-      order: 0,
-      type: "group",
-      x: 0,
-      y: 0,
-      w: 0,
-      h: 0,
-    });
-
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const rectNode = this.nodes.add(nanoid(), {
       parent: trackItem1Node.id,
@@ -129,8 +120,7 @@ export class Document {
       },
     });
 
-    this.nodes.add(nanoid(), {
-      parent: trackItem2Node.id,
+    this.nodes.add(trackItem2.id, {
       order: 1,
       type: "video",
       start: -4 * 60 * 1000,

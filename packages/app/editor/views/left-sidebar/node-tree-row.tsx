@@ -52,7 +52,7 @@ export const TrackItemTreeRow: React.FC<{
   return (
     <div className="flex-1 min-w-0 h-full flex items-center">
       <span className="mr-2 p-1 rounded-full">
-        <Icon icon="material-symbols:view-timeline-outline" />
+        <NodeIcon node={trackItem.node} />
       </span>
       {trackItem.track.data.name}
     </div>
