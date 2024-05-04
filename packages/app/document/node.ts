@@ -311,13 +311,18 @@ export class Node {
         (animation) =>
           animation.start <= time && time < animation.start + animation.duration
       );
-      if (!playingAnimation) {
-        continue;
-      }
 
       const lastFinishedAnimation = animationsEndDesc.find(
         (animation) => animation.start + animation.duration <= time
       );
+
+      if (!playingAnimation) {
+        if (lastFinishedAnimation) {
+          // eslint-disable-next-line
+          (data as any)[property] = lastFinishedAnimation.to;
+        }
+        continue;
+      }
 
       const startValue =
         playingAnimation.from ??

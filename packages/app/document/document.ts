@@ -144,6 +144,17 @@ export class Document {
       to: 1,
     });
 
+    this.animationStore.data.set(nanoid(), {
+      node: rectNode.id,
+      type: "property",
+      property: "w",
+      start: 0,
+      duration: 1000,
+      easing: "linear",
+      from: 0,
+      to: 100,
+    });
+
     this.nodes.add(trackItem2.id, {
       order: 1,
       type: "video",
