@@ -23,8 +23,8 @@ export const Editor = observer(() => {
         <RightSideBar />
       </div>
       <div className="flex flex-col">
-        <TimelineEditor />
         {editorState.mode === "animate" && <AnimationEditor />}
+        <TimelineEditor />
       </div>
       <ContextMenuHost />
     </div>
