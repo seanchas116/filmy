@@ -115,10 +115,14 @@ const AnimationEditor = observer(() => {
   return (
     <div className="relative">
       {animations.map((animation, i) => {
+        if (animation.type !== "property") {
+          return;
+        }
+
         return (
           <div
             key={i}
-            className="absolute bg-gray-100 rounded-lg flex items-center justify-center border-gray-200 border-2"
+            className="absolute bg-gray-100 flex items-center justify-center border-gray-200 border-2 text-xs"
             style={{
               left: (currentScene.start + animation.start) * scale,
               width: (currentScene.start + animation.duration) * scale,
@@ -126,9 +130,13 @@ const AnimationEditor = observer(() => {
               top: i * 20,
             }}
           >
-            {animation.type === "property"
-              ? animation.property
-              : animation.type}
+            {animation.property}
+            <div className="absolute left-0 -top-0.5 w-fit h-5 px-2 leading-5 rounded-full bg-gray-200 -translate-x-1/2">
+              {animation.from}
+            </div>
+            <div className="absolute right-0 -top-0.5 w-fit h-5 px-2 leading-5 rounded-full bg-gray-200 translate-x-1/2">
+              {animation.to}
+            </div>
           </div>
         );
       })}
