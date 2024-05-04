@@ -137,14 +137,14 @@ const TimelineAreaItem: React.FC<{
 
             const initX = e.clientX;
             const initStart = item.start;
-            const initTrim = item.trim;
+            // const initTrim = item.trim;
             const initDuration = item.duration;
 
             const onMouseMove = action((e: MouseEvent) => {
               const totalDeltaX = e.clientX - initX;
 
               const newStart = Math.max(0, initStart + totalDeltaX / scale);
-              const newTrim = Math.max(0, initTrim + totalDeltaX / scale);
+              // const newTrim = Math.max(0, initTrim + totalDeltaX / scale);
               const newDuration = Math.max(
                 0,
                 initDuration - totalDeltaX / scale
@@ -153,7 +153,7 @@ const TimelineAreaItem: React.FC<{
               item.data = {
                 ...item.data,
                 start: newStart,
-                trim: newTrim,
+                // trim: newTrim,
                 duration: newDuration,
               };
             });
@@ -257,7 +257,6 @@ const VideoThumbnail: React.FC<{
 
     const nodeID = item.node.id;
     const nodeData = item.node.data;
-    const trim = item.trim;
 
     useEffect(() => {
       if (nodeData.type !== "video") {
@@ -281,7 +280,7 @@ const VideoThumbnail: React.FC<{
 
         for (let i = 0; i < width / thumbnailWidth; i++) {
           const time =
-            ((i + 0.5) * (thumbnailWidth / widthPerMS) + trim) / 1000;
+            ((i + 0.5) * (thumbnailWidth / widthPerMS) - nodeData.start) / 1000;
           console.log(time);
           thumbnails.push(await videoThumbnail.getAt(time));
         }
@@ -292,7 +291,7 @@ const VideoThumbnail: React.FC<{
       void generateThumbnails().then((thumbnails) => {
         setThumbnails(thumbnails);
       });
-    }, [nodeData, trim, thumbnailWidth, width, widthPerMS, nodeID]);
+    }, [nodeData, thumbnailWidth, width, widthPerMS, nodeID]);
 
     if (!thumbnails.length) {
       return null;

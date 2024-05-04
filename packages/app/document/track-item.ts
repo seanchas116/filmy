@@ -52,17 +52,6 @@ export class TrackItem {
     };
   }
 
-  get trim(): number {
-    return this.data.trim;
-  }
-
-  set trim(offset: number) {
-    this.data = {
-      ...this.data,
-      trim: offset,
-    };
-  }
-
   get duration(): number {
     return this.data.duration;
   }
