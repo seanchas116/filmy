@@ -72,7 +72,8 @@ export class CompositionRenderer {
       this.renderNode(child, trackItem, currentTime, isPlaying);
     }
 
-    const data = node.data;
+    const localTime = currentTime - trackItem.start;
+    const data = node.animatedDataAt(localTime);
 
     if (data.type === "video") {
       let video = videos.get(node.id);

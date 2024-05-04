@@ -284,7 +284,7 @@ export class Node {
     );
   }
 
-  animatedData(time: number): NodeData {
+  animatedDataAt(time: number): NodeData {
     // Apply property animations for each property
     const animationsForProperty = new Map<string, PropertyAnimationData[]>();
 
