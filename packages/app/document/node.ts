@@ -1,4 +1,4 @@
-import { AnimationData, NodeData } from "./schema";
+import { AnimationData, NodeData, PropertyAnimationData } from "./schema";
 import { Parenting } from "@/utils/store/parenting";
 import { InstanceManager } from "./instance-manager";
 import { Rect, Vec2 } from "paintvec";
@@ -276,11 +276,69 @@ export class Node {
     this.document.nodeStore.data.delete(this.id);
   }
 
+  // Animations (sorted by start time)
   @computed get animations(): AnimationData[] {
     const animationIDs = this.document.animationParenting.getChildren(this.id);
     return animationIDs.items.map((id) =>
       assertNonNull(this.document.animationStore.data.get(id))
     );
+  }
+
+  animatedData(time: number): NodeData {
+    // Apply property animations for each property
+    const animationsForProperty = new Map<string, PropertyAnimationData[]>();
+
+    for (const animation of this.animations) {
+      if (animation.type === "property") {
+        const property = animation.property;
+        const animations = animationsForProperty.get(property) ?? [];
+        animations.push(animation);
+        animationsForProperty.set(property, animations);
+      }
+    }
+
+    const data = { ...this.data };
+
+    for (const [property, animations] of animationsForProperty) {
+      const animationsStartDesc = animations.toSorted(
+        (a, b) => b.start - a.start
+      );
+      const animationsEndDesc = animations.toSorted(
+        (a, b) => a.start + a.duration - (b.start + b.duration)
+      );
+
+      const playingAnimation = animationsStartDesc.find(
+        (animation) =>
+          animation.start <= time && time < animation.start + animation.duration
+      );
+      if (!playingAnimation) {
+        continue;
+      }
+
+      const lastFinishedAnimation = animationsEndDesc.find(
+        (animation) => animation.start + animation.duration <= time
+      );
+
+      const startValue =
+        playingAnimation.from ??
+        lastFinishedAnimation?.to ??
+        // eslint-disable-next-line
+        Number((data as any)[property] ?? 0);
+
+      const endValue = playingAnimation.to;
+
+      // Linear value (TODO: easing)
+      const value = lerp(
+        startValue,
+        endValue,
+        (time - playingAnimation.start) / playingAnimation.duration
+      );
+
+      // eslint-disable-next-line
+      (data as any)[property] = value;
+    }
+
+    return data;
   }
 }
 
