@@ -125,7 +125,7 @@ const AnimationEditor = observer(() => {
             className="absolute bg-gray-100 flex items-center justify-center border-gray-200 border-2 text-xs"
             style={{
               left: (currentScene.start + animation.start) * scale,
-              width: (currentScene.start + animation.duration) * scale,
+              width: animation.duration * scale,
               height: 20,
               top: i * 20,
             }}
