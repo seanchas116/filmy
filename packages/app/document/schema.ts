@@ -1,3 +1,24 @@
+export type AnimationData =
+  | {
+      // property animation
+      type: "property";
+      property: string;
+      start: number;
+      duration: number;
+      easing: string;
+      from: number;
+      to: number;
+      node: string;
+    }
+  | {
+      // in or out animation (such as text appearing)
+      type: "in" | "out";
+      filter: string;
+      start: number;
+      duration: number;
+      node: string;
+    };
+
 export type NodeCommonData = {
   readonly parent?: string;
   readonly order: number;
