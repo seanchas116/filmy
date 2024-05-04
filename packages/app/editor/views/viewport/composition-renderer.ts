@@ -78,6 +78,7 @@ export class CompositionRenderer {
       let video = videos.get(node.id);
       if (!video) {
         video = document.createElement("video");
+        video.crossOrigin = "anonymous";
         video.src = data.src;
         video.muted = true; // TODO: audio
         videos.set(node.id, video);
