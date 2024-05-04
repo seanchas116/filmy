@@ -1,10 +1,11 @@
-import { NodeData } from "./schema";
+import { AnimationData, NodeData } from "./schema";
 import { Parenting } from "@/utils/store/parenting";
 import { InstanceManager } from "./instance-manager";
 import { Rect, Vec2 } from "paintvec";
 import { computed, makeObservable, observable } from "mobx";
 import { Document } from "./document";
 import { TrackItem } from "./track-item";
+import { assertNonNull } from "@/utils/assert";
 
 function lerp(a: number, b: number, t: number): number {
   return a * (1 - t) + b * t;
@@ -273,6 +274,13 @@ export class Node {
 
     this.document.selectedNodeIDStore.data.delete(this.id);
     this.document.nodeStore.data.delete(this.id);
+  }
+
+  @computed get animations(): AnimationData[] {
+    const animationIDs = this.document.animationParenting.getChildren(this.id);
+    return animationIDs.items.map((id) =>
+      assertNonNull(this.document.animationStore.data.get(id))
+    );
   }
 }
 

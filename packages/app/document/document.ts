@@ -1,5 +1,11 @@
 import { Store } from "@/utils/store/store";
-import { NodeData, SequenceData, TrackData, TrackItemData } from "./schema";
+import {
+  AnimationData,
+  NodeData,
+  SequenceData,
+  TrackData,
+  TrackItemData,
+} from "./schema";
 import { NodeManager } from "./node";
 import { InstanceManager } from "./instance-manager";
 import { Track } from "./track";
@@ -17,6 +23,7 @@ export class Document {
     this.sequenceStore = new Store<string, SequenceData>();
     this.trackItemStore = new Store<string, TrackItemData>();
     this.nodeStore = new Store<string, NodeData>();
+    this.animationStore = new Store<string, AnimationData>();
     this.selectedNodeIDStore = new Store<string, true>();
     this.currentSceneStore = new Store<"value", string>();
 
@@ -46,6 +53,11 @@ export class Document {
     this.trackItemParenting = new Parenting(
       this.trackItemStore,
       (data) => data.track,
+      (data) => data.start
+    );
+    this.animationParenting = new Parenting(
+      this.animationStore,
+      (data) => data.node,
       (data) => data.start
     );
     this.sequences = new InstanceManager(
@@ -142,6 +154,8 @@ export class Document {
   readonly trackStore: Store<string, TrackData>;
   readonly trackItemStore: Store<string, TrackItemData>;
   readonly nodeStore: Store<string, NodeData>;
+  readonly animationStore: Store<string, AnimationData>;
+
   readonly selectedNodeIDStore: Store<string, true>;
   readonly currentSceneStore: Store<"value", string>;
 
@@ -150,6 +164,7 @@ export class Document {
   readonly trackItems: InstanceManager<TrackItemData, TrackItem>;
   readonly trackParenting: Parenting<TrackData>;
   readonly trackItemParenting: Parenting<TrackItemData>;
+  readonly animationParenting: Parenting<AnimationData>;
   readonly nodes: NodeManager;
 
   readonly currentSequence: Sequence;
