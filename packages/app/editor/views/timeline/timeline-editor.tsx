@@ -108,6 +108,7 @@ const AnimationEditor = observer(() => {
     }
   };
   visitNode(currentScene.node);
+  console.log(animations);
 
   const scale = 0.1;
 
@@ -117,13 +118,18 @@ const AnimationEditor = observer(() => {
         return (
           <div
             key={i}
-            className="absolute bg-gray-200 rounded-lg"
+            className="absolute bg-gray-100 rounded-lg flex items-center justify-center border-gray-200 border-2"
             style={{
               left: (currentScene.start + animation.start) * scale,
               width: (currentScene.start + animation.duration) * scale,
               height: 20,
+              top: i * 20,
             }}
-          ></div>
+          >
+            {animation.type === "property"
+              ? animation.property
+              : animation.type}
+          </div>
         );
       })}
     </div>
