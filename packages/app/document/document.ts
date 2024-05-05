@@ -108,7 +108,7 @@ export class Document {
     const trackItem1 = this.trackItems.add(nanoid(), {
       track: track1.id,
       start: 1000,
-      duration: 1000,
+      duration: 2000,
     });
 
     const trackItem2 = this.trackItems.add(nanoid(), {
@@ -159,7 +159,7 @@ export class Document {
       x: 16,
       y: 480 - 48 - 16,
       w: 100,
-      h: 8,
+      h: 32,
       opacity: 0.5,
       fill: {
         type: "solid",
@@ -195,7 +195,7 @@ export class Document {
       duration: 1000,
       easing: "linear",
       from: 0,
-      to: 100,
+      to: 300,
     });
 
     this.animationStore.data.set(nanoid(), {
@@ -203,7 +203,7 @@ export class Document {
       node: textNode.id,
       type: "in",
       start: 0,
-      duration: 500,
+      duration: 1000,
     });
 
     this.nodes.add(trackItem2.id, {
