@@ -1,6 +1,4 @@
 import { AnimationData, NodeData, PropertyAnimationData } from "./schema";
-import { Parenting } from "@/utils/store/parenting";
-import { InstanceManager } from "./instance-manager";
 import { Rect, Vec2 } from "paintvec";
 import { computed, makeObservable, observable } from "mobx";
 import { Document } from "./document";
@@ -11,41 +9,22 @@ function lerp(a: number, b: number, t: number): number {
   return a * (1 - t) + b * t;
 }
 
-export class NodeManager extends InstanceManager<NodeData, Node> {
-  constructor(document: Document) {
-    super(document.nodeStore, (id) => new Node(document, id));
-    this.parenting = new Parenting(
-      document.nodeStore,
-      (data) => data.parent,
-      (data) => data.order
-    );
-  }
-
-  readonly parenting: Parenting<NodeData>;
-
-  get roots() {
-    return this.parenting.getRoots().items.map((id) => this.instances.get(id)!);
-  }
-}
-
 export class Node {
   constructor(document: Document, id: string) {
     this.document = document;
-    this.manager = document.nodes;
     this.id = id;
     makeObservable(this);
   }
 
   readonly document: Document;
-  readonly manager: NodeManager;
   readonly id: string;
 
   @computed get data(): NodeData {
-    return this.manager.store.data.get(this.id)!;
+    return this.document.nodeStore.data.get(this.id)!;
   }
 
   set data(data: NodeData) {
-    this.manager.store.data.set(this.id, data);
+    this.document.nodeStore.data.set(this.id, data);
   }
 
   @computed get type(): NodeData["type"] {
@@ -53,19 +32,19 @@ export class Node {
   }
 
   @computed get children(): Node[] {
-    return this.manager.parenting
+    return this.document.nodeParenting
       .getChildren(this.id)
-      .items.map((id) => this.manager.instances.get(id)!);
+      .items.map((id) => this.document.nodes.get(id));
   }
 
   childAt(index: number): Node | undefined {
-    const id = this.manager.parenting.getChildren(this.id).items[index];
-    return id ? this.manager.instances.get(id) : undefined;
+    const id = this.document.nodeParenting.getChildren(this.id).items[index];
+    return id ? this.document.nodes.get(id) : undefined;
   }
 
   @computed get parent(): Node | undefined {
     const parentId = this.data.parent;
-    return parentId ? this.manager.instances.get(parentId) : undefined;
+    return parentId ? this.document.nodes.get(parentId) : undefined;
   }
 
   @computed get root(): Node {
@@ -107,7 +86,8 @@ export class Node {
     }
 
     return (
-      this.manager.parenting.getChildren(parentId).indices.get(this.id) ?? -1
+      this.document.nodeParenting.getChildren(parentId).indices.get(this.id) ??
+      -1
     );
   }
 

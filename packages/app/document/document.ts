@@ -6,7 +6,7 @@ import {
   TrackData,
   TrackItemData,
 } from "./schema";
-import { NodeManager } from "./node";
+import { Node } from "./node";
 import { InstanceManager } from "./instance-manager";
 import { Track } from "./track";
 import { TrackItem } from "./track-item";
@@ -37,7 +37,10 @@ export class Document {
       this.currentSceneStore,
     ]);
 
-    this.nodes = new NodeManager(this);
+    this.nodes = new InstanceManager(
+      this.nodeStore,
+      (id) => new Node(this, id)
+    );
     this.tracks = new InstanceManager(
       this.trackStore,
       (id) => new Track(this, id)
@@ -55,6 +58,11 @@ export class Document {
       this.trackItemStore,
       (data) => data.track,
       (data) => data.start
+    );
+    this.nodeParenting = new Parenting(
+      this.nodeStore,
+      (data) => data.parent,
+      (data) => data.order
     );
     this.animationParenting = new Parenting(
       this.animationStore,
@@ -189,8 +197,9 @@ export class Document {
   readonly trackItems: InstanceManager<TrackItemData, TrackItem>;
   readonly trackParenting: Parenting<TrackData>;
   readonly trackItemParenting: Parenting<TrackItemData>;
+  readonly nodeParenting: Parenting<NodeData>;
   readonly animationParenting: Parenting<AnimationData>;
-  readonly nodes: NodeManager;
+  readonly nodes: InstanceManager<NodeData, Node>;
 
   readonly currentSequence: Sequence;
 
