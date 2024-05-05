@@ -46,10 +46,6 @@ export const AnimationEditor = observer(() => {
       >
         <div className="relative h-full">
           {animations.map((animation, i) => {
-            if (animation.data.type !== "property") {
-              return;
-            }
-
             return (
               <div
                 key={animation.id}
@@ -69,12 +65,16 @@ export const AnimationEditor = observer(() => {
                 })}
               >
                 <div className="absolute inset-x-0 top-1 bottom-1 bg-gray-100 border-gray-200 border-2 group-aria-selected:border-blue-500 group-aria-selected:bg-blue-200" />
-                <div className="absolute left-0 top-0 bottom-0 my-auto w-fit h-6 px-2 leading-6 rounded-full bg-gray-200 group-aria-selected:bg-blue-500 group-aria-selected:text-white -translate-x-1/2">
-                  {animation.data.from}
-                </div>
-                <div className="absolute right-0 top-0 bottom-0 my-auto w-fit h-6 px-2 leading-6 rounded-full bg-gray-200 group-aria-selected:bg-blue-500 group-aria-selected:text-white translate-x-1/2">
-                  {animation.data.to}
-                </div>
+                {animation.data.type === "property" && (
+                  <>
+                    <div className="absolute left-0 top-0 bottom-0 my-auto w-fit h-6 px-2 leading-6 rounded-full bg-gray-200 group-aria-selected:bg-blue-500 group-aria-selected:text-white -translate-x-1/2">
+                      {animation.data.from}
+                    </div>
+                    <div className="absolute right-0 top-0 bottom-0 my-auto w-fit h-6 px-2 leading-6 rounded-full bg-gray-200 group-aria-selected:bg-blue-500 group-aria-selected:text-white translate-x-1/2">
+                      {animation.data.to}
+                    </div>
+                  </>
+                )}
               </div>
             );
           })}
