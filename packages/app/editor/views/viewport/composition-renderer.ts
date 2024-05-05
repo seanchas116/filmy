@@ -29,7 +29,13 @@ export class CurrentFrameRenderer {
   }
 
   render() {
+    const sequence = this.editorState.document.currentSequence;
+
     this.renderer.clear();
+    this.renderer.context.scale(
+      this.renderer.canvas.width / sequence.width,
+      this.renderer.canvas.height / sequence.height
+    );
 
     const items = this.editorState.getTrackItemsForCurrentTime().toReversed();
     for (const item of items) {
@@ -61,6 +67,7 @@ export class CompositionRenderer {
   }
 
   clear() {
+    this.context.resetTransform();
     this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 

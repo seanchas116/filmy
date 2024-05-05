@@ -20,8 +20,8 @@ export const CompositionView: React.FC = observer(() => {
     if (!canvas) {
       return;
     }
-    canvas.width = width;
-    canvas.height = height;
+    canvas.width = width * window.devicePixelRatio;
+    canvas.height = height * window.devicePixelRatio;
 
     const renderer = new CurrentFrameRenderer(editorState, canvas);
     return () => {
@@ -44,9 +44,8 @@ export const CompositionView: React.FC = observer(() => {
       </svg>
       <canvas
         ref={canvasRef}
-        width={width}
-        height={height}
         className="absolute left-0 top-0 pointer-events-none"
+        style={{ width, height }}
       />
     </div>
   );
