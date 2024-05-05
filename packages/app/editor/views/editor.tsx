@@ -9,6 +9,7 @@ import { useKeyHandling } from "./use-key-handling";
 import { ContextMenuHost } from "../components/context-menu-host";
 import { observer } from "mobx-react-lite";
 import { useEditorState } from "./use-editor-state";
+import { TimelineTools } from "./timeline/timeline-tools";
 
 export const Editor = observer(() => {
   const editorState = useEditorState();
@@ -23,6 +24,7 @@ export const Editor = observer(() => {
         <RightSideBar />
       </div>
       <div className="flex flex-col">
+        <TimelineTools />
         {editorState.mode === "animate" && <AnimationEditor />}
         <TimelineEditor />
       </div>
