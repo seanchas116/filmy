@@ -3,6 +3,7 @@ import { TrackItem } from "./track-item";
 import { computed } from "mobx";
 import { compact } from "lodash-es";
 import { Document } from "./document";
+import { Animation } from "./animation";
 
 export class Selection {
   constructor(document: Document) {
@@ -20,6 +21,14 @@ export class Selection {
     return compact(
       [...this.document.selectedNodeIDStore.data.keys()].map((id) =>
         this.document.nodes.safeGet(id)
+      )
+    );
+  }
+
+  @computed get animations(): Animation[] {
+    return compact(
+      [...this.document.selectedAnimationIDStore.data.keys()].map((id) =>
+        this.document.animations.safeGet(id)
       )
     );
   }
