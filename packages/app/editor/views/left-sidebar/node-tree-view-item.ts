@@ -104,7 +104,7 @@ export class NodeTreeViewItem extends TreeViewItem {
   }
 
   deselectAll(): void {
-    this.editorState.document.selection.clearNodeSelection();
+    this.editorState.document.selection.clear();
   }
 
   @computed get draggable() {

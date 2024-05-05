@@ -51,7 +51,7 @@ export class GroupCommand extends Command {
     group.insertBefore(targets, undefined);
     group.expanded = true;
 
-    document.selection.clearNodeSelection();
+    document.selection.clear();
     group.select();
     document.undoManager.commit();
   }
@@ -83,7 +83,7 @@ export class UngroupCommand extends Command {
     const nodes = this.targets;
     const document = this.editorState.document;
 
-    document.selection.clearNodeSelection();
+    document.selection.clear();
 
     const parent = nodes[0].parent;
     if (!parent) {

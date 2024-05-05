@@ -11,11 +11,8 @@ export class Selection {
 
   readonly document: Document;
 
-  clearNodeSelection(): void {
+  clear(): void {
     this.document.selectedNodeIDStore.data.clear();
-  }
-
-  clearAnimationSelection() {
     this.document.selectedAnimationIDStore.data.clear();
   }
 

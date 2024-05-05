@@ -79,7 +79,7 @@ const TimelineAreaItem: React.FC<{
       }
 
       if (!e.shiftKey) {
-        editorState.document.selection.clearNodeSelection();
+        editorState.document.selection.clear();
       }
       item.node.select();
 

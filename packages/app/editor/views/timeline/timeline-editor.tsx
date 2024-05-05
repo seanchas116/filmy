@@ -24,7 +24,7 @@ export const TimelineEditor: React.FC = observer(() => {
       <div
         className="p-4"
         onMouseDown={action(() => {
-          editorState.document.selection.clearNodeSelection();
+          editorState.document.selection.clear();
           editorState.document.selection.clearCurrentScene();
         })}
       >
@@ -81,7 +81,7 @@ export const AnimationEditor = observer(() => {
       <div
         className="p-4"
         onMouseDown={action(() => {
-          editorState.document.selection.clearAnimationSelection();
+          editorState.document.selection.clear();
         })}
       >
         <div className="relative h-full">
@@ -103,7 +103,7 @@ export const AnimationEditor = observer(() => {
                   top: i * 32,
                 }}
                 onMouseDown={action((e) => {
-                  editorState.document.selection.clearAnimationSelection();
+                  editorState.document.selection.clear();
                   animation.select();
                   e.stopPropagation();
                 })}
