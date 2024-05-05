@@ -2,6 +2,7 @@ import { observer } from "mobx-react-lite";
 import { useEditorState } from "../use-editor-state";
 import { NumberInput } from "./input";
 import { action } from "mobx";
+import tw from "tailwind-styled-components";
 
 const AnimationAddView: React.FC = observer(() => {
   return (
@@ -14,6 +15,8 @@ const AnimationAddView: React.FC = observer(() => {
     </div>
   );
 });
+
+const Row = tw.div`grid grid-cols-3 gap-2 items-center`;
 
 export const AnimationPropertyEditor: React.FC = observer(() => {
   const editorState = useEditorState();
@@ -28,7 +31,7 @@ export const AnimationPropertyEditor: React.FC = observer(() => {
 
   return (
     <div className="p-2 flex flex-col gap-2">
-      <div className="grid grid-cols-3 gap-2 items-center">
+      <Row>
         <div>Start</div>
         <NumberInput
           className="col-span-2"
@@ -41,8 +44,8 @@ export const AnimationPropertyEditor: React.FC = observer(() => {
             };
           })}
         />
-      </div>
-      <div className="grid grid-cols-3 gap-2 items-center">
+      </Row>
+      <Row>
         <div>Duration</div>
         <NumberInput
           className="col-span-2"
@@ -55,10 +58,29 @@ export const AnimationPropertyEditor: React.FC = observer(() => {
             };
           })}
         />
-      </div>
+      </Row>
       {data.type === "property" && (
         <>
-          <div className="grid grid-cols-3 gap-2 items-center">
+          <Row>
+            <div>Property</div>
+            <select
+              value={data.property}
+              className="h-8 bg-gray-100 rounded-lg px-4 w-fit"
+              onChange={(e) => {
+                animation.data = {
+                  ...data,
+                  property: e.target.value,
+                };
+              }}
+            >
+              <option value="opacity">Opacity</option>
+              <option value="x">X</option>
+              <option value="y">Y</option>
+              <option value="w">Width</option>
+              <option value="h">Height</option>
+            </select>
+          </Row>
+          <Row>
             <div>Initial Value</div>
             <NumberInput
               className="col-span-2"
@@ -71,8 +93,8 @@ export const AnimationPropertyEditor: React.FC = observer(() => {
                 };
               })}
             />
-          </div>
-          <div className="grid grid-cols-3 gap-2 items-center">
+          </Row>
+          <Row>
             <div>Final Value</div>
             <NumberInput
               className="col-span-2"
@@ -85,7 +107,7 @@ export const AnimationPropertyEditor: React.FC = observer(() => {
                 };
               })}
             />
-          </div>
+          </Row>
         </>
       )}
     </div>
