@@ -4,8 +4,8 @@ import { Icon } from "@iconify/react";
 import { action } from "mobx";
 import { usePointerStroke } from "@/editor/components/use-pointer-stroke";
 import { TimelineArea } from "./timeline-area";
-import { AnimationData } from "@/document/schema";
 import { Node } from "@/document/node";
+import { Animation } from "@/document/animation";
 
 export const TimelineEditor: React.FC = observer(() => {
   const editorState = useEditorState();
@@ -92,14 +92,11 @@ export const AnimationEditor = observer(() => {
     return <div className="h-32 bg-white border-t border-gray-200"></div>;
   }
 
-  const animations: {
-    node: Node;
-    animation: AnimationData;
-  }[] = [];
+  const animations: Animation[] = [];
 
   const visitNode = (node: Node) => {
     for (const animation of node.animations) {
-      animations.push({ node, animation });
+      animations.push(animation);
     }
     for (const child of node.children) {
       visitNode(child);
@@ -117,37 +114,37 @@ export const AnimationEditor = observer(() => {
           return (
             <div key={i} className="p-1 h-8 flex items-center">
               {anim.node.name} -{" "}
-              {anim.animation.type === "property"
-                ? anim.animation.property
-                : anim.animation.type}
+              {anim.data.type === "property"
+                ? anim.data.property
+                : anim.data.type}
             </div>
           );
         })}
       </div>
       <div className="p-4">
         <div className="relative h-full">
-          {animations.map(({ animation }, i) => {
-            if (animation.type !== "property") {
+          {animations.map((animation, i) => {
+            if (animation.data.type !== "property") {
               return;
             }
 
             return (
               <div
-                key={i}
+                key={animation.id}
                 className="absolute flex items-center justify-center text-xs"
                 style={{
-                  left: (currentScene.start + animation.start) * scale,
-                  width: animation.duration * scale,
+                  left: (currentScene.start + animation.data.start) * scale,
+                  width: animation.data.duration * scale,
                   height: 32,
                   top: i * 32,
                 }}
               >
                 <div className="absolute inset-x-0 top-1 bottom-1 bg-gray-100 border-gray-200 border-2" />
                 <div className="absolute left-0 top-0 bottom-0 my-auto w-fit h-6 px-2 leading-6 rounded-full bg-gray-200 -translate-x-1/2">
-                  {animation.from}
+                  {animation.data.from}
                 </div>
                 <div className="absolute right-0 top-0 bottom-0 my-auto w-fit h-6 px-2 leading-6 rounded-full bg-gray-200 translate-x-1/2">
-                  {animation.to}
+                  {animation.data.to}
                 </div>
               </div>
             );

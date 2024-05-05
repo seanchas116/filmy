@@ -16,6 +16,7 @@ import { Parenting } from "@/utils/store/parenting";
 import { makeObservable } from "mobx";
 import { UndoManager } from "@/utils/store/undo-manager";
 import { Selection } from "./selection";
+import { Animation } from "./animation";
 
 export class Document {
   constructor() {
@@ -34,12 +35,17 @@ export class Document {
       this.trackItemStore,
       this.nodeStore,
       this.selectedNodeIDStore,
+      this.selectedAnimationIDStore,
       this.currentSceneStore,
     ]);
 
     this.nodes = new InstanceManager(
       this.nodeStore,
       (id) => new Node(this, id)
+    );
+    this.animations = new InstanceManager(
+      this.animationStore,
+      (id) => new Animation(this, id)
     );
     this.tracks = new InstanceManager(
       this.trackStore,
@@ -195,11 +201,12 @@ export class Document {
   readonly sequences: InstanceManager<SequenceData, Sequence>;
   readonly tracks: InstanceManager<TrackData, Track>;
   readonly trackItems: InstanceManager<TrackItemData, TrackItem>;
+  readonly nodes: InstanceManager<NodeData, Node>;
+  readonly animations: InstanceManager<AnimationData, Animation>;
   readonly trackParenting: Parenting<TrackData>;
   readonly trackItemParenting: Parenting<TrackItemData>;
   readonly nodeParenting: Parenting<NodeData>;
   readonly animationParenting: Parenting<AnimationData>;
-  readonly nodes: InstanceManager<NodeData, Node>;
 
   readonly currentSequence: Sequence;
 

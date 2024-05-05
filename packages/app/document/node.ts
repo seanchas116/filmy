@@ -1,9 +1,9 @@
-import { AnimationData, NodeData, PropertyAnimationData } from "./schema";
+import { NodeData, PropertyAnimationData } from "./schema";
 import { Rect, Vec2 } from "paintvec";
 import { computed, makeObservable, observable } from "mobx";
 import { Document } from "./document";
 import { TrackItem } from "./track-item";
-import { assertNonNull } from "@/utils/assert";
+import { Animation } from "./animation";
 
 function lerp(a: number, b: number, t: number): number {
   return a * (1 - t) + b * t;
@@ -257,11 +257,9 @@ export class Node {
   }
 
   // Animations (sorted by start time)
-  @computed get animations(): AnimationData[] {
+  @computed get animations(): Animation[] {
     const animationIDs = this.document.animationParenting.getChildren(this.id);
-    return animationIDs.items.map((id) =>
-      assertNonNull(this.document.animationStore.data.get(id))
-    );
+    return animationIDs.items.map((id) => this.document.animations.get(id));
   }
 
   animatedDataAt(time: number): NodeData {
@@ -269,10 +267,10 @@ export class Node {
     const animationsForProperty = new Map<string, PropertyAnimationData[]>();
 
     for (const animation of this.animations) {
-      if (animation.type === "property") {
-        const property = animation.property;
+      if (animation.data.type === "property") {
+        const property = animation.data.property;
         const animations = animationsForProperty.get(property) ?? [];
-        animations.push(animation);
+        animations.push(animation.data);
         animationsForProperty.set(property, animations);
       }
     }
