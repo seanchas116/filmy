@@ -29,26 +29,6 @@ export const NodePropertyEditor: React.FC = observer(() => {
 
   return (
     <>
-      <div className="p-2 flex">
-        <button
-          className="p-1 aria-selected:text-blue-500"
-          aria-pressed={editorState.mode == "design"}
-          onClick={action(() => {
-            editorState.mode = "design";
-          })}
-        >
-          Arrange
-        </button>
-        <button
-          className="p-1 aria-selected:text-blue-500"
-          aria-pressed={editorState.mode == "animate"}
-          onClick={action(() => {
-            editorState.mode = "animate";
-          })}
-        >
-          Animate
-        </button>
-      </div>
       <div className="p-2 flex flex-col gap-2">
         <div className="grid grid-cols-2 gap-2">
           <NumberInput

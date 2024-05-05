@@ -9,8 +9,10 @@ import { useKeyHandling } from "./use-key-handling";
 import { ContextMenuHost } from "../components/context-menu-host";
 import { observer } from "mobx-react-lite";
 import { TimelineTools } from "./timeline/timeline-tools";
+import { useEditorState } from "./use-editor-state";
 
 export const Editor = observer(() => {
+  const editorState = useEditorState();
   useKeyHandling();
 
   return (
@@ -23,7 +25,7 @@ export const Editor = observer(() => {
       </div>
       <div className="flex flex-col">
         <TimelineTools />
-        <MotionEditor />
+        {editorState.mode === "animate" && <MotionEditor />}
         <TrackEditor />
       </div>
       <ContextMenuHost />
