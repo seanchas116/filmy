@@ -55,28 +55,36 @@ export type StrokeData = {
   readonly fill: FillData;
 };
 
-export type NodeData = NodeCommonData &
-  (
-    | {
-        readonly type: "text";
-        readonly text: string;
-        readonly font: FontData;
-      }
-    | {
-        readonly type: "rectangle";
-      }
-    | {
-        readonly type: "ellipse";
-      }
-    | {
-        readonly type: "video";
-        readonly src: string;
-        readonly start: number;
-      }
-    | {
-        readonly type: "group";
-      }
-  );
+export type TextNodeData = NodeCommonData & {
+  readonly type: "text";
+  readonly text: string;
+  readonly font: FontData;
+};
+
+export type RectangleNodeData = NodeCommonData & {
+  readonly type: "rectangle";
+};
+
+export type EllipseNodeData = NodeCommonData & {
+  readonly type: "ellipse";
+};
+
+export type VideoNodeData = NodeCommonData & {
+  readonly type: "video";
+  readonly src: string;
+  readonly start: number;
+};
+
+export type GroupNodeData = NodeCommonData & {
+  readonly type: "group";
+};
+
+export type NodeData =
+  | TextNodeData
+  | RectangleNodeData
+  | EllipseNodeData
+  | VideoNodeData
+  | GroupNodeData;
 
 export type TrackData = {
   readonly sequence: string;

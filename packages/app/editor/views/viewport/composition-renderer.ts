@@ -1,4 +1,5 @@
 import { Node } from "@/document/node";
+import { TextNodeData } from "@/document/schema";
 import { TrackItem } from "@/document/track-item";
 import { EditorState } from "@/editor/state/editor-state";
 import { assertNonNull } from "@/utils/assert";
@@ -132,11 +133,48 @@ export class CompositionRenderer {
       this.context.globalAlpha = data.opacity ?? 1;
       this.context.font = `${data.font.size}px ${data.font.family}`;
       this.context.fillStyle = data.fill?.hex ?? "none";
-      this.context.fillText(data.text, data.x, data.y + data.font.size);
+
+      // TODO: control via animation
+      new TextAppearAnimation().render(
+        this.context,
+        data,
+        Math.min(1, localTime / 500)
+      );
+
       return;
     }
   }
 
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.max(Math.min(value, max), min);
+}
+
+class TextAppearAnimation {
+  constructor() {}
+
+  render(
+    context: CanvasRenderingContext2D,
+    data: TextNodeData,
+    progress: number
+  ) {
+    const charCount = data.text.length;
+    let x = data.x;
+    for (let i = 0; i < charCount; i++) {
+      const char = data.text[i];
+      const charProgress = clamp(progress * charCount - i, 0, 1);
+
+      context.globalAlpha = charProgress;
+      context.fillText(
+        char,
+        x,
+        data.y + data.font.size + (1 - charProgress) * data.font.size
+      );
+
+      x += context.measureText(char).width;
+    }
+  }
 }
