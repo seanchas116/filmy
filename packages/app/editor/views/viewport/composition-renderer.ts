@@ -186,7 +186,7 @@ class TextAppearAnimation {
 
       context.save();
 
-      const rotation = 1 - charProgress;
+      const rotation = (1 - charProgress) * (Math.PI * 0.25);
 
       context.translate(
         x,
