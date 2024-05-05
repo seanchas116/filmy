@@ -1,20 +1,21 @@
-export type PropertyAnimationData = {
-  // property animation
-  type: "property";
-  property: string;
-  start: number;
-  duration: number;
-  easing: string;
-  from?: number;
-  to: number;
-  node: string;
+export type AnimationCommonData = {
+  readonly node: string;
+  readonly order: number;
+  readonly start: number;
+  readonly duration: number;
 };
-export type InOutAnimationData = {
+
+export type PropertyAnimationData = AnimationCommonData & {
+  // property animation
+  readonly type: "property";
+  readonly property: string;
+  readonly easing: string;
+  readonly from?: number;
+  readonly to: number;
+};
+export type InOutAnimationData = AnimationCommonData & {
   // in or out animation (such as text appearing)
-  type: "in" | "out";
-  start: number;
-  duration: number;
-  node: string;
+  readonly type: "in" | "out";
 };
 
 export type AnimationData = PropertyAnimationData | InOutAnimationData;

@@ -22,6 +22,8 @@ export const AnimationEditor = observer(() => {
     visitNode(currentScene.node);
   }
 
+  animations.sort((a, b) => a.data.order - b.data.order);
+
   const scale = 0.1;
 
   return (
@@ -46,6 +48,100 @@ export const AnimationEditor = observer(() => {
       >
         <div className="relative h-full">
           {animations.map((animation, i) => {
+            const onBarMouseDown = action((e: React.MouseEvent) => {
+              editorState.document.selection.clear();
+              animation.select();
+              e.stopPropagation();
+
+              const initClientX = e.clientX;
+              const initStart = animation.data.start;
+
+              const onMouseMove = action((e: MouseEvent) => {
+                const totalDeltaX = e.clientX - initClientX;
+                const start = Math.max(0, initStart + totalDeltaX / scale);
+
+                animation.data = {
+                  ...animation.data,
+                  start,
+                };
+              });
+
+              const onMouseUp = action(() => {
+                window.removeEventListener("mousemove", onMouseMove);
+                window.removeEventListener("mouseup", onMouseUp);
+
+                editorState.document.undoManager.commit();
+              });
+
+              window.addEventListener("mousemove", onMouseMove);
+              window.addEventListener("mouseup", onMouseUp);
+            });
+
+            const onStartHandleMouseDown = action((e: React.MouseEvent) => {
+              e.stopPropagation();
+
+              const initClientX = e.clientX;
+              const initStart = animation.data.start;
+              const initDuration = animation.data.duration;
+
+              const onMouseMove = action((e: MouseEvent) => {
+                const totalDeltaX = e.clientX - initClientX;
+
+                const start = Math.max(0, initStart + totalDeltaX / scale);
+                const duration = Math.max(
+                  0,
+                  initDuration - totalDeltaX / scale
+                );
+
+                animation.data = {
+                  ...animation.data,
+                  start,
+                  duration,
+                };
+              });
+
+              const onMouseUp = action(() => {
+                window.removeEventListener("mousemove", onMouseMove);
+                window.removeEventListener("mouseup", onMouseUp);
+
+                editorState.document.undoManager.commit();
+              });
+
+              window.addEventListener("mousemove", onMouseMove);
+              window.addEventListener("mouseup", onMouseUp);
+            });
+
+            const onEndHandleMouseDown = action((e: React.MouseEvent) => {
+              e.stopPropagation();
+
+              const initClientX = e.clientX;
+              const initDuration = animation.data.duration;
+
+              const onMouseMove = action((e: MouseEvent) => {
+                const totalDeltaX = e.clientX - initClientX;
+
+                const duration = Math.max(
+                  0,
+                  initDuration + totalDeltaX / scale
+                );
+
+                animation.data = {
+                  ...animation.data,
+                  duration,
+                };
+              });
+
+              const onMouseUp = action(() => {
+                window.removeEventListener("mousemove", onMouseMove);
+                window.removeEventListener("mouseup", onMouseUp);
+
+                editorState.document.undoManager.commit();
+              });
+
+              window.addEventListener("mousemove", onMouseMove);
+              window.addEventListener("mouseup", onMouseUp);
+            });
+
             return (
               <div
                 key={animation.id}
@@ -58,46 +154,21 @@ export const AnimationEditor = observer(() => {
                   height: 32,
                   top: i * 32,
                 }}
-                onMouseDown={action((e) => {
-                  editorState.document.selection.clear();
-                  animation.select();
-                  e.stopPropagation();
-
-                  const initClientX = e.clientX;
-                  const initStart = animation.data.start;
-
-                  const onMouseMove = action((e: MouseEvent) => {
-                    const totalDeltaX = e.clientX - initClientX;
-                    const start = Math.max(0, initStart + totalDeltaX / scale);
-
-                    animation.data = {
-                      ...animation.data,
-                      start,
-                    };
-                  });
-
-                  const onMouseEnd = action(() => {
-                    window.removeEventListener("mousemove", onMouseMove);
-                    window.removeEventListener("mouseup", onMouseEnd);
-
-                    editorState.document.undoManager.commit();
-                  });
-
-                  window.addEventListener("mousemove", onMouseMove);
-                  window.addEventListener("mouseup", onMouseEnd);
-                })}
+                onMouseDown={onBarMouseDown}
               >
                 <div className="absolute inset-x-0 top-1 bottom-1 bg-gray-100 border-gray-200 border-2 group-aria-selected:border-blue-500 group-aria-selected:bg-blue-200" />
-                {animation.data.type === "property" && (
-                  <>
-                    <div className="absolute left-0 top-0 bottom-0 my-auto w-fit h-6 px-2 leading-6 rounded-full bg-gray-200 group-aria-selected:bg-blue-500 group-aria-selected:text-white -translate-x-1/2">
-                      {animation.data.from}
-                    </div>
-                    <div className="absolute right-0 top-0 bottom-0 my-auto w-fit h-6 px-2 leading-6 rounded-full bg-gray-200 group-aria-selected:bg-blue-500 group-aria-selected:text-white translate-x-1/2">
-                      {animation.data.to}
-                    </div>
-                  </>
-                )}
+                <div
+                  className="absolute left-0 top-0 bottom-0 my-auto w-fit h-6 px-2 leading-6 rounded-full bg-gray-200 group-aria-selected:bg-blue-500 group-aria-selected:text-white -translate-x-1/2"
+                  onMouseDown={onStartHandleMouseDown}
+                >
+                  {animation.data.type === "property" ? animation.data.from : 0}
+                </div>
+                <div
+                  className="absolute right-0 top-0 bottom-0 my-auto w-fit h-6 px-2 leading-6 rounded-full bg-gray-200 group-aria-selected:bg-blue-500 group-aria-selected:text-white translate-x-1/2"
+                  onMouseDown={onEndHandleMouseDown}
+                >
+                  {animation.data.type === "property" ? animation.data.to : 1}
+                </div>
               </div>
             );
           })}

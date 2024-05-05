@@ -74,7 +74,7 @@ export class Document {
     this.animationParenting = new Parenting(
       this.animationStore,
       (data) => data.node,
-      (data) => data.start
+      (data) => data.order
     );
     this.sequences = new InstanceManager(
       this.sequenceStore,
@@ -175,6 +175,7 @@ export class Document {
     });
 
     this.animationStore.data.set(nanoid(), {
+      order: 0,
       node: rectNode.id,
       type: "property",
       property: "opacity",
@@ -186,6 +187,7 @@ export class Document {
     });
 
     this.animationStore.data.set(nanoid(), {
+      order: 1,
       node: rectNode.id,
       type: "property",
       property: "w",
@@ -197,6 +199,7 @@ export class Document {
     });
 
     this.animationStore.data.set(nanoid(), {
+      order: 2,
       node: textNode.id,
       type: "in",
       start: 0,
