@@ -27,7 +27,7 @@ export const AnimationEditor = observer(() => {
   const scale = 0.1;
 
   return (
-    <div className="h-32 bg-white border-t border-gray-200 grid grid-cols-[auto_1fr]">
+    <div className="h-48 bg-white border-t border-gray-200 grid grid-cols-[auto_1fr]">
       <div className="w-64 border-r border-gray-200 p-4 px-2">
         {animations.map((anim, i) => {
           return (
