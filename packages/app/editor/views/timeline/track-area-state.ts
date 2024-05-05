@@ -14,7 +14,7 @@ export interface PreviewRow {
   previews: Preview[];
 }
 
-export class TimelineAreaState {
+export class TrackAreaState {
   constructor(editorState: EditorState) {
     this.editorState = editorState;
     makeObservable(this);

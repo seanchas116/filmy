@@ -1,11 +1,11 @@
 import { observer } from "mobx-react-lite";
 import { useEditorState } from "../use-editor-state";
 import { action } from "mobx";
-import { TimelineArea } from "./timeline-area";
+import { TrackArea } from "./track-area";
 import { Node } from "@/document/node";
 import { Animation } from "@/document/animation";
 
-export const TimelineEditor: React.FC = observer(() => {
+export const TrackEditor: React.FC = observer(() => {
   const editorState = useEditorState();
   const tracks = editorState.document.currentSequence.tracks;
 
@@ -29,7 +29,7 @@ export const TimelineEditor: React.FC = observer(() => {
         })}
       >
         <div className="relative h-full">
-          <TimelineArea />
+          <TrackArea />
           {/* time cursor */}
           <div
             className="absolute -top-4 -bottom-5 bg-red-500 pointer-events-none"
@@ -44,7 +44,7 @@ export const TimelineEditor: React.FC = observer(() => {
   );
 });
 
-export const AnimationEditor = observer(() => {
+export const MotionEditor = observer(() => {
   const editorState = useEditorState();
   const currentScene = editorState.document.selection.currentScene;
 

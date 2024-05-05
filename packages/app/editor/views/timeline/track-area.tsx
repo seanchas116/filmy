@@ -4,7 +4,7 @@ import { action } from "mobx";
 import { twMerge } from "tailwind-merge";
 import { TrackItem } from "@/document/track-item";
 import { useEffect, useState } from "react";
-import { TimelineAreaState } from "./timeline-area-state";
+import { TrackAreaState } from "./track-area-state";
 import {
   VideoThumbnailRenderer,
   VideoThumbnailFrame,
@@ -13,12 +13,12 @@ import { getOrCreate } from "@/utils/get-or-create";
 import { CompositionRenderer } from "../viewport/composition-renderer";
 import { Sequence } from "@/document/sequence";
 
-export const TimelineArea: React.FC<{
+export const TrackArea: React.FC<{
   className?: string;
 }> = observer(({ className }) => {
   const editorState = useEditorState();
 
-  const [state] = useState(() => new TimelineAreaState(editorState));
+  const [state] = useState(() => new TrackAreaState(editorState));
 
   return (
     <div
@@ -27,7 +27,7 @@ export const TimelineArea: React.FC<{
     >
       {state.rowsToShow.flatMap((row, trackIndex) => {
         return row.previews.map((preview) => (
-          <TimelineAreaItem
+          <TrackAreaItem
             key={preview.item.id}
             rowHeight={state.rowHeight}
             scale={state.scale}
@@ -49,7 +49,7 @@ export const TimelineArea: React.FC<{
   );
 });
 
-const TimelineAreaItem: React.FC<{
+const TrackAreaItem: React.FC<{
   rowHeight: number;
   scale: number;
   item: TrackItem;

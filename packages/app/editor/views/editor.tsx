@@ -3,7 +3,7 @@
 import { LeftSideBar } from "./left-sidebar/left-sidebar";
 import { RightSideBar } from "./right-sidebar/right-sidebar";
 import { ToolBar } from "./tool-bar/tool-bar";
-import { AnimationEditor, TimelineEditor } from "./timeline/timeline-editor";
+import { MotionEditor, TrackEditor } from "./timeline/timeline-editor";
 import { Viewport } from "./viewport/viewport";
 import { useKeyHandling } from "./use-key-handling";
 import { ContextMenuHost } from "../components/context-menu-host";
@@ -25,8 +25,8 @@ export const Editor = observer(() => {
       </div>
       <div className="flex flex-col">
         <TimelineTools />
-        {editorState.mode === "animate" && <AnimationEditor />}
-        <TimelineEditor />
+        {editorState.mode === "animate" && <MotionEditor />}
+        <TrackEditor />
       </div>
       <ContextMenuHost />
     </div>
