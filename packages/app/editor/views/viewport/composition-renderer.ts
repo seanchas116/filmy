@@ -172,11 +172,20 @@ class TextAppearAnimation {
       const charProgress = clamp(progress * charCount - i, 0, 1);
 
       context.globalAlpha = charProgress;
-      context.fillText(
-        char,
+
+      context.save();
+
+      const rotation = 1 - charProgress;
+
+      context.translate(
         x,
         data.y + data.font.size + (1 - charProgress) * data.font.size
       );
+      context.rotate(-rotation);
+
+      context.fillText(char, 0, 0);
+
+      context.restore();
 
       x += context.measureText(char).width;
     }
