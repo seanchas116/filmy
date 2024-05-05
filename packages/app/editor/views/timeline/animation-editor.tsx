@@ -62,6 +62,29 @@ export const AnimationEditor = observer(() => {
                   editorState.document.selection.clear();
                   animation.select();
                   e.stopPropagation();
+
+                  const initClientX = e.clientX;
+                  const initStart = animation.data.start;
+
+                  const onMouseMove = action((e: MouseEvent) => {
+                    const totalDeltaX = e.clientX - initClientX;
+                    const start = Math.max(0, initStart + totalDeltaX / scale);
+
+                    animation.data = {
+                      ...animation.data,
+                      start,
+                    };
+                  });
+
+                  const onMouseEnd = action(() => {
+                    window.removeEventListener("mousemove", onMouseMove);
+                    window.removeEventListener("mouseup", onMouseEnd);
+
+                    editorState.document.undoManager.commit();
+                  });
+
+                  window.addEventListener("mousemove", onMouseMove);
+                  window.addEventListener("mouseup", onMouseEnd);
                 })}
               >
                 <div className="absolute inset-x-0 top-1 bottom-1 bg-gray-100 border-gray-200 border-2 group-aria-selected:border-blue-500 group-aria-selected:bg-blue-200" />
