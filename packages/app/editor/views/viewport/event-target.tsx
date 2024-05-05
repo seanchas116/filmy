@@ -73,7 +73,7 @@ export const EventTarget = observer(() => {
         return clickMoveDragHandler;
       }
 
-      editorState.document.selection.clear();
+      editorState.document.selection.clearNodeSelection();
     }),
     onMove: action((e, { initData }) => {
       initData?.move(createViewportEvent(e));

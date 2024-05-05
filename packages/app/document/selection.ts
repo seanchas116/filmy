@@ -11,8 +11,12 @@ export class Selection {
 
   readonly document: Document;
 
-  clear(): void {
+  clearNodeSelection(): void {
     this.document.selectedNodeIDStore.data.clear();
+  }
+
+  clearAnimationSelection() {
+    this.document.selectedAnimationIDStore.data.clear();
   }
 
   @computed get nodes(): Node[] {
