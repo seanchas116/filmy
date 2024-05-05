@@ -1,5 +1,5 @@
 import { Node } from "@/document/node";
-import { TextNodeData } from "@/document/schema";
+import { InOutAnimationData, TextNodeData } from "@/document/schema";
 import { TrackItem } from "@/document/track-item";
 import { EditorState } from "@/editor/state/editor-state";
 import { assertNonNull } from "@/utils/assert";
@@ -142,12 +142,24 @@ export class CompositionRenderer {
       this.context.font = `${data.font.size}px ${data.font.family}`;
       this.context.fillStyle = data.fill?.hex ?? "none";
 
-      // TODO: control via animation
-      new TextAppearAnimation().render(
-        this.context,
-        data,
-        Math.min(1, localTime / 500)
-      );
+      const appearAnimations = node.animations
+        .map((a) => a.data)
+        .filter((a): a is InOutAnimationData => a.type === "in");
+
+      // TODO: show all animations
+      const appearAnimation = appearAnimations.at(0);
+      if (appearAnimation) {
+        const progress = clamp(
+          (localTime - appearAnimation.start) / appearAnimation.duration,
+          0,
+          1
+        );
+
+        // TODO: control via animation
+        new TextAppearAnimation().render(this.context, data, progress);
+      } else {
+        new TextAppearAnimation().render(this.context, data, 1);
+      }
 
       return;
     }

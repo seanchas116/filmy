@@ -17,6 +17,7 @@ import { makeObservable } from "mobx";
 import { UndoManager } from "@/utils/store/undo-manager";
 import { Selection } from "./selection";
 import { Animation } from "./animation";
+import twColors from "tailwindcss/colors";
 
 export class Document {
   constructor() {
@@ -125,19 +126,44 @@ export class Document {
       h: 0,
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const rectNode = this.nodes.add(nanoid(), {
       parent: trackItem1Node.id,
       order: 0,
       type: "rectangle",
-      x: 0,
-      y: 0,
+      x: 16,
+      y: 480 - 8 - 16,
       w: 100,
-      h: 100,
+      h: 8,
       opacity: 0.5,
       fill: {
         type: "solid",
-        hex: "#ff0000",
+        hex: twColors.blue[500],
+      },
+      stroke: {
+        width: 1,
+        fill: {
+          type: "solid",
+          hex: "#000000",
+        },
+      },
+    });
+    const textNode = this.nodes.add(nanoid(), {
+      parent: trackItem1Node.id,
+      order: 0,
+      type: "text",
+      text: "Hello, world!",
+      font: {
+        family: "serif",
+        size: 32,
+      },
+      x: 16,
+      y: 480 - 48 - 16,
+      w: 100,
+      h: 8,
+      opacity: 0.5,
+      fill: {
+        type: "solid",
+        hex: "#ffffff",
       },
       stroke: {
         width: 1,
@@ -153,7 +179,7 @@ export class Document {
       type: "property",
       property: "opacity",
       start: 0,
-      duration: 1000,
+      duration: 500,
       easing: "linear",
       from: 0,
       to: 1,
@@ -168,6 +194,13 @@ export class Document {
       easing: "linear",
       from: 0,
       to: 100,
+    });
+
+    this.animationStore.data.set(nanoid(), {
+      node: textNode.id,
+      type: "in",
+      start: 0,
+      duration: 500,
     });
 
     this.nodes.add(trackItem2.id, {

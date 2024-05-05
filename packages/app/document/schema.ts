@@ -12,7 +12,6 @@ export type PropertyAnimationData = {
 export type InOutAnimationData = {
   // in or out animation (such as text appearing)
   type: "in" | "out";
-  filter: string;
   start: number;
   duration: number;
   node: string;
