@@ -155,7 +155,6 @@ export class CompositionRenderer {
           1
         );
 
-        // TODO: control via animation
         new TextAppearAnimation().render(this.context, data, progress);
       } else {
         new TextAppearAnimation().render(this.context, data, 1);
