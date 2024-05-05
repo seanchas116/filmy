@@ -4,10 +4,7 @@ import { computed, makeObservable, observable } from "mobx";
 import { Document } from "./document";
 import { TrackItem } from "./track-item";
 import { Animation } from "./animation";
-
-function lerp(a: number, b: number, t: number): number {
-  return a * (1 - t) + b * t;
-}
+import { lerp } from "@/utils/math";
 
 export class Node {
   constructor(document: Document, id: string) {

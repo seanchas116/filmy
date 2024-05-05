@@ -3,6 +3,7 @@ import { TextNodeData } from "@/document/schema";
 import { TrackItem } from "@/document/track-item";
 import { EditorState } from "@/editor/state/editor-state";
 import { assertNonNull } from "@/utils/assert";
+import { clamp } from "@/utils/math";
 import { autorun } from "mobx";
 
 export class CurrentFrameRenderer {
@@ -147,10 +148,6 @@ export class CompositionRenderer {
 
   canvas: HTMLCanvasElement;
   context: CanvasRenderingContext2D;
-}
-
-function clamp(value: number, min: number, max: number) {
-  return Math.max(Math.min(value, max), min);
 }
 
 class TextAppearAnimation {
