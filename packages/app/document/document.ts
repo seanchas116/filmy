@@ -25,6 +25,7 @@ export class Document {
     this.nodeStore = new Store<string, NodeData>();
     this.animationStore = new Store<string, AnimationData>();
     this.selectedNodeIDStore = new Store<string, true>();
+    this.selectedAnimationIDStore = new Store<string, true>();
     this.currentSceneStore = new Store<"value", string>();
 
     this.undoManager = new UndoManager([
@@ -180,6 +181,7 @@ export class Document {
   readonly animationStore: Store<string, AnimationData>;
 
   readonly selectedNodeIDStore: Store<string, true>;
+  readonly selectedAnimationIDStore: Store<string, true>;
   readonly currentSceneStore: Store<"value", string>;
 
   readonly sequences: InstanceManager<SequenceData, Sequence>;

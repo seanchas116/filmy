@@ -1,4 +1,3 @@
-import { Store } from "@/utils/store/store";
 import { Node } from "./node";
 import { TrackItem } from "./track-item";
 import { computed } from "mobx";
@@ -8,19 +7,17 @@ import { Document } from "./document";
 export class Selection {
   constructor(document: Document) {
     this.document = document;
-    this.selectedNodeIDStore = document.selectedNodeIDStore;
   }
 
   readonly document: Document;
-  readonly selectedNodeIDStore: Store<string, true>;
 
   clear(): void {
-    this.selectedNodeIDStore.data.clear();
+    this.document.selectedNodeIDStore.data.clear();
   }
 
   @computed get nodes(): Node[] {
     return compact(
-      [...this.selectedNodeIDStore.data.keys()].map((id) =>
+      [...this.document.selectedNodeIDStore.data.keys()].map((id) =>
         this.document.nodes.safeGet(id)
       )
     );
