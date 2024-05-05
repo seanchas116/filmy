@@ -32,7 +32,7 @@ export const TimelineEditor: React.FC = observer(() => {
           <TimelineArea />
           {/* time cursor */}
           <div
-            className="absolute -top-4 -bottom-4 bg-red-500 pointer-events-none"
+            className="absolute -top-4 -bottom-5 bg-red-500 pointer-events-none"
             style={{
               left: currentTime * scale,
               width: 2,
@@ -108,7 +108,7 @@ export const AnimationEditor = observer(() => {
             );
           })}
           <div
-            className="absolute -top-4 -bottom-4 bg-red-500 pointer-events-none"
+            className="absolute -top-4 -bottom-5 bg-red-500 pointer-events-none"
             style={{
               left: editorState.currentTime * scale,
               width: 2,

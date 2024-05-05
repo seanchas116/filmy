@@ -29,44 +29,30 @@ export const TimelineTools: React.FC = observer(() => {
 
   return (
     <div className="h-12 bg-white border-t border-gray-200 grid grid-cols-[auto_1fr]">
-      <div className="w-64 border-r border-gray-200 p-2">
-        <div className="flex mb-2">
-          <button
-            className="h-8 w-8 flex items-center justify-center text-xl bg-gray-800 rounded-lg text-white"
-            onMouseDown={() => {
-              editorState.isPlaying ? editorState.pause() : editorState.play();
-            }}
-          >
-            {editorState.isPlaying ? (
-              <Icon icon="material-symbols:stop-outline-rounded" />
-            ) : (
-              <Icon icon="material-symbols:play-arrow-outline-rounded" />
-            )}
-          </button>
-        </div>
+      <div className="w-64 border-r border-gray-200 p-2 flex">
+        <button
+          className="h-8 w-8 flex items-center justify-center text-xl bg-gray-800 rounded-lg text-white"
+          onMouseDown={() => {
+            editorState.isPlaying ? editorState.pause() : editorState.play();
+          }}
+        >
+          {editorState.isPlaying ? (
+            <Icon icon="material-symbols:stop-outline-rounded" />
+          ) : (
+            <Icon icon="material-symbols:play-arrow-outline-rounded" />
+          )}
+        </button>
       </div>
-      <div
-        className="p-4"
-        onMouseDown={action(() => {
-          editorState.document.selection.clear();
-          editorState.document.selection.clearCurrentScene();
-        })}
-      >
-        <div className="relative h-full">
-          {/* seek area */}
-          <div className="h-8 relative">
-            <div className="absolute -inset-4" {...seekPointerProps} />
-          </div>
-          <div
-            className="absolute top-4 bottom-0 bg-red-500 pointer-events-none"
-            style={{
-              left: currentTime * scale,
-              width: 2,
-            }}
-          >
-            <div className="absolute -top-6 -translate-x-1/2 bg-red-500 text-white text-xs px-2 py-1 rounded-lg">
-              {(currentTime / 1000).toFixed(2)}
-            </div>
+      <div className="relative" {...seekPointerProps}>
+        <div
+          className="absolute top-3 bottom-0 bg-red-500 pointer-events-none"
+          style={{
+            left: currentTime * scale + 16,
+            width: 2,
+          }}
+        >
+          <div className="absolute top-0 -translate-x-1/2 bg-red-500 text-white text-xs px-2 py-1 rounded-lg">
+            {(currentTime / 1000).toFixed(2)}
           </div>
         </div>
       </div>
