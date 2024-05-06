@@ -45,6 +45,15 @@ export type FontData = {
   readonly style?: string;
 };
 
+export type TextAnimationData = {
+  readonly start: number; // percentage
+  readonly end: number; // percentage
+  readonly translateX: number;
+  readonly translateY: number;
+  readonly rotate: number;
+  readonly scale: number;
+};
+
 export type FillData = {
   readonly type: "solid";
   readonly hex: string; // #RRGGBB
@@ -59,6 +68,7 @@ export type TextNodeData = NodeCommonData & {
   readonly type: "text";
   readonly text: string;
   readonly font: FontData;
+  readonly textAnimation?: TextAnimationData;
 };
 
 export type RectangleNodeData = NodeCommonData & {
