@@ -139,7 +139,7 @@ export class CompositionRenderer {
 
     if (data.type === "text") {
       this.context.globalAlpha = (data.opacity ?? 100) / 100;
-      this.context.font = `${data.font.size}px ${data.font.family}`;
+      this.context.font = `${data.font.weight ?? 400} ${data.font.size}px ${data.font.family}`;
       this.context.fillStyle = data.fill?.hex ?? "none";
 
       const appearAnimations = node.animations

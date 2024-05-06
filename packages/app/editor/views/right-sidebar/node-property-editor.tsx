@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { action } from "mobx";
 import { Icon } from "@iconify/react";
 import { flattenGroup } from "@/document/node";
-import { NumberInput } from "./input";
+import { InputBody, InputWrap, NumberInput } from "./input";
 import { TextNodeData } from "@/document/schema";
 
 const KeyframeButton = () => {
@@ -38,6 +38,7 @@ export const NodePropertyEditor: React.FC = observer(() => {
   const strokeWidth = sameOrMixed(nodeDatas.map((data) => data.stroke?.width));
 
   const text = sameOrMixed(textNodeDatas.map((data) => data.text));
+  const fontFamily = sameOrMixed(textNodeDatas.map((data) => data.font.family));
   const fontSize = sameOrMixed(textNodeDatas.map((data) => data.font.size));
   const fontWeight = sameOrMixed(textNodeDatas.map((data) => data.font.weight));
 
@@ -200,6 +201,25 @@ export const NodePropertyEditor: React.FC = observer(() => {
               }
             })}
           />
+          <InputWrap label={<Icon icon="material-symbols:font-download" />}>
+            <InputBody
+              value={fontFamily === MIXED ? "" : fontFamily ?? ""}
+              placeholder={fontFamily === MIXED ? "Mixed" : undefined}
+              onChangeValue={(value) => {
+                for (const node of selectedNodes) {
+                  if (node.data.type === "text") {
+                    node.data = {
+                      ...node.data,
+                      font: {
+                        ...node.data.font,
+                        family: value,
+                      },
+                    };
+                  }
+                }
+              }}
+            />
+          </InputWrap>
           <div className="grid grid-cols-2 gap-2">
             <div className="grid grid-cols-[auto_1fr]">
               <KeyframeButton />
