@@ -5,6 +5,7 @@ import { action } from "mobx";
 import { Icon } from "@iconify/react";
 import { flattenGroup } from "@/document/node";
 import { NumberInput } from "./input";
+import { TextNodeData } from "@/document/schema";
 
 const KeyframeButton = () => {
   return (
@@ -22,18 +23,23 @@ export const NodePropertyEditor: React.FC = observer(() => {
     return null;
   }
 
-  const x = sameOrMixed(selectedNodes.map((node) => node.data.x));
-  const y = sameOrMixed(selectedNodes.map((node) => node.data.y));
-  const width = sameOrMixed(selectedNodes.map((node) => node.data.w));
-  const height = sameOrMixed(selectedNodes.map((node) => node.data.h));
-  const opacity = sameOrMixed(selectedNodes.map((node) => node.data.opacity));
-  const fill = sameOrMixed(selectedNodes.map((node) => node.data.fill));
-  const strokeFill = sameOrMixed(
-    selectedNodes.map((node) => node.data.stroke?.fill)
+  const nodeDatas = selectedNodes.map((node) => node.data);
+  const textNodeDatas = nodeDatas.filter(
+    (data): data is TextNodeData => data.type === "text"
   );
-  const strokeWidth = sameOrMixed(
-    selectedNodes.map((node) => node.data.stroke?.width)
-  );
+
+  const x = sameOrMixed(nodeDatas.map((data) => data.x));
+  const y = sameOrMixed(nodeDatas.map((data) => data.y));
+  const width = sameOrMixed(nodeDatas.map((data) => data.w));
+  const height = sameOrMixed(nodeDatas.map((data) => data.h));
+  const opacity = sameOrMixed(nodeDatas.map((data) => data.opacity));
+  const fill = sameOrMixed(nodeDatas.map((data) => data.fill));
+  const strokeFill = sameOrMixed(nodeDatas.map((data) => data.stroke?.fill));
+  const strokeWidth = sameOrMixed(nodeDatas.map((data) => data.stroke?.width));
+
+  const text = sameOrMixed(textNodeDatas.map((data) => data.text));
+  const fontSize = sameOrMixed(textNodeDatas.map((data) => data.font.size));
+  const fontWeight = sameOrMixed(textNodeDatas.map((data) => data.font.weight));
 
   return (
     <>
@@ -179,6 +185,65 @@ export const NodePropertyEditor: React.FC = observer(() => {
           </div>
         </div>
       </div>
+      {textNodeDatas.length > 0 && (
+        <div className="p-2 flex flex-col gap-2">
+          <h3>Text</h3>
+          <textarea
+            className="w-full rounded-lg p-2 bg-gray-100"
+            value={text === MIXED ? "" : text ?? ""}
+            onChange={action((e) => {
+              const value = e.target.value;
+              for (const node of selectedNodes) {
+                if (node.data.type === "text") {
+                  node.data = { ...node.data, text: value };
+                }
+              }
+            })}
+          />
+          <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-[auto_1fr]">
+              <KeyframeButton />
+              <NumberInput
+                label={<Icon icon="material-symbols:format-size" />}
+                value={fontSize}
+                onChangeValue={action((value) => {
+                  for (const node of selectedNodes) {
+                    if (node.data.type === "text") {
+                      node.data = {
+                        ...node.data,
+                        font: {
+                          ...node.data.font,
+                          size: value,
+                        },
+                      };
+                    }
+                  }
+                })}
+              />
+            </div>
+            <div className="grid grid-cols-[auto_1fr]">
+              <KeyframeButton />
+              <NumberInput
+                label={<Icon icon="material-symbols:line-weight-rounded" />}
+                value={fontWeight}
+                onChangeValue={action((value) => {
+                  for (const node of selectedNodes) {
+                    if (node.data.type === "text") {
+                      node.data = {
+                        ...node.data,
+                        font: {
+                          ...node.data.font,
+                          weight: value,
+                        },
+                      };
+                    }
+                  }
+                })}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 });
