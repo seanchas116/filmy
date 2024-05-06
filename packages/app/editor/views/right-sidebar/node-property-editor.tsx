@@ -73,10 +73,10 @@ export const NodePropertyEditor: React.FC = observer(() => {
         <div className="grid grid-cols-2 gap-2">
           <NumberInput
             label={<Icon icon="material-symbols:opacity" />}
-            value={opacity}
+            value={typeof opacity === "number" ? opacity * 100 : 100}
             onChangeValue={action((value) => {
               for (const node of selectedNodes) {
-                node.data = { ...node.data, opacity: value };
+                node.data = { ...node.data, opacity: value / 100 };
               }
             })}
           />
