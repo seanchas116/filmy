@@ -134,7 +134,7 @@ export class Document {
       y: 480 - 8 - 16,
       w: 100,
       h: 8,
-      opacity: 0.5,
+      opacity: 50,
       fill: {
         type: "solid",
         hex: twColors.blue[500],
@@ -160,7 +160,7 @@ export class Document {
       y: 480 - 48 - 16,
       w: 100,
       h: 32,
-      opacity: 0.5,
+      opacity: 50,
       fill: {
         type: "solid",
         hex: "#ffffff",
@@ -183,7 +183,7 @@ export class Document {
       duration: 500,
       easing: "linear",
       from: 0,
-      to: 1,
+      to: 100,
     });
 
     this.animationStore.data.set(nanoid(), {

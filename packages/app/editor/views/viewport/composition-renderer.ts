@@ -108,20 +108,20 @@ export class CompositionRenderer {
         video.currentTime = targetTime;
       }
 
-      this.context.globalAlpha = data.opacity ?? 1;
+      this.context.globalAlpha = (data.opacity ?? 100) / 100;
       this.context.drawImage(video, data.x, data.y, data.w, data.h);
       return;
     }
 
     if (data.type === "rectangle") {
-      this.context.globalAlpha = data.opacity ?? 1;
+      this.context.globalAlpha = (data.opacity ?? 100) / 100;
       this.context.fillStyle = data.fill?.hex ?? "none";
       this.context.fillRect(data.x, data.y, data.w, data.h);
       return;
     }
 
     if (data.type === "ellipse") {
-      this.context.globalAlpha = data.opacity ?? 1;
+      this.context.globalAlpha = (data.opacity ?? 100) / 100;
       this.context.fillStyle = data.fill?.hex ?? "none";
       this.context.beginPath();
       this.context.ellipse(
@@ -138,7 +138,7 @@ export class CompositionRenderer {
     }
 
     if (data.type === "text") {
-      this.context.globalAlpha = data.opacity ?? 1;
+      this.context.globalAlpha = (data.opacity ?? 100) / 100;
       this.context.font = `${data.font.size}px ${data.font.family}`;
       this.context.fillStyle = data.fill?.hex ?? "none";
 
