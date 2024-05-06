@@ -50,6 +50,9 @@ importers:
       paintvec:
         specifier: workspace:*
         version: link:../paintvec
+      pointer-lock-movement:
+        specifier: ^0.1.9
+        version: 0.1.9(react@18.3.0)
       react:
         specifier: ^18
         version: 18.3.0
@@ -5000,6 +5003,11 @@ packages:
   pnp-webpack-plugin@1.7.0:
     resolution: {integrity: sha512-2Rb3vm+EXble/sMXNSu6eoBx8e79gKqhNq9F5ZWW6ERNCTE/Q0wQNne5541tE5vKjfM8hpNCYL+LGc1YTfI0dg==}
     engines: {node: '>=6'}
+
+  pointer-lock-movement@0.1.9:
+    resolution: {integrity: sha512-I+wwrggKorynoDk/T05g3c9rvCr3ArHMAy3oKY7WKhHATDnUrm60gCAh/5QPdjUd/PH0+OlNYroq3VLDJBm8iQ==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
 
   polished@4.3.1:
     resolution: {integrity: sha512-OBatVyC/N7SCW/FaDHrSd+vn0o5cS855TOmYi4OkdWUMSJCET/xip//ch8xGUvtr3i44X9LVyWwQlRMTN3pwSA==}
@@ -12298,6 +12306,10 @@ snapshots:
       ts-pnp: 1.2.0(typescript@5.4.5)
     transitivePeerDependencies:
       - typescript
+
+  pointer-lock-movement@0.1.9(react@18.3.0):
+    dependencies:
+      react: 18.3.0
 
   polished@4.3.1:
     dependencies:
