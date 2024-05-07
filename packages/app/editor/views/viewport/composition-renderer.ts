@@ -4,6 +4,7 @@ import { TrackItem } from "@/document/track-item";
 import { EditorState } from "@/editor/state/editor-state";
 import { assertNonNull } from "@/utils/assert";
 import { clamp } from "@/utils/math";
+import { UnitBezier } from "@/utils/unit-bezier";
 import { autorun } from "mobx";
 
 export class CurrentFrameRenderer {
@@ -180,7 +181,10 @@ class TextAppearAnimation {
     let x = data.x;
     for (let i = 0; i < charCount; i++) {
       const char = data.text[i];
-      const charProgress = clamp(progress * charCount - i, 0, 1);
+      let charProgress = clamp(progress * charCount - i, 0, 1);
+
+      const easing = new UnitBezier(0, 0, 0.58, 1); // ease-out
+      charProgress = easing.solve(charProgress);
 
       context.globalAlpha = charProgress;
 
