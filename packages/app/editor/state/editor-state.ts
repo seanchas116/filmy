@@ -36,6 +36,25 @@ export class EditorState {
     this.requestFrame();
   }
 
+  playRange(start: number, duration: number, speed: number) {
+    this.currentTime = start;
+
+    let time = start;
+
+    const updateTime = action(() => {
+      time += (1000 / 60) * speed;
+
+      if (time >= start + duration) {
+        this.currentTime = start + duration;
+        clearInterval(timeout);
+      } else {
+        this.currentTime = time;
+      }
+    });
+
+    const timeout = setInterval(updateTime, 1 / 60);
+  }
+
   private requestFrame() {
     requestAnimationFrame(
       action(() => {

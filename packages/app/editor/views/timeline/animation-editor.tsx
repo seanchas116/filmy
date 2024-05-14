@@ -40,6 +40,12 @@ export const AnimationEditor = observer(() => {
                   editorState.document.selection.clear();
                 }
                 anim.select();
+                anim.node.select();
+                editorState.playRange(
+                  anim.data.start + (currentScene?.start ?? 0),
+                  anim.data.duration,
+                  1
+                );
               })}
             >
               {anim.node.name} -{" "}
@@ -57,23 +63,29 @@ export const AnimationEditor = observer(() => {
         })}
       >
         <div className="relative h-full">
-          {animations.map((animation, i) => {
+          {animations.map((anim, i) => {
             const onBarMouseDown = action((e: React.MouseEvent) => {
               if (!e.shiftKey) {
                 editorState.document.selection.clear();
               }
-              animation.select();
+              anim.select();
+              anim.node.select();
+              editorState.playRange(
+                anim.data.start + (currentScene?.start ?? 0),
+                anim.data.duration,
+                1
+              );
               e.stopPropagation();
 
               const initClientX = e.clientX;
-              const initStart = animation.data.start;
+              const initStart = anim.data.start;
 
               const onMouseMove = action((e: MouseEvent) => {
                 const totalDeltaX = e.clientX - initClientX;
                 const start = Math.max(0, initStart + totalDeltaX / scale);
 
-                animation.data = {
-                  ...animation.data,
+                anim.data = {
+                  ...anim.data,
                   start,
                 };
               });
@@ -93,8 +105,8 @@ export const AnimationEditor = observer(() => {
               e.stopPropagation();
 
               const initClientX = e.clientX;
-              const initStart = animation.data.start;
-              const initDuration = animation.data.duration;
+              const initStart = anim.data.start;
+              const initDuration = anim.data.duration;
 
               const onMouseMove = action((e: MouseEvent) => {
                 const totalDeltaX = e.clientX - initClientX;
@@ -105,8 +117,8 @@ export const AnimationEditor = observer(() => {
                   initDuration - totalDeltaX / scale
                 );
 
-                animation.data = {
-                  ...animation.data,
+                anim.data = {
+                  ...anim.data,
                   start,
                   duration,
                 };
@@ -127,7 +139,7 @@ export const AnimationEditor = observer(() => {
               e.stopPropagation();
 
               const initClientX = e.clientX;
-              const initDuration = animation.data.duration;
+              const initDuration = anim.data.duration;
 
               const onMouseMove = action((e: MouseEvent) => {
                 const totalDeltaX = e.clientX - initClientX;
@@ -137,8 +149,8 @@ export const AnimationEditor = observer(() => {
                   initDuration + totalDeltaX / scale
                 );
 
-                animation.data = {
-                  ...animation.data,
+                anim.data = {
+                  ...anim.data,
                   duration,
                 };
               });
@@ -156,13 +168,12 @@ export const AnimationEditor = observer(() => {
 
             return (
               <div
-                key={animation.id}
+                key={anim.id}
                 className="absolute flex items-center justify-center text-xs group"
-                aria-selected={animation.selected}
+                aria-selected={anim.selected}
                 style={{
-                  left:
-                    ((currentScene?.start ?? 0) + animation.data.start) * scale,
-                  width: animation.data.duration * scale,
+                  left: ((currentScene?.start ?? 0) + anim.data.start) * scale,
+                  width: anim.data.duration * scale,
                   height: 32,
                   top: i * 32,
                 }}
@@ -173,13 +184,13 @@ export const AnimationEditor = observer(() => {
                   className="absolute left-0 top-0 bottom-0 my-auto w-fit h-6 px-2 leading-6 rounded-full bg-gray-200 group-aria-selected:bg-blue-500 group-aria-selected:text-white -translate-x-1/2"
                   onMouseDown={onStartHandleMouseDown}
                 >
-                  {animation.data.type === "property" ? animation.data.from : 0}
+                  {anim.data.type === "property" ? anim.data.from : 0}
                 </div>
                 <div
                   className="absolute right-0 top-0 bottom-0 my-auto w-fit h-6 px-2 leading-6 rounded-full bg-gray-200 group-aria-selected:bg-blue-500 group-aria-selected:text-white translate-x-1/2"
                   onMouseDown={onEndHandleMouseDown}
                 >
-                  {animation.data.type === "property" ? animation.data.to : 1}
+                  {anim.data.type === "property" ? anim.data.to : 1}
                 </div>
               </div>
             );
