@@ -4,7 +4,7 @@ import { TrackItem } from "@/document/track-item";
 import { EditorState } from "@/editor/state/editor-state";
 import { assertNonNull } from "@/utils/assert";
 import { clamp } from "@/utils/math";
-import { UnitBezier } from "@/utils/easing";
+import { UnitBezier, easeOut } from "@/utils/easing";
 import { autorun } from "mobx";
 
 export class CurrentFrameRenderer {
@@ -225,9 +225,3 @@ class TextAppearAnimation {
     }
   }
 }
-
-export const ease = [0.25, 0.1, 0.25, 1.0] as const;
-export const linear = [0.0, 0.0, 1.0, 1.0] as const;
-export const easeIn = [0.42, 0, 1.0, 1.0] as const;
-export const easeOut = [0, 0, 0.58, 1.0] as const;
-export const easeInOut = [0.42, 0, 0.58, 1.0] as const;

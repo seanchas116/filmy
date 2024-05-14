@@ -4,7 +4,7 @@ import { NumberInput } from "./input";
 import { action } from "mobx";
 import tw from "tailwind-styled-components";
 import { nanoid } from "nanoid";
-import { linear } from "../viewport/composition-renderer";
+import { linear, ease, easeIn, easeOut, easeInOut } from "@/utils/easing";
 
 const AnimationAddView: React.FC = observer(() => {
   const editorState = useEditorState();
@@ -125,6 +125,41 @@ export const AnimationPropertyEditor: React.FC = observer(() => {
               <option value="rotate">Rotate</option>
               <option value="scaleX">Scale X</option>
               <option value="scaleY">Scale Y</option>
+            </select>
+          </Row>
+          <Row>
+            <div>Easing</div>
+            <select
+              value={data.easing.join()}
+              className="h-8 bg-gray-100 rounded-lg px-4 w-fit"
+              onChange={(e) => {
+                const easing = e.target.value.split(",").map(Number) as [
+                  number,
+                  number,
+                  number,
+                  number,
+                ];
+
+                animation.data = {
+                  ...data,
+                  easing,
+                };
+              }}
+            >
+              {Object.entries({
+                Ease: ease,
+                Linear: linear,
+                "Ease In": easeIn,
+                "Ease Out": easeOut,
+                "Ease In Out": easeInOut,
+              }).map(
+                ([label, easing]) =>
+                  easing && (
+                    <option key={label} value={easing.join()}>
+                      {label}
+                    </option>
+                  )
+              )}
             </select>
           </Row>
           <Row>

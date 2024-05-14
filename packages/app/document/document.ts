@@ -18,7 +18,7 @@ import { UndoManager } from "@/utils/store/undo-manager";
 import { Selection } from "./selection";
 import { Animation } from "./animation";
 import twColors from "tailwindcss/colors";
-import { easeOut } from "@/editor/views/viewport/composition-renderer";
+import { easeOut } from "@/utils/easing";
 
 export class Document {
   constructor() {
