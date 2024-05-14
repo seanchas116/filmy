@@ -36,6 +36,21 @@ export const NodePropertyEditor: React.FC = observer(() => {
   const fill = sameOrMixed(nodeDatas.map((data) => data.fill));
   const strokeFill = sameOrMixed(nodeDatas.map((data) => data.stroke?.fill));
   const strokeWidth = sameOrMixed(nodeDatas.map((data) => data.stroke?.width));
+  const translateX = sameOrMixed(
+    nodeDatas.map((data) => data.transform?.translateX ?? 0)
+  );
+  const translateY = sameOrMixed(
+    nodeDatas.map((data) => data.transform?.translateY ?? 0)
+  );
+  const scaleX = sameOrMixed(
+    nodeDatas.map((data) => data.transform?.scaleX ?? 100)
+  );
+  const scaleY = sameOrMixed(
+    nodeDatas.map((data) => data.transform?.scaleY ?? 100)
+  );
+  const rotate = sameOrMixed(
+    nodeDatas.map((data) => data.transform?.rotate ?? 0)
+  );
 
   const text = sameOrMixed(textNodeDatas.map((data) => data.text));
   const fontFamily = sameOrMixed(textNodeDatas.map((data) => data.font.family));
@@ -264,6 +279,102 @@ export const NodePropertyEditor: React.FC = observer(() => {
           </div>
         </div>
       )}
+      <div className="p-2 flex flex-col gap-2">
+        <h3>Transform</h3>
+        <div className="grid grid-cols-2 gap-2">
+          <NumberInput
+            label="X"
+            value={translateX}
+            onChangeValue={action((value) => {
+              for (const node of selectedNodes) {
+                node.data = {
+                  ...node.data,
+                  transform: {
+                    ...node.data.transform,
+                    translateX: value,
+                  },
+                };
+              }
+            })}
+          />
+          <NumberInput
+            label="Y"
+            value={translateY}
+            onChangeValue={action((value) => {
+              for (const node of selectedNodes) {
+                node.data = {
+                  ...node.data,
+                  transform: {
+                    ...node.data.transform,
+                    translateY: value,
+                  },
+                };
+              }
+            })}
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <NumberInput
+            label={<Icon icon="material-symbols:width-rounded" />}
+            value={scaleX}
+            onChangeValue={action((value) => {
+              for (const node of selectedNodes) {
+                node.data = {
+                  ...node.data,
+                  transform: {
+                    ...node.data.transform,
+                    scaleX: value,
+                  },
+                };
+              }
+            })}
+          />
+          <NumberInput
+            label={<Icon icon="material-symbols:width-rounded" rotate={1} />}
+            value={scaleY}
+            onChangeValue={action((value) => {
+              for (const node of selectedNodes) {
+                node.data = {
+                  ...node.data,
+                  transform: {
+                    ...node.data.transform,
+                    scaleY: value,
+                  },
+                };
+              }
+            })}
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <NumberInput
+            label={<Icon icon="material-symbols:rotate-left-rounded" />}
+            value={rotate}
+            onChangeValue={action((value) => {
+              for (const node of selectedNodes) {
+                node.data = {
+                  ...node.data,
+                  transform: {
+                    ...node.data.transform,
+                    rotate: value,
+                  },
+                };
+              }
+            })}
+          />
+        </div>
+        {/* TODO: anchor */}
+        <div className="grid grid-cols-3 gap-1 w-fit">
+          <div className="bg-gray-200 h-3 w-3 rounded" />
+          <div className="bg-gray-200 h-3 w-3 rounded" />
+          <div className="bg-gray-200 h-3 w-3 rounded" />
+          <div className="bg-gray-200 h-3 w-3 rounded" />
+          <div className="bg-blue-500 h-3 w-3 rounded" />
+          <div className="bg-gray-200 h-3 w-3 rounded" />
+          <div className="bg-gray-200 h-3 w-3 rounded" />
+          <div className="bg-gray-200 h-3 w-3 rounded" />
+          <div className="bg-gray-200 h-3 w-3 rounded" />
+        </div>
+      </div>
     </>
   );
 });
