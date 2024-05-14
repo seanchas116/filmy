@@ -32,7 +32,7 @@ export const NodePropertyEditor: React.FC = observer(() => {
   const y = sameOrMixed(nodeDatas.map((data) => data.y));
   const width = sameOrMixed(nodeDatas.map((data) => data.w));
   const height = sameOrMixed(nodeDatas.map((data) => data.h));
-  const opacity = sameOrMixed(nodeDatas.map((data) => data.opacity));
+  const opacity = sameOrMixed(nodeDatas.map((data) => data.opacity ?? 100));
   const fill = sameOrMixed(nodeDatas.map((data) => data.fill));
   const strokeFill = sameOrMixed(nodeDatas.map((data) => data.stroke?.fill));
   const strokeWidth = sameOrMixed(nodeDatas.map((data) => data.stroke?.width));
