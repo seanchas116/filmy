@@ -9,7 +9,7 @@ export type PropertyAnimationData = AnimationCommonData & {
   // property animation
   readonly type: "property";
   readonly property: string;
-  readonly easing: string;
+  readonly easing: readonly [number, number, number, number];
   readonly from?: number;
   readonly to: number;
 };

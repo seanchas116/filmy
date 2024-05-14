@@ -4,6 +4,7 @@ import { NumberInput } from "./input";
 import { action } from "mobx";
 import tw from "tailwind-styled-components";
 import { nanoid } from "nanoid";
+import { linear } from "../viewport/composition-renderer";
 
 const AnimationAddView: React.FC = observer(() => {
   const editorState = useEditorState();
@@ -47,7 +48,7 @@ const AnimationAddView: React.FC = observer(() => {
                 property: "opacity",
                 start: 0,
                 duration: 500,
-                easing: "linear",
+                easing: linear,
                 from: 0,
                 to: 100,
               });

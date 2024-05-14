@@ -18,6 +18,7 @@ import { UndoManager } from "@/utils/store/undo-manager";
 import { Selection } from "./selection";
 import { Animation } from "./animation";
 import twColors from "tailwindcss/colors";
+import { easeOut } from "@/editor/views/viewport/composition-renderer";
 
 export class Document {
   constructor() {
@@ -181,7 +182,7 @@ export class Document {
       property: "opacity",
       start: 0,
       duration: 500,
-      easing: "linear",
+      easing: easeOut,
       from: 0,
       to: 100,
     });
@@ -193,7 +194,7 @@ export class Document {
       property: "scaleX",
       start: 0,
       duration: 1000,
-      easing: "linear",
+      easing: easeOut,
       from: 0,
       to: 100,
     });

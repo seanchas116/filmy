@@ -5,6 +5,7 @@ import { Document } from "./document";
 import { TrackItem } from "./track-item";
 import { Animation } from "./animation";
 import { lerp } from "@/utils/math";
+import { UnitBezier } from "@/utils/easing";
 
 export class Node {
   constructor(document: Document, id: string) {
@@ -307,12 +308,11 @@ export class Node {
 
       const endValue = playingAnimation.to;
 
-      // Linear value (TODO: easing)
-      const value = lerp(
-        startValue,
-        endValue,
-        (time - playingAnimation.start) / playingAnimation.duration
+      const ratio = (time - playingAnimation.start) / playingAnimation.duration;
+      const easedRatio = new UnitBezier(...playingAnimation.easing).solve(
+        ratio
       );
+      const value = lerp(startValue, endValue, easedRatio);
 
       // eslint-disable-next-line
       (data as any)[property] = value;
