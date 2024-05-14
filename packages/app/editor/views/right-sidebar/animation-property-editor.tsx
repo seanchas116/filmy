@@ -40,10 +40,6 @@ const AnimationAddView: React.FC = observer(() => {
             const nodes = editorState.document.selection.nodes;
 
             for (const node of nodes) {
-              if (node.type !== "text") {
-                continue;
-              }
-
               editorState.document.animations.add(nanoid(), {
                 order: 0, // TODO
                 node: node.id,
