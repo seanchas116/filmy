@@ -28,10 +28,20 @@ export const AnimationEditor = observer(() => {
 
   return (
     <div className="h-48 bg-white border-t border-gray-200 grid grid-cols-[auto_1fr]">
-      <div className="w-64 border-r border-gray-200 p-4 px-2">
+      <div className="w-64 border-r border-gray-200 py-4">
         {animations.map((anim, i) => {
           return (
-            <div key={i} className="p-1 h-8 flex items-center">
+            <div
+              key={i}
+              className="p-1 px-4 h-8 flex items-center aria-selected:bg-blue-100 hover:bg-gray-100"
+              aria-selected={anim.selected}
+              onClick={action((e) => {
+                if (!e.shiftKey) {
+                  editorState.document.selection.clear();
+                }
+                anim.select();
+              })}
+            >
               {anim.node.name} -{" "}
               {anim.data.type === "property"
                 ? anim.data.property
@@ -49,7 +59,9 @@ export const AnimationEditor = observer(() => {
         <div className="relative h-full">
           {animations.map((animation, i) => {
             const onBarMouseDown = action((e: React.MouseEvent) => {
-              editorState.document.selection.clear();
+              if (!e.shiftKey) {
+                editorState.document.selection.clear();
+              }
               animation.select();
               e.stopPropagation();
 
