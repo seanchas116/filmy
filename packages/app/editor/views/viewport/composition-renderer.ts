@@ -114,16 +114,32 @@ export class CompositionRenderer {
       return;
     }
 
+    const anchorX = data.x + (data.w * (data.transform?.anchorX ?? 50)) / 100;
+    const anchorY = data.y + (data.h * (data.transform?.anchorY ?? 50)) / 100;
+
+    this.context.globalAlpha = (data.opacity ?? 100) / 100;
+    this.context.fillStyle = data.fill?.hex ?? "none";
+
+    this.context.translate(anchorX, anchorY);
+
+    this.context.translate(
+      data.transform?.translateX ?? 0,
+      data.transform?.translateY ?? 0
+    );
+    this.context.rotate((data.transform?.rotate ?? 0) * (Math.PI / 180));
+    this.context.scale(
+      (data.transform?.scaleX ?? 100) / 100,
+      (data.transform?.scaleY ?? 100) / 100
+    );
+
+    this.context.translate(-anchorX, -anchorY);
+
     if (data.type === "rectangle") {
-      this.context.globalAlpha = (data.opacity ?? 100) / 100;
-      this.context.fillStyle = data.fill?.hex ?? "none";
       this.context.fillRect(data.x, data.y, data.w, data.h);
       return;
     }
 
     if (data.type === "ellipse") {
-      this.context.globalAlpha = (data.opacity ?? 100) / 100;
-      this.context.fillStyle = data.fill?.hex ?? "none";
       this.context.beginPath();
       this.context.ellipse(
         data.x + data.w / 2,
@@ -139,9 +155,7 @@ export class CompositionRenderer {
     }
 
     if (data.type === "text") {
-      this.context.globalAlpha = (data.opacity ?? 100) / 100;
       this.context.font = `${data.font.weight ?? 400} ${data.font.size}px ${data.font.family}`;
-      this.context.fillStyle = data.fill?.hex ?? "none";
 
       const appearAnimations = node.animations
         .map((a) => a.data)

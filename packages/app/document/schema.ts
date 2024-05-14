@@ -52,8 +52,8 @@ export type TransformData = {
   readonly rotate?: number;
   readonly scaleX?: number;
   readonly scaleY?: number;
-  readonly anchorX?: number;
-  readonly anchorY?: number;
+  readonly anchorX?: 0 | 50 | 100;
+  readonly anchorY?: 0 | 50 | 100;
 };
 
 export type TextAnimationData = {

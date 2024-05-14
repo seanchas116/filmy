@@ -146,6 +146,9 @@ export class Document {
           hex: "#000000",
         },
       },
+      transform: {
+        anchorX: 0,
+      },
     });
     const textNode = this.nodes.add(nanoid(), {
       parent: trackItem1Node.id,
@@ -191,12 +194,12 @@ export class Document {
       order: 1,
       node: rectNode.id,
       type: "property",
-      property: "w",
+      property: "transform.scaleX",
       start: 0,
       duration: 1000,
       easing: "linear",
       from: 0,
-      to: 300,
+      to: 100,
     });
 
     this.animationStore.data.set(nanoid(), {

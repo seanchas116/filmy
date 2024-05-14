@@ -51,6 +51,12 @@ export const NodePropertyEditor: React.FC = observer(() => {
   const rotate = sameOrMixed(
     nodeDatas.map((data) => data.transform?.rotate ?? 0)
   );
+  const anchor = sameOrMixed(
+    nodeDatas.map(
+      (data) =>
+        `${data.transform?.anchorX ?? 50}:${data.transform?.anchorY ?? 50}` as const
+    )
+  );
 
   const text = sameOrMixed(textNodeDatas.map((data) => data.text));
   const fontFamily = sameOrMixed(textNodeDatas.map((data) => data.font.family));
@@ -363,16 +369,32 @@ export const NodePropertyEditor: React.FC = observer(() => {
           />
         </div>
         {/* TODO: anchor */}
-        <div className="grid grid-cols-3 gap-1 w-fit">
-          <div className="bg-gray-200 h-3 w-3 rounded" />
-          <div className="bg-gray-200 h-3 w-3 rounded" />
-          <div className="bg-gray-200 h-3 w-3 rounded" />
-          <div className="bg-gray-200 h-3 w-3 rounded" />
-          <div className="bg-blue-500 h-3 w-3 rounded" />
-          <div className="bg-gray-200 h-3 w-3 rounded" />
-          <div className="bg-gray-200 h-3 w-3 rounded" />
-          <div className="bg-gray-200 h-3 w-3 rounded" />
-          <div className="bg-gray-200 h-3 w-3 rounded" />
+        <div className="grid grid-cols-3 w-fit">
+          {([0, 50, 100] as const).map((anchorY) => {
+            return ([0, 50, 100] as const).map((anchorX) => {
+              return (
+                <button
+                  key={`${anchorX}:${anchorY}`}
+                  className="p-0.5 group"
+                  aria-pressed={anchor === `${anchorX}:${anchorY}`}
+                  onClick={action(() => {
+                    for (const node of selectedNodes) {
+                      node.data = {
+                        ...node.data,
+                        transform: {
+                          ...node.data.transform,
+                          anchorX,
+                          anchorY,
+                        },
+                      };
+                    }
+                  })}
+                >
+                  <div className="w-3 h-3 rounded bg-gray-200 group-hover:bg-gray-300 group-aria-pressed:bg-blue-500" />
+                </button>
+              );
+            });
+          })}
         </div>
       </div>
     </>
