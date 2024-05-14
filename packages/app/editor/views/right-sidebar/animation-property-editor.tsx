@@ -3,14 +3,63 @@ import { useEditorState } from "../use-editor-state";
 import { NumberInput } from "./input";
 import { action } from "mobx";
 import tw from "tailwind-styled-components";
+import { nanoid } from "nanoid";
 
 const AnimationAddView: React.FC = observer(() => {
+  const editorState = useEditorState();
+
   return (
     <div className="p-2">
       <h2>Add Animation</h2>
       <div className="grid grid-cols-2 gap-2">
-        <button className="bg-gray-200 p-2">Slide In</button>
-        <button className="bg-gray-200 p-2">Fade In</button>
+        <button
+          className="bg-gray-200 p-2"
+          onClick={action(() => {
+            const nodes = editorState.document.selection.nodes;
+
+            for (const node of nodes) {
+              if (node.type !== "text") {
+                continue;
+              }
+
+              editorState.document.animations.add(nanoid(), {
+                order: 0, // TODO
+                node: node.id,
+                type: "in",
+                start: 0,
+                duration: 1000,
+              });
+            }
+          })}
+        >
+          Text Animation
+        </button>
+        <button
+          className="bg-gray-200 p-2"
+          onClick={action(() => {
+            const nodes = editorState.document.selection.nodes;
+
+            for (const node of nodes) {
+              if (node.type !== "text") {
+                continue;
+              }
+
+              editorState.document.animations.add(nanoid(), {
+                order: 0, // TODO
+                node: node.id,
+                type: "property",
+                property: "opacity",
+                start: 0,
+                duration: 500,
+                easing: "linear",
+                from: 0,
+                to: 100,
+              });
+            }
+          })}
+        >
+          Property Animation
+        </button>
       </div>
     </div>
   );
