@@ -31,7 +31,14 @@ export type NodeCommonData = {
   readonly fill?: FillData;
   readonly stroke?: StrokeData;
   readonly opacity?: number; // percentage
-  readonly transform?: TransformData;
+
+  readonly translateX?: number;
+  readonly translateY?: number;
+  readonly rotate?: number;
+  readonly scaleX?: number;
+  readonly scaleY?: number;
+  readonly anchorX?: 0 | 50 | 100;
+  readonly anchorY?: 0 | 50 | 100;
 
   readonly x: number;
   readonly y: number;
@@ -40,20 +47,10 @@ export type NodeCommonData = {
 };
 
 export type FontData = {
-  readonly family: string;
-  readonly size: number;
-  readonly weight?: number;
-  readonly style?: string;
-};
-
-export type TransformData = {
-  readonly translateX?: number;
-  readonly translateY?: number;
-  readonly rotate?: number;
-  readonly scaleX?: number;
-  readonly scaleY?: number;
-  readonly anchorX?: 0 | 50 | 100;
-  readonly anchorY?: 0 | 50 | 100;
+  readonly fontFamily: string;
+  readonly fontSize: number;
+  readonly fontWeight?: number;
+  readonly fontStyle?: string;
 };
 
 export type TextAnimationData = {
@@ -78,9 +75,8 @@ export type StrokeData = {
 export type TextNodeData = NodeCommonData & {
   readonly type: "text";
   readonly text: string;
-  readonly font: FontData;
   readonly textAnimation?: TextAnimationData;
-};
+} & FontData;
 
 export type RectangleNodeData = NodeCommonData & {
   readonly type: "rectangle";

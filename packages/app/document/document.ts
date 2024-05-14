@@ -146,20 +146,16 @@ export class Document {
           hex: "#000000",
         },
       },
-      transform: {
-        anchorX: 0,
-      },
+      anchorX: 0,
     });
     const textNode = this.nodes.add(nanoid(), {
       parent: trackItem1Node.id,
       order: 0,
       type: "text",
       text: "Hello, world!",
-      font: {
-        family: "Avenir Next",
-        weight: 700,
-        size: 48,
-      },
+      fontFamily: "Avenir Next",
+      fontWeight: 700,
+      fontSize: 48,
       x: 16,
       y: 400,
       w: 100,
@@ -194,7 +190,7 @@ export class Document {
       order: 1,
       node: rectNode.id,
       type: "property",
-      property: "transform.scaleX",
+      property: "scaleX",
       start: 0,
       duration: 1000,
       easing: "linear",

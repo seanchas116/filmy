@@ -82,6 +82,17 @@ export class CompositionRenderer {
       this.renderNode(child, trackItem, currentTime, isPlaying);
     }
 
+    this.context.save();
+    this.renderNodeShape(node, trackItem, currentTime, isPlaying);
+    this.context.restore();
+  }
+
+  renderNodeShape(
+    node: Node,
+    trackItem: TrackItem,
+    currentTime: number,
+    isPlaying: boolean
+  ) {
     const localTime = currentTime - trackItem.start;
     const data = node.animatedDataAt(localTime);
 
@@ -114,23 +125,17 @@ export class CompositionRenderer {
       return;
     }
 
-    const anchorX = data.x + (data.w * (data.transform?.anchorX ?? 50)) / 100;
-    const anchorY = data.y + (data.h * (data.transform?.anchorY ?? 50)) / 100;
+    const anchorX = data.x + (data.w * (data.anchorX ?? 50)) / 100;
+    const anchorY = data.y + (data.h * (data.anchorY ?? 50)) / 100;
 
     this.context.globalAlpha = (data.opacity ?? 100) / 100;
     this.context.fillStyle = data.fill?.hex ?? "none";
 
     this.context.translate(anchorX, anchorY);
 
-    this.context.translate(
-      data.transform?.translateX ?? 0,
-      data.transform?.translateY ?? 0
-    );
-    this.context.rotate((data.transform?.rotate ?? 0) * (Math.PI / 180));
-    this.context.scale(
-      (data.transform?.scaleX ?? 100) / 100,
-      (data.transform?.scaleY ?? 100) / 100
-    );
+    this.context.translate(data.translateX ?? 0, data.translateY ?? 0);
+    this.context.rotate((data.rotate ?? 0) * (Math.PI / 180));
+    this.context.scale((data.scaleX ?? 100) / 100, (data.scaleY ?? 100) / 100);
 
     this.context.translate(-anchorX, -anchorY);
 
@@ -155,7 +160,7 @@ export class CompositionRenderer {
     }
 
     if (data.type === "text") {
-      this.context.font = `${data.font.weight ?? 400} ${data.font.size}px ${data.font.family}`;
+      this.context.font = `${data.fontWeight ?? 400} ${data.fontSize}px ${data.fontFamily}`;
 
       const appearAnimations = node.animations
         .map((a) => a.data)
@@ -208,7 +213,7 @@ class TextAppearAnimation {
 
       context.translate(
         x,
-        data.y + data.font.size + (1 - charProgress) * data.font.size
+        data.y + data.fontSize + (1 - charProgress) * data.fontSize
       );
       context.rotate(-rotation);
 

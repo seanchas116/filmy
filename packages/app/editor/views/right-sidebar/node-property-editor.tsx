@@ -36,32 +36,21 @@ export const NodePropertyEditor: React.FC = observer(() => {
   const fill = sameOrMixed(nodeDatas.map((data) => data.fill));
   const strokeFill = sameOrMixed(nodeDatas.map((data) => data.stroke?.fill));
   const strokeWidth = sameOrMixed(nodeDatas.map((data) => data.stroke?.width));
-  const translateX = sameOrMixed(
-    nodeDatas.map((data) => data.transform?.translateX ?? 0)
-  );
-  const translateY = sameOrMixed(
-    nodeDatas.map((data) => data.transform?.translateY ?? 0)
-  );
-  const scaleX = sameOrMixed(
-    nodeDatas.map((data) => data.transform?.scaleX ?? 100)
-  );
-  const scaleY = sameOrMixed(
-    nodeDatas.map((data) => data.transform?.scaleY ?? 100)
-  );
-  const rotate = sameOrMixed(
-    nodeDatas.map((data) => data.transform?.rotate ?? 0)
-  );
+  const translateX = sameOrMixed(nodeDatas.map((data) => data.translateX ?? 0));
+  const translateY = sameOrMixed(nodeDatas.map((data) => data.translateY ?? 0));
+  const scaleX = sameOrMixed(nodeDatas.map((data) => data.scaleX ?? 100));
+  const scaleY = sameOrMixed(nodeDatas.map((data) => data.scaleY ?? 100));
+  const rotate = sameOrMixed(nodeDatas.map((data) => data.rotate ?? 0));
   const anchor = sameOrMixed(
     nodeDatas.map(
-      (data) =>
-        `${data.transform?.anchorX ?? 50}:${data.transform?.anchorY ?? 50}` as const
+      (data) => `${data.anchorX ?? 50}:${data.anchorY ?? 50}` as const
     )
   );
 
   const text = sameOrMixed(textNodeDatas.map((data) => data.text));
-  const fontFamily = sameOrMixed(textNodeDatas.map((data) => data.font.family));
-  const fontSize = sameOrMixed(textNodeDatas.map((data) => data.font.size));
-  const fontWeight = sameOrMixed(textNodeDatas.map((data) => data.font.weight));
+  const fontFamily = sameOrMixed(textNodeDatas.map((data) => data.fontFamily));
+  const fontSize = sameOrMixed(textNodeDatas.map((data) => data.fontSize));
+  const fontWeight = sameOrMixed(textNodeDatas.map((data) => data.fontWeight));
 
   return (
     <>
@@ -231,10 +220,7 @@ export const NodePropertyEditor: React.FC = observer(() => {
                   if (node.data.type === "text") {
                     node.data = {
                       ...node.data,
-                      font: {
-                        ...node.data.font,
-                        family: value,
-                      },
+                      fontFamily: value,
                     };
                   }
                 }
@@ -252,10 +238,7 @@ export const NodePropertyEditor: React.FC = observer(() => {
                     if (node.data.type === "text") {
                       node.data = {
                         ...node.data,
-                        font: {
-                          ...node.data.font,
-                          size: value,
-                        },
+                        fontSize: value,
                       };
                     }
                   }
@@ -272,10 +255,7 @@ export const NodePropertyEditor: React.FC = observer(() => {
                     if (node.data.type === "text") {
                       node.data = {
                         ...node.data,
-                        font: {
-                          ...node.data.font,
-                          weight: value,
-                        },
+                        fontWeight: value,
                       };
                     }
                   }
@@ -295,10 +275,7 @@ export const NodePropertyEditor: React.FC = observer(() => {
               for (const node of selectedNodes) {
                 node.data = {
                   ...node.data,
-                  transform: {
-                    ...node.data.transform,
-                    translateX: value,
-                  },
+                  translateX: value,
                 };
               }
             })}
@@ -310,10 +287,7 @@ export const NodePropertyEditor: React.FC = observer(() => {
               for (const node of selectedNodes) {
                 node.data = {
                   ...node.data,
-                  transform: {
-                    ...node.data.transform,
-                    translateY: value,
-                  },
+                  translateY: value,
                 };
               }
             })}
@@ -327,10 +301,7 @@ export const NodePropertyEditor: React.FC = observer(() => {
               for (const node of selectedNodes) {
                 node.data = {
                   ...node.data,
-                  transform: {
-                    ...node.data.transform,
-                    scaleX: value,
-                  },
+                  scaleX: value,
                 };
               }
             })}
@@ -342,10 +313,7 @@ export const NodePropertyEditor: React.FC = observer(() => {
               for (const node of selectedNodes) {
                 node.data = {
                   ...node.data,
-                  transform: {
-                    ...node.data.transform,
-                    scaleY: value,
-                  },
+                  scaleY: value,
                 };
               }
             })}
@@ -359,10 +327,7 @@ export const NodePropertyEditor: React.FC = observer(() => {
               for (const node of selectedNodes) {
                 node.data = {
                   ...node.data,
-                  transform: {
-                    ...node.data.transform,
-                    rotate: value,
-                  },
+                  rotate: value,
                 };
               }
             })}
@@ -381,11 +346,8 @@ export const NodePropertyEditor: React.FC = observer(() => {
                     for (const node of selectedNodes) {
                       node.data = {
                         ...node.data,
-                        transform: {
-                          ...node.data.transform,
-                          anchorX,
-                          anchorY,
-                        },
+                        anchorX,
+                        anchorY,
                       };
                     }
                   })}
