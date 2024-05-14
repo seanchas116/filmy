@@ -72,14 +72,12 @@ export class InsertDragHandler implements DragHandler {
           : {
               type: "text",
               text: "Text",
-              font: {
-                family: "Arial",
-                size: 48,
-                weight: 700,
-              },
+              fontFamily: "Arial",
+              fontSize: 48,
+              fontWeight: 700,
               fill: {
                 type: "solid",
-                hex: "#ffffff",
+                hex: "#000000",
               },
               stroke: {
                 width: 2,
