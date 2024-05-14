@@ -44,7 +44,7 @@ export const AnimationEditor = observer(() => {
                 editorState.playRange(
                   anim.data.start + (currentScene?.start ?? 0),
                   anim.data.duration,
-                  1
+                  4
                 );
               })}
             >
@@ -73,7 +73,7 @@ export const AnimationEditor = observer(() => {
               editorState.playRange(
                 anim.data.start + (currentScene?.start ?? 0),
                 anim.data.duration,
-                1
+                4
               );
               e.stopPropagation();
 

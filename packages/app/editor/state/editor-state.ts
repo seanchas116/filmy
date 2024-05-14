@@ -36,7 +36,14 @@ export class EditorState {
     this.requestFrame();
   }
 
+  private playRangeTimeout = 0;
+
   playRange(start: number, duration: number, speed: number) {
+    if (this.playRangeTimeout) {
+      clearInterval(this.playRangeTimeout);
+      this.playRangeTimeout = 0;
+    }
+
     this.currentTime = start;
 
     let time = start;
@@ -46,13 +53,17 @@ export class EditorState {
 
       if (time >= start + duration) {
         this.currentTime = start + duration;
-        clearInterval(timeout);
+        clearInterval(this.playRangeTimeout);
+        this.playRangeTimeout = 0;
       } else {
         this.currentTime = time;
       }
     });
 
-    const timeout = setInterval(updateTime, 1 / 60);
+    this.playRangeTimeout = setInterval(
+      updateTime,
+      1000 / 60
+    ) as unknown as number;
   }
 
   private requestFrame() {
