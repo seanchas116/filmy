@@ -64,6 +64,19 @@ export const AnimationEditor = observer(() => {
       >
         <div className="relative h-full">
           {animations.map((anim, i) => {
+            const snapTargets = new Set<number>();
+
+            snapTargets.add(0);
+            snapTargets.add(currentScene?.duration ?? 0);
+
+            for (const a of animations) {
+              if (a.id === anim.id) {
+                continue;
+              }
+              snapTargets.add(a.data.start);
+              snapTargets.add(a.data.start + a.data.duration);
+            }
+
             const onBarMouseDown = action((e: React.MouseEvent) => {
               if (!e.shiftKey) {
                 editorState.document.selection.clear();
@@ -112,10 +125,8 @@ export const AnimationEditor = observer(() => {
                 const totalDeltaX = e.clientX - initClientX;
 
                 const start = Math.max(0, initStart + totalDeltaX / scale);
-                const duration = Math.max(
-                  0,
-                  initDuration - totalDeltaX / scale
-                );
+                let duration = Math.max(0, initDuration - totalDeltaX / scale);
+                duration = snapValue(duration, snapTargets, 100);
 
                 anim.data = {
                   ...anim.data,
@@ -144,10 +155,10 @@ export const AnimationEditor = observer(() => {
               const onMouseMove = action((e: MouseEvent) => {
                 const totalDeltaX = e.clientX - initClientX;
 
-                const duration = Math.max(
-                  0,
-                  initDuration + totalDeltaX / scale
-                );
+                let duration = Math.max(0, initDuration + totalDeltaX / scale);
+                duration =
+                  snapValue(duration + anim.data.start, snapTargets, 100) -
+                  anim.data.start;
 
                 anim.data = {
                   ...anim.data,
@@ -207,3 +218,16 @@ export const AnimationEditor = observer(() => {
     </div>
   );
 });
+
+function snapValue(x: number, snapTargets: Set<number>, threshold: number) {
+  let minDistance = Infinity;
+  let snapValue = x;
+  for (const target of snapTargets) {
+    const distance = Math.abs(x - target);
+    if (distance < minDistance && distance < threshold) {
+      minDistance = distance;
+      snapValue = target;
+    }
+  }
+  return snapValue;
+}
