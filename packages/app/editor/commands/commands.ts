@@ -210,7 +210,9 @@ export class Commands {
   handleKeyUp(event: KeyboardEvent): void {
     if (event.key === " ") {
       this.editorState.panMode = false;
-      this.editorState.togglePlay();
+      if (!isTextInput(event.target)) {
+        this.editorState.togglePlay();
+      }
     }
     if (event.key === "Alt") {
       this.editorState.measureMode = false;
