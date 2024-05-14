@@ -119,10 +119,11 @@ export const AnimationPropertyEditor: React.FC = observer(() => {
               }}
             >
               <option value="opacity">Opacity</option>
-              <option value="x">X</option>
-              <option value="y">Y</option>
-              <option value="w">Width</option>
-              <option value="h">Height</option>
+              <option value="translateX">Translate X</option>
+              <option value="translateY">Translate Y</option>
+              <option value="rotate">Rotate</option>
+              <option value="scaleX">Scale X</option>
+              <option value="scaleY">Scale Y</option>
             </select>
           </Row>
           <Row>
