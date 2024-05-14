@@ -39,6 +39,10 @@ export class EditorState {
   private playRangeTimeout = 0;
 
   playRange(start: number, duration: number, speed: number) {
+    if (this.isPlaying) {
+      this.pause();
+    }
+
     if (this.playRangeTimeout) {
       clearInterval(this.playRangeTimeout);
       this.playRangeTimeout = 0;
