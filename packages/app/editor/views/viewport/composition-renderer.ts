@@ -196,32 +196,43 @@ class TextAppearAnimation {
     data: TextNodeData,
     progress: number
   ) {
-    const charCount = data.text.length;
-    let x = data.x;
-    for (let i = 0; i < charCount; i++) {
-      const char = data.text[i];
-      let charProgress = clamp(progress * charCount - i, 0, 1);
+    const lines = data.text.split("\n");
+    const charCount = lines
+      .map((line) => line.length)
+      .reduce((a, b) => a + b, 0);
 
-      const easing = new UnitBezier(...easeOut);
-      charProgress = easing.solve(charProgress);
+    const lineHeight = data.fontSize * ((data.lineHeight ?? 100) / 100);
 
-      context.globalAlpha = charProgress;
+    let y = data.y + lineHeight - (lineHeight - data.fontSize) / 2;
+    let charIndex = 0;
 
-      context.save();
+    for (const line of lines) {
+      let x = data.x;
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        let charProgress = clamp(progress * charCount - charIndex, 0, 1);
 
-      const rotation = (1 - charProgress) * (Math.PI * 0.25);
+        const easing = new UnitBezier(...easeOut);
+        charProgress = easing.solve(charProgress);
 
-      context.translate(
-        x,
-        data.y + data.fontSize + (1 - charProgress) * data.fontSize
-      );
-      context.rotate(-rotation);
+        context.globalAlpha = charProgress;
 
-      context.fillText(char, 0, 0);
+        context.save();
 
-      context.restore();
+        const rotation = (1 - charProgress) * (Math.PI * 0.25);
 
-      x += context.measureText(char).width;
+        context.translate(x, y + (1 - charProgress) * data.fontSize);
+        context.rotate(-rotation);
+
+        context.fillText(char, 0, 0);
+
+        context.restore();
+
+        x += context.measureText(char).width;
+        charIndex++;
+      }
+
+      y += lineHeight;
     }
   }
 }

@@ -75,6 +75,7 @@ export class InsertDragHandler implements DragHandler {
               fontFamily: "Arial",
               fontSize: 48,
               fontWeight: 700,
+              lineHeight: 150,
               fill: {
                 type: "solid",
                 hex: "#000000",

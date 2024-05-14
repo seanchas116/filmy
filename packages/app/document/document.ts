@@ -157,6 +157,7 @@ export class Document {
       fontFamily: "Avenir Next",
       fontWeight: 700,
       fontSize: 48,
+      lineHeight: 150,
       x: 16,
       y: 400,
       w: 100,

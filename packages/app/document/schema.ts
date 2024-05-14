@@ -51,6 +51,7 @@ export type FontData = {
   readonly fontSize: number;
   readonly fontWeight?: number;
   readonly fontStyle?: string;
+  readonly lineHeight?: number; // percentage
 };
 
 export type TextAnimationData = {
