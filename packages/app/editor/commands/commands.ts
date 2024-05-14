@@ -181,6 +181,11 @@ export class Commands {
 
     if (event.key === " ") {
       this.editorState.panMode = true;
+
+      // Prevent space from pressing buttons etc
+      if (!isTextInput(event.target)) {
+        return true;
+      }
     }
     if (event.key === "Alt") {
       this.editorState.measureMode = true;
