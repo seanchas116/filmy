@@ -53,6 +53,14 @@ export class Selection {
   }
 
   deleteSelected() {
+    const animations = this.animations;
+    if (animations.length) {
+      for (const animation of animations) {
+        animation.delete();
+      }
+      return;
+    }
+
     for (const node of this.nodes) {
       node.delete();
     }
