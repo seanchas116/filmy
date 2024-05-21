@@ -162,17 +162,15 @@ export class CompositionRenderer {
     if (data.type === "text") {
       this.context.font = `${data.fontWeight ?? 400} ${data.fontSize}px ${data.fontFamily}`;
 
-      const textAnimations = node.animations
+      const textAnimation = node.animations
         .map((a) => a.data)
-        .filter(
+        .find(
           (a): a is TextAnimationData =>
             a.type === "text" &&
             a.start <= localTime &&
             localTime <= a.start + a.duration
         );
 
-      // TODO: show all animations
-      const textAnimation = textAnimations.at(0);
       if (textAnimation) {
         const progress = clamp(
           (localTime - textAnimation.start) / textAnimation.duration,
