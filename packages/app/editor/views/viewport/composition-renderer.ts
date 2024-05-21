@@ -164,7 +164,12 @@ export class CompositionRenderer {
 
       const textAnimations = node.animations
         .map((a) => a.data)
-        .filter((a): a is TextAnimationData => a.type === "text");
+        .filter(
+          (a): a is TextAnimationData =>
+            a.type === "text" &&
+            a.start <= localTime &&
+            localTime <= a.start + a.duration
+        );
 
       // TODO: show all animations
       const textAnimation = textAnimations.at(0);
