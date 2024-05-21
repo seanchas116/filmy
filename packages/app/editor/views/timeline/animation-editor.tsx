@@ -3,6 +3,7 @@ import { useEditorState } from "../use-editor-state";
 import { action } from "mobx";
 import { Node } from "@/document/node";
 import { Animation } from "@/document/animation";
+import { startCase } from "lodash-es";
 
 export const AnimationEditor = observer(() => {
   const editorState = useEditorState();
@@ -48,10 +49,12 @@ export const AnimationEditor = observer(() => {
                 );
               })}
             >
-              {anim.node.name} -{" "}
-              {anim.data.type === "property"
-                ? anim.data.property
-                : anim.data.type}
+              {startCase(
+                anim.data.type === "property"
+                  ? anim.data.property
+                  : anim.data.type
+              )}
+              <span className="opacity-50 ml-2">{anim.node.name}</span>
             </div>
           );
         })}
