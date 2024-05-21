@@ -188,39 +188,52 @@ export const AnimationPropertyEditor: React.FC = observer(() => {
       )}
       <Row>
         <div>Easing</div>
-        <select
-          value={data.easing.join()}
-          className="h-8 bg-gray-100 rounded-lg px-4 w-fit"
-          onChange={(e) => {
-            const easing = e.target.value.split(",").map(Number) as [
-              number,
-              number,
-              number,
-              number,
-            ];
-
+        <EasingSelect
+          value={data.easing}
+          onChangeValue={(easing) => {
             animation.data = {
               ...data,
               easing,
             };
           }}
-        >
-          {Object.entries({
-            Ease: ease,
-            Linear: linear,
-            "Ease In": easeIn,
-            "Ease Out": easeOut,
-            "Ease In Out": easeInOut,
-          }).map(
-            ([label, easing]) =>
-              easing && (
-                <option key={label} value={easing.join()}>
-                  {label}
-                </option>
-              )
-          )}
-        </select>
+        />
       </Row>
     </div>
   );
 });
+
+const EasingSelect: React.FC<{
+  value: readonly [number, number, number, number];
+  onChangeValue: (value: readonly [number, number, number, number]) => void;
+}> = ({ value, onChangeValue }) => {
+  return (
+    <select
+      value={value.join()}
+      className="h-8 bg-gray-100 rounded-lg px-4 w-fit"
+      onChange={(e) => {
+        const easing = e.target.value.split(",").map(Number) as [
+          number,
+          number,
+          number,
+          number,
+        ];
+        onChangeValue(easing);
+      }}
+    >
+      {Object.entries({
+        Ease: ease,
+        Linear: linear,
+        "Ease In": easeIn,
+        "Ease Out": easeOut,
+        "Ease In Out": easeInOut,
+      }).map(
+        ([label, easing]) =>
+          easing && (
+            <option key={label} value={easing.join()}>
+              {label}
+            </option>
+          )
+      )}
+    </select>
+  );
+};
