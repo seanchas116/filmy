@@ -203,7 +203,13 @@ export class Document {
     this.animationStore.data.set(nanoid(), {
       order: 2,
       node: textNode.id,
-      type: "in",
+      type: "text",
+      from: 0,
+      to: 100,
+      translateX: 0,
+      translateY: 48,
+      rotate: -45,
+      scale: 1,
       start: 0,
       duration: 1000,
     });

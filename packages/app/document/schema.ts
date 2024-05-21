@@ -13,12 +13,17 @@ export type PropertyAnimationData = AnimationCommonData & {
   readonly from?: number;
   readonly to: number;
 };
-export type InOutAnimationData = AnimationCommonData & {
-  // in or out animation (such as text appearing)
-  readonly type: "in" | "out";
+export type TextAnimationData = AnimationCommonData & {
+  readonly type: "text";
+  readonly from: number; // percentage
+  readonly to: number; // percentage
+  readonly translateX: number;
+  readonly translateY: number;
+  readonly rotate: number;
+  readonly scale: number;
 };
 
-export type AnimationData = PropertyAnimationData | InOutAnimationData;
+export type AnimationData = PropertyAnimationData | TextAnimationData;
 
 export type NodeCommonData = {
   readonly parent?: string;
@@ -54,15 +59,6 @@ export type FontData = {
   readonly lineHeight?: number; // percentage
 };
 
-export type TextAnimationData = {
-  readonly start: number; // percentage
-  readonly end: number; // percentage
-  readonly translateX: number;
-  readonly translateY: number;
-  readonly rotate: number;
-  readonly scale: number;
-};
-
 export type FillData = {
   readonly type: "solid";
   readonly hex: string; // #RRGGBB
@@ -76,7 +72,6 @@ export type StrokeData = {
 export type TextNodeData = NodeCommonData & {
   readonly type: "text";
   readonly text: string;
-  readonly textAnimation?: TextAnimationData;
 } & FontData;
 
 export type RectangleNodeData = NodeCommonData & {

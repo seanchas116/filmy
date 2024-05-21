@@ -26,7 +26,13 @@ const AnimationAddView: React.FC = observer(() => {
               editorState.document.animations.add(nanoid(), {
                 order: 0, // TODO
                 node: node.id,
-                type: "in",
+                type: "text",
+                from: 0,
+                to: 100,
+                translateX: -20,
+                translateY: 0,
+                rotate: -45,
+                scale: 1,
                 start: 0,
                 duration: 1000,
               });

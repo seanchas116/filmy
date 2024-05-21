@@ -1,9 +1,9 @@
 import { Node } from "@/document/node";
-import { InOutAnimationData, TextNodeData } from "@/document/schema";
+import { TextAnimationData, TextNodeData } from "@/document/schema";
 import { TrackItem } from "@/document/track-item";
 import { EditorState } from "@/editor/state/editor-state";
 import { assertNonNull } from "@/utils/assert";
-import { clamp } from "@/utils/math";
+import { clamp, lerp } from "@/utils/math";
 import { UnitBezier, easeOut } from "@/utils/easing";
 import { autorun } from "mobx";
 
@@ -162,22 +162,41 @@ export class CompositionRenderer {
     if (data.type === "text") {
       this.context.font = `${data.fontWeight ?? 400} ${data.fontSize}px ${data.fontFamily}`;
 
-      const appearAnimations = node.animations
+      const textAnimations = node.animations
         .map((a) => a.data)
-        .filter((a): a is InOutAnimationData => a.type === "in");
+        .filter((a): a is TextAnimationData => a.type === "text");
 
       // TODO: show all animations
-      const appearAnimation = appearAnimations.at(0);
-      if (appearAnimation) {
+      const textAnimation = textAnimations.at(0);
+      if (textAnimation) {
         const progress = clamp(
-          (localTime - appearAnimation.start) / appearAnimation.duration,
+          (localTime - textAnimation.start) / textAnimation.duration,
           0,
           1
         );
+        const showRatio =
+          lerp(textAnimation.from, textAnimation.to, progress) / 100;
 
-        new TextAppearAnimation().render(this.context, data, progress);
+        new TextAnimationRenderer().render(
+          this.context,
+          data,
+          textAnimation,
+          showRatio
+        );
       } else {
-        new TextAppearAnimation().render(this.context, data, 1);
+        new TextAnimationRenderer().render(
+          this.context,
+          data,
+          {
+            from: 0,
+            to: 100,
+            translateX: 0,
+            translateY: 0,
+            rotate: 0,
+            scale: 1,
+          },
+          1
+        );
       }
 
       return;
@@ -188,12 +207,20 @@ export class CompositionRenderer {
   context: CanvasRenderingContext2D;
 }
 
-class TextAppearAnimation {
+class TextAnimationRenderer {
   constructor() {}
 
   render(
     context: CanvasRenderingContext2D,
     data: TextNodeData,
+    config: {
+      readonly from: number; // percentage
+      readonly to: number; // percentage
+      readonly translateX: number;
+      readonly translateY: number;
+      readonly rotate: number;
+      readonly scale: number;
+    },
     progress: number
   ) {
     const lines = data.text.split("\n");
@@ -206,11 +233,13 @@ class TextAppearAnimation {
     let y = data.y + lineHeight - (lineHeight - data.fontSize) / 2;
     let charIndex = 0;
 
+    const showRatio = lerp(config.from, config.to, progress) / 100;
+
     for (const line of lines) {
       let x = data.x;
       for (let i = 0; i < line.length; i++) {
         const char = line[i];
-        let charProgress = clamp(progress * charCount - charIndex, 0, 1);
+        let charProgress = clamp(showRatio * charCount - charIndex, 0, 1);
 
         const easing = new UnitBezier(...easeOut);
         charProgress = easing.solve(charProgress);
@@ -219,9 +248,12 @@ class TextAppearAnimation {
 
         context.save();
 
-        const rotation = (1 - charProgress) * (Math.PI * 0.25);
+        const rotation = (1 - charProgress) * ((config.rotate / 180) * Math.PI);
 
-        context.translate(x, y + (1 - charProgress) * data.fontSize);
+        context.translate(
+          x + (1 - charProgress) * config.translateX,
+          y + (1 - charProgress) * config.translateY
+        );
         context.rotate(-rotation);
 
         context.fillText(char, 0, 0);
