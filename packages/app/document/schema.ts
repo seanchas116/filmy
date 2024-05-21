@@ -3,20 +3,19 @@ export type AnimationCommonData = {
   readonly order: number;
   readonly start: number;
   readonly duration: number;
+  readonly easing: readonly [number, number, number, number];
 };
 
 export type PropertyAnimationData = AnimationCommonData & {
   // property animation
   readonly type: "property";
   readonly property: string;
-  readonly easing: readonly [number, number, number, number];
   readonly from?: number;
   readonly to: number;
 };
 export type TextAnimationData = AnimationCommonData & {
   readonly type: "text";
   readonly mode: "in" | "out";
-  readonly easing: readonly [number, number, number, number];
   readonly charEasing: readonly [number, number, number, number];
   readonly translateX: number;
   readonly translateY: number;

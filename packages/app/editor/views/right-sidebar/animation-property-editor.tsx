@@ -5,6 +5,12 @@ import { action } from "mobx";
 import tw from "tailwind-styled-components";
 import { nanoid } from "nanoid";
 import { linear, ease, easeIn, easeOut, easeInOut } from "@/utils/easing";
+import {
+  AnimationCommonData,
+  PropertyAnimationData,
+  TextAnimationData,
+} from "@/document/schema";
+import { mixedToUndefined, sameOrMixed } from "@/utils/mixed";
 
 const AnimationAddView: React.FC = observer(() => {
   const editorState = useEditorState();
@@ -74,30 +80,40 @@ const AnimationAddView: React.FC = observer(() => {
 
 const Row = tw.div`grid grid-cols-3 gap-2 items-center`;
 
-export const AnimationPropertyEditor: React.FC = observer(() => {
+const CommonAnimationPropertyEditor: React.FC = observer(() => {
   const editorState = useEditorState();
-  const selectedAnimations = editorState.document.selection.animations;
+  const animations = editorState.document.selection.animations;
+  const datas = animations.map((a) => a.data);
 
-  if (!selectedAnimations.length) {
-    return <AnimationAddView />;
+  if (!datas.length) {
+    return null;
   }
 
-  const animation = selectedAnimations[0];
-  const data = animation.data;
+  const update = (data: Partial<AnimationCommonData>) => {
+    for (const anim of animations) {
+      anim.data = {
+        ...anim.data,
+        ...data,
+      };
+    }
+  };
+
+  const start = sameOrMixed(datas.map((d) => d.start));
+  const duration = sameOrMixed(datas.map((d) => d.duration));
+  const easing = sameOrMixed(datas.map((d) => d.easing));
 
   return (
-    <div className="p-2 flex flex-col gap-2">
+    <>
       <Row>
         <div>Start</div>
         <NumberInput
           className="col-span-2"
           label=""
-          value={animation.data.start}
+          value={start}
           onChangeValue={action((value) => {
-            animation.data = {
-              ...animation.data,
+            update({
               start: value,
-            };
+            });
           })}
         />
       </Row>
@@ -106,99 +122,164 @@ export const AnimationPropertyEditor: React.FC = observer(() => {
         <NumberInput
           className="col-span-2"
           label=""
-          value={animation.data.duration}
+          value={duration}
           onChangeValue={action((value) => {
-            animation.data = {
-              ...animation.data,
+            update({
               duration: value,
-            };
+            });
           })}
         />
       </Row>
-      {data.type === "property" && (
-        <>
-          <Row>
-            <div>Property</div>
-            <select
-              value={data.property}
-              className="h-8 bg-gray-100 rounded-lg px-4 w-fit"
-              onChange={(e) => {
-                animation.data = {
-                  ...data,
-                  property: e.target.value,
-                };
-              }}
-            >
-              <option value="opacity">Opacity</option>
-              <option value="translateX">Translate X</option>
-              <option value="translateY">Translate Y</option>
-              <option value="rotate">Rotate</option>
-              <option value="scaleX">Scale X</option>
-              <option value="scaleY">Scale Y</option>
-            </select>
-          </Row>
-          <Row>
-            <div>Initial Value</div>
-            <NumberInput
-              className="col-span-2"
-              label=""
-              value={data.from}
-              onChangeValue={action((value) => {
-                animation.data = {
-                  ...data,
-                  from: value,
-                };
-              })}
-            />
-          </Row>
-          <Row>
-            <div>Final Value</div>
-            <NumberInput
-              className="col-span-2"
-              label=""
-              value={data.to}
-              onChangeValue={action((value) => {
-                animation.data = {
-                  ...data,
-                  to: value,
-                };
-              })}
-            />
-          </Row>
-        </>
-      )}
-      {data.type === "text" && (
-        <>
-          <Row>
-            <div>Mode</div>
-            <select
-              value={data.mode}
-              className="h-8 bg-gray-100 rounded-lg px-4 w-fit"
-              onChange={(e) => {
-                animation.data = {
-                  ...data,
-                  mode: e.target.value as "in" | "out",
-                };
-              }}
-            >
-              <option value="in">In</option>
-              <option value="out">Out</option>
-            </select>
-          </Row>
-        </>
-      )}
       <Row>
         <div>Easing</div>
         <EasingSelect
-          value={data.easing}
+          value={mixedToUndefined(easing) ?? linear}
           onChangeValue={(easing) => {
-            animation.data = {
-              ...data,
+            update({
               easing,
-            };
+            });
           }}
         />
       </Row>
+    </>
+  );
+});
+
+export const PropertyAnimationPropertyEditor: React.FC = observer(() => {
+  const editorState = useEditorState();
+  const animations = editorState.document.selection.animations;
+  const datas = animations
+    .map((a) => a.data)
+    .filter((a): a is PropertyAnimationData => a.type === "property");
+
+  if (!datas.length) {
+    return null;
+  }
+
+  const update = (data: Partial<PropertyAnimationData>) => {
+    for (const anim of animations) {
+      if (anim.data.type === "property") {
+        anim.data = {
+          ...anim.data,
+          ...data,
+        };
+      }
+    }
+  };
+
+  const property = sameOrMixed(datas.map((d) => d.property));
+  const from = sameOrMixed(datas.map((d) => d.from));
+  const to = sameOrMixed(datas.map((d) => d.to));
+
+  return (
+    <>
+      <Row>
+        <div>Property</div>
+        <select
+          value={mixedToUndefined(property) ?? ""}
+          className="h-8 bg-gray-100 rounded-lg px-4 w-fit"
+          onChange={action((e) => {
+            update({
+              property: e.target.value,
+            });
+          })}
+        >
+          <option value="opacity">Opacity</option>
+          <option value="translateX">Translate X</option>
+          <option value="translateY">Translate Y</option>
+          <option value="rotate">Rotate</option>
+          <option value="scaleX">Scale X</option>
+          <option value="scaleY">Scale Y</option>
+        </select>
+      </Row>
+      <Row>
+        <div>Initial Value</div>
+        <NumberInput
+          className="col-span-2"
+          label=""
+          value={from}
+          onChangeValue={action((value) => {
+            update({
+              from: value,
+            });
+          })}
+        />
+      </Row>
+      <Row>
+        <div>Final Value</div>
+        <NumberInput
+          className="col-span-2"
+          label=""
+          value={to}
+          onChangeValue={action((value) => {
+            update({
+              to: value,
+            });
+          })}
+        />
+      </Row>
+    </>
+  );
+});
+
+export const TextAnimationPropertyEditor: React.FC = observer(() => {
+  const editorState = useEditorState();
+  const animations = editorState.document.selection.animations;
+  const datas = animations
+    .map((a) => a.data)
+    .filter((a): a is TextAnimationData => a.type === "text");
+
+  if (!datas.length) {
+    return null;
+  }
+
+  const update = (data: Partial<TextAnimationData>) => {
+    for (const anim of animations) {
+      if (anim.data.type === "text") {
+        anim.data = {
+          ...anim.data,
+          ...data,
+        };
+      }
+    }
+  };
+
+  const mode = sameOrMixed(datas.map((d) => d.mode));
+
+  return (
+    <>
+      <Row>
+        <div>Mode</div>
+        <select
+          value={mixedToUndefined(mode)}
+          className="h-8 bg-gray-100 rounded-lg px-4 w-fit"
+          onChange={(e) => {
+            update({
+              mode: e.target.value as "in" | "out",
+            });
+          }}
+        >
+          <option value="in">In</option>
+          <option value="out">Out</option>
+        </select>
+      </Row>
+    </>
+  );
+});
+
+export const AnimationPropertyEditor: React.FC = observer(() => {
+  const editorState = useEditorState();
+  const selectedAnimations = editorState.document.selection.animations;
+
+  if (!selectedAnimations.length) {
+    return <AnimationAddView />;
+  }
+
+  return (
+    <div className="p-2 flex flex-col gap-2">
+      <CommonAnimationPropertyEditor />
+      <PropertyAnimationPropertyEditor />
+      <TextAnimationPropertyEditor />
     </div>
   );
 });

@@ -24,3 +24,7 @@ export function sameOrMixed<T>(
   }
   return values[0];
 }
+
+export function mixedToUndefined<T>(value: T | typeof MIXED): T | undefined {
+  return value === MIXED ? undefined : value;
+}
