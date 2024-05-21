@@ -3,7 +3,7 @@ import { TextAnimationData, TextNodeData } from "@/document/schema";
 import { TrackItem } from "@/document/track-item";
 import { EditorState } from "@/editor/state/editor-state";
 import { assertNonNull } from "@/utils/assert";
-import { clamp, lerp } from "@/utils/math";
+import { clamp } from "@/utils/math";
 import { UnitBezier, linear } from "@/utils/easing";
 import { autorun } from "mobx";
 
@@ -176,26 +176,22 @@ export class CompositionRenderer {
         );
         const easing = new UnitBezier(...textAnimation.easing);
         const showRatio = easing.solve(
-          lerp(textAnimation.from, textAnimation.to, progress) / 100
+          textAnimation.mode === "in" ? progress : 1 - progress
         );
 
         new TextAnimationRenderer().render(
           this.context,
           data,
           textAnimation,
+          0,
           showRatio
         );
       } else {
         new TextAnimationRenderer().render(
           this.context,
           data,
-          {
-            translateX: 0,
-            translateY: 0,
-            rotate: 0,
-            scale: 1,
-            easing: linear,
-          },
+          { translateX: 0, translateY: 0, rotate: 0, scale: 1, easing: linear },
+          0,
           1
         );
       }
@@ -221,7 +217,8 @@ class TextAnimationRenderer {
       readonly scale: number;
       readonly easing: readonly [number, number, number, number];
     },
-    showRatio: number
+    showBegin: number,
+    showEnd: number
   ) {
     const lines = data.text.split("\n");
     const charCount = lines
@@ -237,7 +234,7 @@ class TextAnimationRenderer {
       let x = data.x;
       for (let i = 0; i < line.length; i++) {
         const char = line[i];
-        let charProgress = clamp(showRatio * charCount - charIndex, 0, 1);
+        let charProgress = clamp(showEnd * charCount - charIndex, 0, 1);
 
         const easing = new UnitBezier(...config.easing);
         charProgress = easing.solve(charProgress);

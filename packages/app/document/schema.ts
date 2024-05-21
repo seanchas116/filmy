@@ -15,8 +15,7 @@ export type PropertyAnimationData = AnimationCommonData & {
 };
 export type TextAnimationData = AnimationCommonData & {
   readonly type: "text";
-  readonly from: number; // percentage
-  readonly to: number; // percentage
+  readonly mode: "in" | "out";
   readonly easing: readonly [number, number, number, number];
   readonly charEasing: readonly [number, number, number, number];
   readonly translateX: number;

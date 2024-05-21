@@ -27,10 +27,9 @@ const AnimationAddView: React.FC = observer(() => {
                 order: 0, // TODO
                 node: node.id,
                 type: "text",
+                mode: "in",
                 easing: linear,
                 charEasing: linear,
-                from: 0,
-                to: 100,
                 translateX: -20,
                 translateY: 0,
                 rotate: -45,
@@ -116,26 +115,76 @@ export const AnimationPropertyEditor: React.FC = observer(() => {
         />
       </Row>
       {data.type === "property" && (
-        <Row>
-          <div>Property</div>
-          <select
-            value={data.property}
-            className="h-8 bg-gray-100 rounded-lg px-4 w-fit"
-            onChange={(e) => {
-              animation.data = {
-                ...data,
-                property: e.target.value,
-              };
-            }}
-          >
-            <option value="opacity">Opacity</option>
-            <option value="translateX">Translate X</option>
-            <option value="translateY">Translate Y</option>
-            <option value="rotate">Rotate</option>
-            <option value="scaleX">Scale X</option>
-            <option value="scaleY">Scale Y</option>
-          </select>
-        </Row>
+        <>
+          <Row>
+            <div>Property</div>
+            <select
+              value={data.property}
+              className="h-8 bg-gray-100 rounded-lg px-4 w-fit"
+              onChange={(e) => {
+                animation.data = {
+                  ...data,
+                  property: e.target.value,
+                };
+              }}
+            >
+              <option value="opacity">Opacity</option>
+              <option value="translateX">Translate X</option>
+              <option value="translateY">Translate Y</option>
+              <option value="rotate">Rotate</option>
+              <option value="scaleX">Scale X</option>
+              <option value="scaleY">Scale Y</option>
+            </select>
+          </Row>
+          <Row>
+            <div>Initial Value</div>
+            <NumberInput
+              className="col-span-2"
+              label=""
+              value={data.from}
+              onChangeValue={action((value) => {
+                animation.data = {
+                  ...data,
+                  from: value,
+                };
+              })}
+            />
+          </Row>
+          <Row>
+            <div>Final Value</div>
+            <NumberInput
+              className="col-span-2"
+              label=""
+              value={data.to}
+              onChangeValue={action((value) => {
+                animation.data = {
+                  ...data,
+                  to: value,
+                };
+              })}
+            />
+          </Row>
+        </>
+      )}
+      {data.type === "text" && (
+        <>
+          <Row>
+            <div>Mode</div>
+            <select
+              value={data.mode}
+              className="h-8 bg-gray-100 rounded-lg px-4 w-fit"
+              onChange={(e) => {
+                animation.data = {
+                  ...data,
+                  mode: e.target.value as "in" | "out",
+                };
+              }}
+            >
+              <option value="in">In</option>
+              <option value="out">Out</option>
+            </select>
+          </Row>
+        </>
       )}
       <Row>
         <div>Easing</div>
@@ -171,34 +220,6 @@ export const AnimationPropertyEditor: React.FC = observer(() => {
               )
           )}
         </select>
-      </Row>
-      <Row>
-        <div>Initial Value</div>
-        <NumberInput
-          className="col-span-2"
-          label=""
-          value={data.from}
-          onChangeValue={action((value) => {
-            animation.data = {
-              ...data,
-              from: value,
-            };
-          })}
-        />
-      </Row>
-      <Row>
-        <div>Final Value</div>
-        <NumberInput
-          className="col-span-2"
-          label=""
-          value={data.to}
-          onChangeValue={action((value) => {
-            animation.data = {
-              ...data,
-              to: value,
-            };
-          })}
-        />
       </Row>
     </div>
   );
