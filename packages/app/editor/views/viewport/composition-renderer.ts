@@ -175,17 +175,24 @@ export class CompositionRenderer {
           1
         );
         const easing = new UnitBezier(...textAnimation.easing);
-        const showRatio = easing.solve(
-          textAnimation.mode === "in" ? progress : 1 - progress
-        );
 
-        new TextAnimationRenderer().render(
-          this.context,
-          data,
-          textAnimation,
-          0,
-          showRatio
-        );
+        if (textAnimation.mode === "in") {
+          new TextAnimationRenderer().render(
+            this.context,
+            data,
+            textAnimation,
+            0,
+            easing.solve(progress)
+          );
+        } else {
+          new TextAnimationRenderer().render(
+            this.context,
+            data,
+            textAnimation,
+            easing.solve(progress),
+            1
+          );
+        }
       } else {
         new TextAnimationRenderer().render(
           this.context,
@@ -234,20 +241,22 @@ class TextAnimationRenderer {
       let x = data.x;
       for (let i = 0; i < line.length; i++) {
         const char = line[i];
-        let charProgress = clamp(showEnd * charCount - charIndex, 0, 1);
+        const charStart = clamp(showBegin * charCount - charIndex, 0, 1);
+        const charEnd = clamp(showEnd * charCount - charIndex, 0, 1);
+        const charProgress = clamp(charEnd - charStart, 0, 1);
 
         const easing = new UnitBezier(...config.easing);
-        charProgress = easing.solve(charProgress);
+        const ratio = easing.solve(charProgress);
 
-        context.globalAlpha = charProgress;
+        context.globalAlpha = ratio;
 
         context.save();
 
-        const rotation = (1 - charProgress) * ((config.rotate / 180) * Math.PI);
+        const rotation = (1 - ratio) * ((config.rotate / 180) * Math.PI);
 
         context.translate(
-          x + (1 - charProgress) * config.translateX,
-          y + (1 - charProgress) * config.translateY
+          x + (1 - ratio) * config.translateX,
+          y + (1 - ratio) * config.translateY
         );
         context.rotate(-rotation);
 
