@@ -21,7 +21,8 @@ export type TextAnimationData = AnimationCommonData & {
   readonly translateX: number;
   readonly translateY: number;
   readonly rotate: number;
-  readonly scale: number;
+  readonly scaleX: number;
+  readonly scaleY: number;
   readonly anchorX: 0 | 50 | 100;
   readonly anchorY: 0 | 50 | 100;
 };

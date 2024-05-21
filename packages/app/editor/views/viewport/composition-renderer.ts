@@ -224,7 +224,16 @@ export class CompositionRenderer {
         new TextAnimationRenderer().render(
           this.context,
           data,
-          { translateX: 0, translateY: 0, rotate: 0, scale: 1, easing: linear },
+          {
+            translateX: 0,
+            translateY: 0,
+            rotate: 0,
+            scaleX: 100,
+            scaleY: 100,
+            anchorX: 50,
+            anchorY: 50,
+            easing: linear,
+          },
           0,
           1
         );
@@ -248,7 +257,10 @@ class TextAnimationRenderer {
       readonly translateX: number;
       readonly translateY: number;
       readonly rotate: number;
-      readonly scale: number;
+      readonly scaleX: number;
+      readonly scaleY: number;
+      readonly anchorX: number;
+      readonly anchorY: number;
       readonly easing: readonly [number, number, number, number];
     },
     showBegin: number,
@@ -280,6 +292,8 @@ class TextAnimationRenderer {
         context.save();
 
         const rotation = (1 - ratio) * ((config.rotate / 180) * Math.PI);
+
+        // TODO: scale / anchor
 
         context.translate(
           x + (1 - ratio) * config.translateX,
