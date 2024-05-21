@@ -11,6 +11,7 @@ import {
   TextAnimationData,
 } from "@/document/schema";
 import { mixedToUndefined, sameOrMixed } from "@/utils/mixed";
+import { Icon } from "@iconify/react/dist/iconify.js";
 
 const AnimationAddView: React.FC = observer(() => {
   const editorState = useEditorState();
@@ -245,6 +246,12 @@ export const TextAnimationPropertyEditor: React.FC = observer(() => {
   };
 
   const mode = sameOrMixed(datas.map((d) => d.mode));
+  const translateX = sameOrMixed(datas.map((d) => d.translateX));
+  const translateY = sameOrMixed(datas.map((d) => d.translateY));
+  const rotate = sameOrMixed(datas.map((d) => d.rotate));
+  const scaleX = sameOrMixed(datas.map((d) => d.scaleX));
+  const scaleY = sameOrMixed(datas.map((d) => d.scaleY));
+  const anchor = sameOrMixed(datas.map((d) => `${d.anchorX}:${d.anchorY}`));
 
   return (
     <>
@@ -263,6 +270,83 @@ export const TextAnimationPropertyEditor: React.FC = observer(() => {
           <option value="out">Out</option>
         </select>
       </Row>
+
+      <div className="flex flex-col gap-2">
+        <h3>Character Transform</h3>
+        <div className="grid grid-cols-2 gap-2">
+          <NumberInput
+            label="X"
+            value={translateX}
+            onChangeValue={action((value) => {
+              update({
+                translateX: value,
+              });
+            })}
+          />
+          <NumberInput
+            label="Y"
+            value={translateY}
+            onChangeValue={action((value) => {
+              update({
+                translateY: value,
+              });
+            })}
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <NumberInput
+            label={<Icon icon="material-symbols:width-rounded" />}
+            value={scaleX}
+            onChangeValue={action((value) => {
+              update({
+                scaleX: value,
+              });
+            })}
+          />
+          <NumberInput
+            label={<Icon icon="material-symbols:width-rounded" rotate={1} />}
+            value={scaleY}
+            onChangeValue={action((value) => {
+              update({
+                scaleY: value,
+              });
+            })}
+          />
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <NumberInput
+            label={<Icon icon="material-symbols:rotate-left-rounded" />}
+            value={rotate}
+            onChangeValue={action((value) => {
+              update({
+                rotate: value,
+              });
+            })}
+          />
+        </div>
+        {/* TODO: anchor */}
+        <div className="grid grid-cols-3 w-fit">
+          {([0, 50, 100] as const).map((anchorY) => {
+            return ([0, 50, 100] as const).map((anchorX) => {
+              return (
+                <button
+                  key={`${anchorX}:${anchorY}`}
+                  className="p-0.5 group"
+                  aria-pressed={anchor === `${anchorX}:${anchorY}`}
+                  onClick={action(() => {
+                    update({
+                      anchorX,
+                      anchorY,
+                    });
+                  })}
+                >
+                  <div className="w-3 h-3 rounded bg-gray-200 group-hover:bg-gray-300 group-aria-pressed:bg-blue-500" />
+                </button>
+              );
+            });
+          })}
+        </div>
+      </div>
     </>
   );
 });
