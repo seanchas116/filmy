@@ -265,7 +265,7 @@ export const NodePropertyEditor: React.FC = observer(() => {
           </div>
         </div>
       )}
-      <div className="flex flex-col gap-2">
+      <div className="p-2 flex flex-col gap-2">
         <h3>Transform</h3>
         <div className="grid grid-cols-2 gap-2">
           <NumberInput
