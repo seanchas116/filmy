@@ -17,10 +17,14 @@ export type TextAnimationData = AnimationCommonData & {
   readonly type: "text";
   readonly from: number; // percentage
   readonly to: number; // percentage
+  readonly easing: readonly [number, number, number, number];
+  readonly charEasing: readonly [number, number, number, number];
   readonly translateX: number;
   readonly translateY: number;
   readonly rotate: number;
   readonly scale: number;
+  readonly anchorX: 0 | 50 | 100;
+  readonly anchorY: 0 | 50 | 100;
 };
 
 export type AnimationData = PropertyAnimationData | TextAnimationData;

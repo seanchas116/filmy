@@ -4,7 +4,7 @@ import { TrackItem } from "@/document/track-item";
 import { EditorState } from "@/editor/state/editor-state";
 import { assertNonNull } from "@/utils/assert";
 import { clamp, lerp } from "@/utils/math";
-import { UnitBezier, easeOut } from "@/utils/easing";
+import { UnitBezier, linear } from "@/utils/easing";
 import { autorun } from "mobx";
 
 export class CurrentFrameRenderer {
@@ -174,8 +174,10 @@ export class CompositionRenderer {
           0,
           1
         );
-        const showRatio =
-          lerp(textAnimation.from, textAnimation.to, progress) / 100;
+        const easing = new UnitBezier(...textAnimation.easing);
+        const showRatio = easing.solve(
+          lerp(textAnimation.from, textAnimation.to, progress) / 100
+        );
 
         new TextAnimationRenderer().render(
           this.context,
@@ -188,12 +190,11 @@ export class CompositionRenderer {
           this.context,
           data,
           {
-            from: 0,
-            to: 100,
             translateX: 0,
             translateY: 0,
             rotate: 0,
             scale: 1,
+            easing: linear,
           },
           1
         );
@@ -214,14 +215,13 @@ class TextAnimationRenderer {
     context: CanvasRenderingContext2D,
     data: TextNodeData,
     config: {
-      readonly from: number; // percentage
-      readonly to: number; // percentage
       readonly translateX: number;
       readonly translateY: number;
       readonly rotate: number;
       readonly scale: number;
+      readonly easing: readonly [number, number, number, number];
     },
-    progress: number
+    showRatio: number
   ) {
     const lines = data.text.split("\n");
     const charCount = lines
@@ -233,15 +233,13 @@ class TextAnimationRenderer {
     let y = data.y + lineHeight - (lineHeight - data.fontSize) / 2;
     let charIndex = 0;
 
-    const showRatio = lerp(config.from, config.to, progress) / 100;
-
     for (const line of lines) {
       let x = data.x;
       for (let i = 0; i < line.length; i++) {
         const char = line[i];
         let charProgress = clamp(showRatio * charCount - charIndex, 0, 1);
 
-        const easing = new UnitBezier(...easeOut);
+        const easing = new UnitBezier(...config.easing);
         charProgress = easing.solve(charProgress);
 
         context.globalAlpha = charProgress;
