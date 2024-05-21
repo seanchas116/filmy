@@ -197,6 +197,30 @@ export class CompositionRenderer {
           );
         }
       } else {
+        const animationsBefore = node.animations
+          .map((a) => a.data)
+          .filter(
+            (a): a is TextAnimationData =>
+              a.type === "text" && a.start + a.duration < localTime
+          )
+          .sort((a, b) => b.start + b.duration - a.order + a.duration);
+        if (animationsBefore[0]?.mode === "out") {
+          // last animation is out -> hide
+          return;
+        }
+
+        const animationsAfter = node.animations
+          .map((a) => a.data)
+          .filter(
+            (a): a is TextAnimationData =>
+              a.type === "text" && a.start > localTime
+          )
+          .sort((a, b) => a.start - b.start);
+        if (animationsAfter[0]?.mode === "in") {
+          // next animation is in -> hide
+          return;
+        }
+
         new TextAnimationRenderer().render(
           this.context,
           data,
