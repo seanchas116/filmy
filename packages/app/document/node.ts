@@ -6,6 +6,9 @@ import { TrackItem } from "./track-item";
 import { Animation } from "./animation";
 import { lerp } from "@/utils/math";
 import { UnitBezier } from "@/utils/easing";
+import { NodeTreeData } from "./node-tree-data";
+import { omit } from "lodash-es";
+import { nanoid } from "nanoid";
 
 export class Node {
   constructor(document: Document, id: string) {
@@ -319,6 +322,29 @@ export class Node {
     }
 
     return data;
+  }
+
+  toTreeData(): NodeTreeData {
+    return {
+      ...omit(this.data, ["parent", "order"]),
+      children: this.children.map((child) => child.toTreeData()),
+      animations: this.animations.map((animation) => animation.data),
+    };
+  }
+
+  static fromTreeData(document: Document, data: NodeTreeData) {
+    const node = document.nodes.add(nanoid(), {
+      ...omit(data, ["children", "animations"]),
+      parent: undefined,
+      order: 0,
+    } as NodeData);
+
+    const children = data.children.map((childData) =>
+      this.fromTreeData(document, childData)
+    );
+    node.insertBefore(children, undefined);
+
+    return node;
   }
 }
 

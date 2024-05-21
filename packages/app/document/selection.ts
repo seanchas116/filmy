@@ -69,4 +69,22 @@ export class Selection {
   selectAllSiblings() {
     throw new Error("Not implemented");
   }
+
+  insertNodesAfterSelection(nodes: Node[]) {
+    const lastSelectedNode = this.nodes.at(-1);
+    if (!lastSelectedNode) {
+      return;
+    }
+    const parent = lastSelectedNode.parent;
+    if (!parent) {
+      return;
+    }
+
+    parent.insertBefore(nodes, lastSelectedNode.nextSibling);
+
+    this.clear();
+    for (const node of nodes) {
+      node.select();
+    }
+  }
 }

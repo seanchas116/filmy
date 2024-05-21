@@ -1,10 +1,40 @@
 import { Command } from "./command";
-import { computed, makeObservable } from "mobx";
+import { computed, makeObservable, runInAction } from "mobx";
 import { Commands } from "./commands";
 import { isTextInput } from "@/utils/is-text-input";
 import { KeyGesture } from "@/utils/key-gesture";
+import { Node } from "@/document/node";
+import { Document } from "@/document/document";
+import { NodeTreeData } from "@/document/node-tree-data";
 
-// const dataMimeType = "application/vnd.rera+json";
+const dataMimeType = "application/vnd.filmy+json";
+
+async function copyNodes(nodes: readonly Node[]) {
+  const trees = nodes.map((node) => node.toTreeData());
+  const data = JSON.stringify(trees);
+
+  await navigator.clipboard.write([
+    new ClipboardItem({
+      [`web ${dataMimeType}`]: new Blob([data], {
+        type: dataMimeType,
+      }),
+    }),
+  ]);
+}
+
+async function pasteNodes(document: Document) {
+  const clipboardItems = await navigator.clipboard.read();
+  for (const clipboardItem of clipboardItems) {
+    if (clipboardItem.types.includes(`web ${dataMimeType}`)) {
+      const blob = await clipboardItem.getType(`web ${dataMimeType}`);
+      const json = await blob.text();
+      const trees = JSON.parse(json) as NodeTreeData[];
+
+      const nodes = trees.map((tree) => Node.fromTreeData(document, tree));
+      document.selection.insertNodesAfterSelection(nodes);
+    }
+  }
+}
 
 export class UndoCommand extends Command {
   constructor(commands: Commands) {
@@ -71,8 +101,7 @@ export class CopyCommand extends Command {
     return !isTextInput(document.activeElement);
   }
   async run() {
-    throw new Error("Method not implemented.");
-    // await copyNodes(this.editorState);
+    await copyNodes(this.editorState.document.selection.nodes);
   }
 }
 
@@ -92,12 +121,11 @@ export class CutCommand extends Command {
     return !isTextInput(document.activeElement);
   }
   async run() {
-    throw new Error("Method not implemented.");
-    // await copyNodes(this.editorState);
-    // runInAction(() => {
-    //   this.editorState.deleteSelection();
-    //   this.editorState.commitUndo();
-    // });
+    await copyNodes(this.editorState.document.selection.nodes);
+    runInAction(() => {
+      this.editorState.document.selection.deleteSelected();
+      this.editorState.document.undoManager.commit();
+    });
   }
 }
 
@@ -118,20 +146,10 @@ export class PasteCommand extends Command {
   }
 
   async run() {
-    throw new Error("Method not implemented.");
-    // await toast.progress(
-    //   async () => {
-    //     await pasteNodes(this.editorState);
-    //     runInAction(() => {
-    //       this.editorState.commitUndo();
-    //     });
-    //   },
-    //   {
-    //     pending: "Pasting...",
-    //     success: "Pasted",
-    //     error: "Failed to paste",
-    //   }
-    // );
+    await pasteNodes(this.editorState.document);
+    runInAction(() => {
+      this.editorState.document.undoManager.commit();
+    });
   }
 }
 
