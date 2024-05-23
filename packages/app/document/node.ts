@@ -6,7 +6,7 @@ import { TrackItem } from "./track-item";
 import { Animation } from "./animation";
 import { lerp } from "@/utils/math";
 import { UnitBezier } from "@/utils/easing";
-import { NodeTreeData } from "./node-tree-data";
+import { NodeClipboardData } from "./clipboard-data";
 import { omit } from "lodash-es";
 import { nanoid } from "nanoid";
 
@@ -324,15 +324,15 @@ export class Node {
     return data;
   }
 
-  toTreeData(): NodeTreeData {
+  toClipboardData(): NodeClipboardData {
     return {
-      ...omit(this.data, ["parent", "order"]),
-      children: this.children.map((child) => child.toTreeData()),
+      ...this.data,
+      children: this.children.map((child) => child.toClipboardData()),
       animations: this.animations.map((animation) => animation.data),
     };
   }
 
-  static fromTreeData(document: Document, data: NodeTreeData) {
+  static fromClipboardData(document: Document, data: NodeClipboardData) {
     const node = document.nodes.add(nanoid(), {
       ...omit(data, ["children", "animations"]),
       parent: undefined,
@@ -340,7 +340,7 @@ export class Node {
     } as NodeData);
 
     const children = data.children.map((childData) =>
-      this.fromTreeData(document, childData)
+      this.fromClipboardData(document, childData)
     );
     node.insertBefore(children, undefined);
 

@@ -5,12 +5,12 @@ import { isTextInput } from "@/utils/is-text-input";
 import { KeyGesture } from "@/utils/key-gesture";
 import { Node } from "@/document/node";
 import { Document } from "@/document/document";
-import { NodeTreeData } from "@/document/node-tree-data";
+import { NodeClipboardData } from "@/document/clipboard-data";
 
 const dataMimeType = "application/vnd.filmy+json";
 
 async function copyNodes(nodes: readonly Node[]) {
-  const trees = nodes.map((node) => node.toTreeData());
+  const trees = nodes.map((node) => node.toClipboardData());
   const data = JSON.stringify(trees);
 
   await navigator.clipboard.write([
@@ -28,9 +28,9 @@ async function pasteNodes(document: Document) {
     if (clipboardItem.types.includes(`web ${dataMimeType}`)) {
       const blob = await clipboardItem.getType(`web ${dataMimeType}`);
       const json = await blob.text();
-      const trees = JSON.parse(json) as NodeTreeData[];
+      const trees = JSON.parse(json) as NodeClipboardData[];
 
-      const nodes = trees.map((tree) => Node.fromTreeData(document, tree));
+      const nodes = trees.map((tree) => Node.fromClipboardData(document, tree));
       document.selection.insertNodesAfterSelection(nodes);
     }
   }
