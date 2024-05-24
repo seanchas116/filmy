@@ -4,6 +4,7 @@ import { TrackItemData } from "./schema";
 import { Node } from "./node";
 import { computed, makeObservable } from "mobx";
 import { Track } from "./track";
+import { TrackItemClipboardData } from "./clipboard-data";
 
 export class TrackItem {
   constructor(document: Document, id: string) {
@@ -59,4 +60,11 @@ export class TrackItem {
   readonly id: string;
   readonly document: Document;
   readonly store: Store<string, TrackItemData>;
+
+  toClipboardData(): TrackItemClipboardData {
+    return {
+      ...this.data,
+      node: this.node.toClipboardData(),
+    };
+  }
 }

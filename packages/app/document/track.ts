@@ -2,6 +2,7 @@ import { Store } from "@/utils/store/store";
 import { Document } from "./document";
 import { TrackData } from "./schema";
 import { TrackItem } from "./track-item";
+import { Node } from "./node";
 
 export class Track {
   constructor(document: Document, id: string) {
@@ -38,6 +39,20 @@ export class Track {
       node.delete();
     }
     this.store.data.delete(this.id);
+  }
+
+  createItem(
+    node: Node,
+    data: {
+      start: number;
+      duration: number;
+    }
+  ): TrackItem {
+    return this.document.trackItems.add(node.id, {
+      track: this.id,
+      start: data.start,
+      duration: data.duration,
+    });
   }
 
   readonly id: string;

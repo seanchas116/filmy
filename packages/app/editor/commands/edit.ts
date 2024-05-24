@@ -5,33 +5,102 @@ import { isTextInput } from "@/utils/is-text-input";
 import { KeyGesture } from "@/utils/key-gesture";
 import { Node } from "@/document/node";
 import { Document } from "@/document/document";
-import { NodeClipboardData } from "@/document/clipboard-data";
+import {
+  NodeClipboardData,
+  TrackItemClipboardData,
+} from "@/document/clipboard-data";
 
 const dataMimeType = "application/vnd.filmy+json";
 
-async function copyNodes(nodes: readonly Node[]) {
-  const trees = nodes.map((node) => node.toClipboardData());
-  const data = JSON.stringify(trees);
+type ClipboardData =
+  | {
+      type: "nodes";
+      nodes: NodeClipboardData[];
+    }
+  | {
+      type: "trackItems";
+      trackItems: TrackItemClipboardData[];
+    };
 
-  await navigator.clipboard.write([
-    new ClipboardItem({
-      [`web ${dataMimeType}`]: new Blob([data], {
-        type: dataMimeType,
+async function copyToClipboard(document: Document) {
+  const trackItems = document.selection.trackItems;
+  if (trackItems.length) {
+    const data: ClipboardData = {
+      type: "trackItems",
+      trackItems: trackItems.map((trackItem) => trackItem.toClipboardData()),
+    };
+
+    await navigator.clipboard.write([
+      new ClipboardItem({
+        [`web ${dataMimeType}`]: new Blob([JSON.stringify(data)], {
+          type: dataMimeType,
+        }),
       }),
-    }),
-  ]);
+    ]);
+    return;
+  }
+
+  const nodes = document.selection.nodes;
+  if (nodes.length) {
+    const data: ClipboardData = {
+      type: "nodes",
+      nodes: nodes.map((node) => node.toClipboardData()),
+    };
+
+    await navigator.clipboard.write([
+      new ClipboardItem({
+        [`web ${dataMimeType}`]: new Blob([JSON.stringify(data)], {
+          type: dataMimeType,
+        }),
+      }),
+    ]);
+    return;
+  }
 }
 
-async function pasteNodes(document: Document) {
+async function pasteNodes(document: Document, currentTime: number) {
   const clipboardItems = await navigator.clipboard.read();
   for (const clipboardItem of clipboardItems) {
     if (clipboardItem.types.includes(`web ${dataMimeType}`)) {
       const blob = await clipboardItem.getType(`web ${dataMimeType}`);
       const json = await blob.text();
-      const trees = JSON.parse(json) as NodeClipboardData[];
+      const data = JSON.parse(json) as ClipboardData;
 
-      const nodes = trees.map((tree) => Node.fromClipboardData(document, tree));
-      document.selection.insertNodesAfterSelection(nodes);
+      if (data.type === "nodes" && data.nodes.length) {
+        const nodes = data.nodes.map((tree) =>
+          Node.fromClipboardData(document, tree)
+        );
+        document.selection.insertNodesAfterSelection(nodes);
+      } else if (data.type === "trackItems" && data.trackItems.length) {
+        const minStartTime = Math.min(
+          ...data.trackItems.map((trackItem) => trackItem.start)
+        );
+
+        const itemDataForTrack = new Map<string, TrackItemClipboardData[]>();
+        for (const trackItem of data.trackItems) {
+          const trackId = trackItem.track;
+          if (!itemDataForTrack.has(trackId)) {
+            itemDataForTrack.set(trackId, []);
+          }
+          itemDataForTrack.get(trackId)!.push(trackItem);
+        }
+
+        // crete new tracks and track items
+
+        for (const [, trackItems] of itemDataForTrack) {
+          const track = document.currentSequence.appendTrack({
+            name: "Track",
+          });
+
+          for (const trackItemData of trackItems) {
+            const node = Node.fromClipboardData(document, trackItemData.node);
+            track.createItem(node, {
+              start: trackItemData.start - minStartTime + currentTime,
+              duration: trackItemData.duration,
+            });
+          }
+        }
+      }
     }
   }
 }
@@ -101,7 +170,7 @@ export class CopyCommand extends Command {
     return !isTextInput(document.activeElement);
   }
   async run() {
-    await copyNodes(this.editorState.document.selection.nodes);
+    await copyToClipboard(this.editorState.document);
   }
 }
 
@@ -121,7 +190,7 @@ export class CutCommand extends Command {
     return !isTextInput(document.activeElement);
   }
   async run() {
-    await copyNodes(this.editorState.document.selection.nodes);
+    await copyToClipboard(this.editorState.document);
     runInAction(() => {
       this.editorState.document.selection.deleteSelected();
       this.editorState.document.undoManager.commit();
@@ -146,7 +215,7 @@ export class PasteCommand extends Command {
   }
 
   async run() {
-    await pasteNodes(this.editorState.document);
+    await pasteNodes(this.editorState.document, this.editorState.currentTime);
     runInAction(() => {
       this.editorState.document.undoManager.commit();
     });
